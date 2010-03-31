@@ -5,8 +5,8 @@ setup(name='python-magic',
       description='File type identification using libmagic',
       author='Adam Hupp',
       author_email='adam@hupp.org',
-      url="http://hupp.org/adam/hg/python-magic",
-      version='0.1',
+      url="http://github.com/ahupp/python-magic",
+      version='0.2',
       py_modules=['magic'],
       long_description="""This module uses ctypes to access the libmagic file type
 identification library.  It makes use of the local magic database and
