@@ -1,0 +1,36 @@
+
+= python-magic =
+
+Adam Hupp <adam at hupp.org>
+
+Distributed under the PSF License: http://www.python.org/psf/license/
+
+python-magic is a simple wrapper for libmagic.  libmagic identifies
+file types according to their headers.  It is the core of the Unix
+"file" command.
+
+
+= Installation =
+
+This module depends on libmagic to run.  It needs swig and
+libmagic-dev to build.
+
+To build and install run:
+
+# python setup.py install
+
+
+= Example Usage =
+
+>>> import magic
+>>> m = magic.Magic()
+>>> m.from_file("testdata/test.pdf")
+'PDF document, version 1.2'
+>>> m.from_buffer(open("testdata/test.pdf").read(1024))
+'PDF document, version 1.2'
+
+# For MIME types
+>>> mime = magic.Magic(mime=True)
+>>> mime.from_file("testdata/test.pdf")
+'application/pdf'
+>>>
