@@ -105,6 +105,13 @@ def from_buffer(buffer, mime=False):
 
 
 libmagic = ctypes.CDLL(ctypes.util.find_library('magic'))
+if not libmagic._name:
+    import sys
+    if sys.platform == "darwin":
+        # try mac ports location
+        libmagic = ctypes.CDLL('/opt/local/lib/libmagic.dylib')
+if not libmagic._name:
+    raise Exception('failed to find libmagic.  Check your installation')
 
 magic_t = ctypes.c_void_p
 
