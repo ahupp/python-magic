@@ -19,6 +19,16 @@ To build and install run:
 
 # python setup.py install
 
+= Installation on Win32 =
+
+You need magic1.dll from http://gnuwin32.sourceforge.net/, grab the
+binaries and dependencies ZIP-file, extract magic1.dll, regex2.dll
+and zlib1.dll and put it in C:\Windows\System32. You also need a 
+magic file from Linux, compatible with file version 5.0.
+
+To build and install run:
+
+# python setup.py install
 
 = Example Usage =
 
