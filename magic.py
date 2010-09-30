@@ -66,9 +66,9 @@ class Magic:
         return magic_file(self.cookie, filename)
 
     def __del__(self):
-	if self.cookie:
-		magic_close(self.cookie)
-		self.cookie = None
+        if self.cookie:
+            magic_close(self.cookie)
+            self.cookie = None
 
 _magic_mime = None
 _magic = None
@@ -116,14 +116,14 @@ if not libmagic or not libmagic._name:
         try:
             # try mac ports location
             libmagic = ctypes.CDLL('/opt/local/lib/libmagic.dylib')
-        # Show we catch just OSError exceptions?
+        # Should we catch just OSError exceptions?
         except:
             pass
     elif sys.platform == "win32":
         try:
             # try local magic1.dll
             libmagic = ctypes.CDLL('magic1.dll')
-        # Show we catch just OSError exceptions?
+        # Should we catch just OSError exceptions?
         except:
             pass
 
