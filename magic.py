@@ -102,17 +102,34 @@ def from_buffer(buffer, mime=False):
 
 
 
-libmagic = ctypes.CDLL(ctypes.util.find_library('magic'))
+libmagic = None
+# Let's try to find magic or magic1
+dll = ctypes.util.find_library('magic') or ctypes.util.find_library('magic1')
+
+# This is necessary because find_library returns None if it doesn't find the library
+if dll:
+    libmagic = ctypes.CDLL(dll)
+
 if not libmagic or not libmagic._name:
     import sys
     if sys.platform == "darwin":
-        # try mac ports location
-        libmagic = ctypes.CDLL('/opt/local/lib/libmagic.dylib')
+        try:
+            # try mac ports location
+            libmagic = ctypes.CDLL('/opt/local/lib/libmagic.dylib')
+        # Show we catch just OSError exceptions?
+        except:
+            pass
     elif sys.platform == "win32":
-        # try local magic1.dll
-        libmagic = ctypes.CDLL('magic1.dll')
+        try:
+            # try local magic1.dll
+            libmagic = ctypes.CDLL('magic1.dll')
+        # Show we catch just OSError exceptions?
+        except:
+            pass
+
 if not libmagic or not libmagic._name:
-    raise Exception('failed to find libmagic.  Check your installation')
+    # It is better to raise an ImportError since we are importing magic module
+    raise ImportError('failed to find libmagic.  Check your installation')
 
 magic_t = ctypes.c_void_p
 
