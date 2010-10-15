@@ -44,3 +44,9 @@ To build and install run:
 >>> mime.from_file("testdata/test.pdf")
 'application/pdf'
 >>>
+
+# For MIME encoding
+>>> mime_encoding = magic.Magic(mime_encoding=True)
+>>> mime_encoding.from_file("testdata/text-iso8859-1.txt")
+'iso-8859-1'
+>>>

@@ -31,18 +31,21 @@ class Magic:
     
     """
 
-    def __init__(self, mime=False, magic_file=None):
+    def __init__(self, mime=False, mime_encoding=False, magic_file=None):
         """
         Create a new libmagic wrapper.
 
         mime - if True, mimetypes are returned instead of textual descriptions
+        mime_encoding - if True, codec is returned
         magic_file - use a mime database other than the system default
         
         """
         flags = MAGIC_NONE
         if mime:
             flags |= MAGIC_MIME
-            
+        elif mime_encoding:
+            flags |= MAGIC_MIME_ENCODING
+
         self.cookie = magic_open(flags)
 
         magic_load(self.cookie, magic_file)
@@ -185,6 +188,8 @@ MAGIC_COMPRESS = 0x000004 # Check inside compressed files
 MAGIC_DEVICES = 0x000008 # Look at the contents of devices
 
 MAGIC_MIME = 0x000010 # Return a mime string
+
+MAGIC_MIME_ENCODING = 0x000400 # Return the MIME encoding
 
 MAGIC_CONTINUE = 0x000020 # Return all matches
 

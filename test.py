@@ -14,6 +14,7 @@ testfile = [
     ("text.txt", "ASCII text", "text/plain; charset=us-ascii"),
     ]
 
+testFileEncoding = [('text-iso8859-1.txt', 'iso-8859-1')]
 
 class TestMagic(unittest.TestCase):
 
@@ -45,7 +46,20 @@ class TestMagic(unittest.TestCase):
 
 class TestMagicMime(TestMagic):
     mime = True
-        
+
+class TestMagicMimeEncoding(TestMagic):
+    def setUp(self):
+        self.m = Magic(mime_encoding=True)
+
+    def testFileEncoding(self):
+        for filename, encoding in testFileEncoding:
+            filename = path.join(path.dirname(__file__),
+                                 "testdata",
+                                 filename)
+            self.assertEqual(encoding, self.m.from_buffer(open(filename).read(1024)))
+            self.assertEqual(encoding, self.m.from_file(filename), filename)
+
+
 if __name__ == '__main__':
     unittest.main()
     
