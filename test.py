@@ -11,7 +11,7 @@ testfile = [
     ("test.pdf", "PDF document, version 1.2", "application/pdf"),
     ("test.gz", 'gzip compressed data, was "test", from Unix, last modified: '
      'Sat Jun 28 18:32:52 2008', "application/x-gzip"),
-    ("text.txt", "ASCII text", "text/plain; charset=us-ascii"),
+    ("text.txt", "ASCII text", "text/plain"),
     ]
 
 testFileEncoding = [('text-iso8859-1.txt', 'iso-8859-1')]
@@ -47,7 +47,7 @@ class TestMagic(unittest.TestCase):
 class TestMagicMime(TestMagic):
     mime = True
 
-class TestMagicMimeEncoding(TestMagic):
+class TestMagicMimeEncoding(unittest.TestCase):
     def setUp(self):
         self.m = Magic(mime_encoding=True)
 
