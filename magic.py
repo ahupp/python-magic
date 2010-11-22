@@ -31,7 +31,7 @@ class Magic:
     
     """
 
-    def __init__(self, mime=False, mime_encoding=False, magic_file=None):
+    def __init__(self, mime=False, magic_file=None, mime_encoding=False):
         """
         Create a new libmagic wrapper.
 
