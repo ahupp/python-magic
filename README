@@ -1,4 +1,3 @@
-
 = python-magic =
 
 Adam Hupp <adam at hupp.org>
@@ -9,11 +8,7 @@ python-magic is a simple wrapper for libmagic.  libmagic identifies
 file types according to their headers.  It is the core of the Unix
 "file" command.
 
-
 = Installation =
-
-This module depends on libmagic to run.  It needs swig and
-libmagic-dev to build.
 
 To build and install run:
 
@@ -50,3 +45,13 @@ To build and install run:
 >>> mime_encoding.from_file("testdata/text-iso8859-1.txt")
 'iso-8859-1'
 >>>
+
+= Contributors =
+
+Thanks to these folks on github who submitted features and bugfixes.
+
+NicolasDelaby
+lukenowak
+FlaPer87
+SimpleSeb
+tehmaze
