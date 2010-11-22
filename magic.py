@@ -115,19 +115,12 @@ if dll:
 
 if not libmagic or not libmagic._name:
     import sys
-    if sys.platform == "darwin":
+    platform_to_lib = {'darwin': '/opt/local/lib/libmagic.dylib',
+                       'win32': 'magic1.dll'}
+    if sys.platform in platform_to_lib:
         try:
-            # try mac ports location
-            libmagic = ctypes.CDLL('/opt/local/lib/libmagic.dylib')
-        # Should we catch just OSError exceptions?
-        except:
-            pass
-    elif sys.platform == "win32":
-        try:
-            # try local magic1.dll
-            libmagic = ctypes.CDLL('magic1.dll')
-        # Should we catch just OSError exceptions?
-        except:
+            libmagic = ctypes.CDLL(platform_to_lib[sys.platform])
+        except OSError:
             pass
 
 if not libmagic or not libmagic._name:
