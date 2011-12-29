@@ -115,11 +115,12 @@ if dll:
 
 if not libmagic or not libmagic._name:
     import sys
-    platform_to_lib = {'darwin': 'libmagic.dylib',
-                       'win32':  'magic1.dll'}
-    if sys.platform in platform_to_lib:
+    platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib', 
+                                  '/usr/local/lib/libmagic.dylib'],
+                       'win32':  ['magic1.dll']}
+    for dll in platform_to_lib.get(sys.platform, []):
         try:
-            libmagic = ctypes.CDLL(platform_to_lib[sys.platform])
+            libmagic = ctypes.CDLL(dll)
         except OSError:
             pass
 
