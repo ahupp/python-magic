@@ -27,8 +27,8 @@ class MagicException(Exception): pass
 
 class Magic:
     """
-    Magic is a wrapper around the libmagic C library.  
-    
+    Magic is a wrapper around the libmagic C library.
+
     """
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False):
@@ -38,7 +38,7 @@ class Magic:
         mime - if True, mimetypes are returned instead of textual descriptions
         mime_encoding - if True, codec is returned
         magic_file - use a mime database other than the system default
-        
+
         """
         flags = MAGIC_NONE
         if mime:
@@ -65,7 +65,7 @@ class Magic:
 
         if not os.path.exists(filename):
             raise IOError("File does not exist: " + filename)
-        
+
         return magic_file(self.cookie, filename)
 
     def __del__(self):
@@ -115,8 +115,9 @@ if dll:
 
 if not libmagic or not libmagic._name:
     import sys
-    platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib', 
-                                  '/usr/local/lib/libmagic.dylib'],
+    platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib',
+                                  '/usr/local/lib/libmagic.dylib',
+                                  '/usr/local/Cellar/libmagic/5.10/lib/libmagic.dylib'],
                        'win32':  ['magic1.dll']}
     for dll in platform_to_lib.get(sys.platform, []):
         try:
