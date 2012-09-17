@@ -37,7 +37,12 @@ On Windows, you need to download and save the following libraries under
 
 ## Author
 
-Adam Hupp <adam at hupp.org>
+Written by Adam Hupp in 2001 for a project that never got off the
+ground.  It origionally used SWIG for the C library bindings, but
+switched to ctypes once that was part of the python standard library.
+
+You can contact me via my [website](http://hupp.org/adam) or
+[github](http://github.com/ahupp).
 
 ## Contributors
 
