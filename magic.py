@@ -69,6 +69,7 @@ class Magic:
         return magic_file(self.cookie, filename)
 
     def __del__(self):
+        # during shutdown magic_close may have been cleared already
         if self.cookie and magic_close:
             magic_close(self.cookie)
             self.cookie = None
