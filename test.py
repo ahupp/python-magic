@@ -2,26 +2,28 @@
 import os.path
 import unittest
 import random
-from StringIO import StringIO
+import magic
 from os import path
-from magic import Magic, MagicException
+
 
 testfile = [
-    ("magic.pyc", "python 2.4 byte-compiled", "application/octet-stream"),
-    ("test.pdf", "PDF document, version 1.2", "application/pdf"),
-    ("test.gz", 'gzip compressed data, was "test", from Unix, last modified: '
-     'Sat Jun 28 18:32:52 2008', "application/x-gzip"),
-    ("text.txt", "ASCII text", "text/plain"),
+    ("magic.pyc", b"python 2.4 byte-compiled", b"application/octet-stream"),
+    ("test.pdf", b"PDF document, version 1.2", b"application/pdf"),
+    ("test.gz", b'gzip compressed data, was "test", from Unix, last modified: '
+     b'Sat Jun 28 18:32:52 2008', b"application/x-gzip"),
+    ("text.txt", b"ASCII text", b"text/plain"),
+    # is there no better way to encode a unicode literal across python2/3.[01]/3.3?
+    (b"\xce\xbb".decode('utf-8'), b"empty", b"application/x-empty")
     ]
 
-testFileEncoding = [('text-iso8859-1.txt', 'iso-8859-1')]
+testFileEncoding = [('text-iso8859-1.txt', b'iso-8859-1')]
 
 class TestMagic(unittest.TestCase):
 
     mime = False
     
     def setUp(self):
-        self.m = Magic(mime=self.mime)
+        self.m = magic.Magic(mime=self.mime)
 
     def testFileTypes(self):
         for filename, desc, mime in testfile:
@@ -33,15 +35,15 @@ class TestMagic(unittest.TestCase):
             else:
                 target = desc
                 
-            self.assertEqual(target, self.m.from_buffer(open(filename).read(1024)))
+            self.assertEqual(target, self.m.from_buffer(open(filename, 'rb').read(1024)))
             self.assertEqual(target, self.m.from_file(filename), filename)
         
 
     def testErrors(self):
         self.assertRaises(IOError, self.m.from_file, "nonexistent")
-        self.assertRaises(MagicException, Magic, magic_file="noneexistent")
+        self.assertRaises(magic.MagicException, magic.Magic, magic_file="noneexistent")
         os.environ['MAGIC'] = '/nonexistetn'
-        self.assertRaises(MagicException, Magic)
+        self.assertRaises(magic.MagicException, magic.Magic)
         del os.environ['MAGIC']
 
 class TestMagicMime(TestMagic):
@@ -49,14 +51,14 @@ class TestMagicMime(TestMagic):
 
 class TestMagicMimeEncoding(unittest.TestCase):
     def setUp(self):
-        self.m = Magic(mime_encoding=True)
+        self.m = magic.Magic(mime_encoding=True)
 
     def testFileEncoding(self):
         for filename, encoding in testFileEncoding:
             filename = path.join(path.dirname(__file__),
                                  "testdata",
                                  filename)
-            self.assertEqual(encoding, self.m.from_buffer(open(filename).read(1024)))
+            self.assertEqual(encoding, self.m.from_buffer(open(filename, 'rb').read(1024)))
             self.assertEqual(encoding, self.m.from_file(filename), filename)
 
 

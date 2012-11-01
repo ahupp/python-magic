@@ -17,6 +17,7 @@ Usage:
 
 """
 
+import sys
 import os.path
 import ctypes
 import ctypes.util
@@ -139,6 +140,11 @@ def errorcheck(result, func, args):
     else:
         return result
 
+def coerce_filename(filename):
+    if filename is None:
+        return None
+    return filename.encode(sys.getfilesystemencoding())
+
 magic_open = libmagic.magic_open
 magic_open.restype = magic_t
 magic_open.argtypes = [c_int]
@@ -155,11 +161,13 @@ magic_errno = libmagic.magic_errno
 magic_errno.restype = c_int
 magic_errno.argtypes = [magic_t]
 
-magic_file = libmagic.magic_file
-magic_file.restype = c_char_p
-magic_file.argtypes = [magic_t, c_char_p]
-magic_file.errcheck = errorcheck
+_magic_file = libmagic.magic_file
+_magic_file.restype = c_char_p
+_magic_file.argtypes = [magic_t, c_char_p]
+_magic_file.errcheck = errorcheck
 
+def magic_file(cookie, filename):
+    return _magic_file(cookie, coerce_filename(filename))
 
 _magic_buffer = libmagic.magic_buffer
 _magic_buffer.restype = c_char_p
@@ -171,10 +179,13 @@ def magic_buffer(cookie, buf):
     return _magic_buffer(cookie, buf, len(buf))
 
 
-magic_load = libmagic.magic_load
-magic_load.restype = c_int
-magic_load.argtypes = [magic_t, c_char_p]
-magic_load.errcheck = errorcheck
+_magic_load = libmagic.magic_load
+_magic_load.restype = c_int
+_magic_load.argtypes = [magic_t, c_char_p]
+_magic_load.errcheck = errorcheck
+
+def magic_load(cookie, filename):
+    return _magic_load(cookie, coerce_filename(filename))
 
 magic_setflags = libmagic.magic_setflags
 magic_setflags.restype = c_int
