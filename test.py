@@ -25,6 +25,7 @@ class MagicTest(unittest.TestCase):
             'test.pdf': b'application/pdf',
             'test.gz': b'application/x-gzip',
             'text.txt': b'text/plain',
+            b'\xce\xbb'.decode('utf-8'): b'text/plain',
         })
 
     def test_descriptions(self):
@@ -58,6 +59,15 @@ class MagicTest(unittest.TestCase):
             self.assertRaises(magic.MagicException, magic.Magic)
         finally:
             del os.environ['MAGIC']
+
+    def test_keep_going(self):
+        filename = os.path.join(self.TESTDATA_DIR, 'keep-going.jpg')
+
+        m = magic.Magic(mime=True)
+        self.assertEqual(m.from_file(filename), b'application/octet-stream')
+        
+        m = magic.Magic(mime=True, keep_going=True)
+        self.assertEqual(m.from_file(filename), b'image/jpeg')
 
 
 if __name__ == '__main__':
