@@ -12,7 +12,7 @@ class MagicTest(unittest.TestCase):
             filename = os.path.join(self.TESTDATA_DIR, filename)
 
             with open(filename, 'rb') as f:
-                value = m.from_buffer(f.read(1024))
+                value = m.from_buffer(f.read())
             self.assertEqual(value, expected_value)
 
             value = m.from_file(filename)
@@ -53,9 +53,11 @@ class MagicTest(unittest.TestCase):
         self.assertRaises(IOError, m.from_file, 'nonexistent')
         self.assertRaises(magic.MagicException, magic.Magic,
                           magic_file='nonexistent')
-        os.environ['MAGIC'] = '/nonexistent'
-        self.assertRaises(magic.MagicException, magic.Magic)
-        del os.environ['MAGIC']
+        os.environ['MAGIC'] = 'nonexistent'
+        try:
+            self.assertRaises(magic.MagicException, magic.Magic)
+        finally:
+            del os.environ['MAGIC']
 
 
 if __name__ == '__main__':
