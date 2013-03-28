@@ -24,7 +24,7 @@ There are three ways to use the library:
 'PDF document, version 1.2'
 >>> Magic2.from_buffer(open("testdata/test.pdf").read(1024)).description
 'PDF document, version 1.2'
->>> Magic2.from_file("testdata/test.pdf).mimetype
+>>> Magic2.from_file("testdata/test.pdf").mimetype
 'application/pdf'
 ```
 
