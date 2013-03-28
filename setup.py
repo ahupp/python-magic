@@ -14,4 +14,5 @@ setup(
         "and supports both textual and MIME-type output. ",
     keywords="mime magic file",
     license="PSF",
+    test_suite='tests',
 )
