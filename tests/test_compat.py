@@ -26,26 +26,22 @@ class TestMagic(MagicTestCaseMixin, unittest.TestCase):
     def test_file_types(self):
         m = magic.Magic(mime=False)
         for filename, desc, mime in testfile:
-            filename = os.path.join(TEST_DATA_DIR, filename)
-            target = desc
-
-            _from_buffer = m.from_buffer(open(filename, 'rb').read(1024))
-            _from_file = m.from_file(filename)
-
-            self.assertMatches(_from_buffer, target)
-            self.assertMatches(_from_file, target)
+            file_path = os.path.join(TEST_DATA_DIR, filename)
+            with open(file_path, 'rb') as f:
+                _from_buffer = m.from_buffer(f.read(1024))
+            _from_file = m.from_file(file_path)
+            self.assertMatches(_from_buffer, desc)
+            self.assertMatches(_from_file, desc)
 
     def test_file_types_mime(self):
         m = magic.Magic(mime=True)
         for filename, desc, mime in testfile:
-            filename = os.path.join(TEST_DATA_DIR, filename)
-            target = mime
-
-            _from_buffer = m.from_buffer(open(filename, 'rb').read(1024))
-            _from_file = m.from_file(filename)
-
-            self.assertMatches(_from_buffer, target)
-            self.assertMatches(_from_file, target)
+            file_path = os.path.join(TEST_DATA_DIR, filename)
+            with open(file_path, 'rb') as f:
+                _from_buffer = m.from_buffer(f.read(1024))
+            _from_file = m.from_file(file_path)
+            self.assertMatches(_from_buffer, mime)
+            self.assertMatches(_from_file, mime)
 
     def test_errors(self):
         m = magic.Magic(mime=False)
@@ -71,20 +67,18 @@ class TestMagic(MagicTestCaseMixin, unittest.TestCase):
 
     def test_file_encoding(self):
         m = magic.Magic(mime_encoding=True)
-
         for filename, encoding in testFileEncoding:
-            filename = os.path.join(TEST_DATA_DIR, filename)
-
-            _from_buffer = m.from_buffer(open(filename, 'rb').read(1024))
-            _from_file = m.from_file(filename)
-
+            file_path = os.path.join(TEST_DATA_DIR, filename)
+            with open(file_path, 'rb') as f:
+                _from_buffer = m.from_buffer(f.read(1024))
+            _from_file = m.from_file(file_path)
             self.assertMatches(_from_buffer, encoding)
             self.assertMatches(_from_file, encoding)
 
     def test_old_from_buffer(self):
         for key, val in TEST_FILES.items():
             file_path = os.path.join(TEST_DATA_DIR, key)
-            with open(file_path) as f:
+            with open(file_path, 'rb') as f:
                 buf = f.read(1024)
             self.assertMatches(magic.from_buffer(buf, mime=False), val[2])
             self.assertMatches(magic.from_buffer(buf, mime=True), val[0])
