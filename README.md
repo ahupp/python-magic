@@ -39,6 +39,21 @@ Other sources:
 - pypi: http://pypi.python.org/pypi/python-magic/
 - github: https://github.com/ahupp/python-magic
 
+### Python compatibility
+
+The library has been tested compatible (a.k.a. full test suite running) with
+the following Python versions:
+
+* CPython 2.6.4
+* CPython 2.7.3
+* CPython 3.3.0
+* PyPy 1.9.0 (2.7.2)
+
+It is known **not** to work on:
+
+* Python < 2.6
+* Python 3.0
+
 ### Dependencies on Windows
 
 On Windows, you need to download and save the following libraries under
