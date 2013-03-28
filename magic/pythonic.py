@@ -22,18 +22,10 @@ class Magic(object):
     _flags = None
     _cookie = None
 
-    def __init__(self, flags=None):
+    def __init__(self, flags=None, magic_db=None):
         self._flags = flags or MAGIC_NONE
-        self.open()
-        self.load()
-
-    def open(self, flags=None):
-        if flags is None:
-            flags = self._flags
-        self._cookie = magic_open(flags)
-
-    def load(self, filename=None):
-        magic_load(self._cookie, filename)
+        self._cookie = magic_open(self.flags)
+        magic_load(self._cookie, magic_db)
 
     @property
     def flags(self):
@@ -48,14 +40,9 @@ class Magic(object):
         magic_setflags(self._cookie, flags)
 
     def from_buffer(self, buf):
-        """Identify the contents of ``buf``"""
         return magic_buffer(self._cookie, buf)
 
     def from_file(self, filename):
-        """
-        Identify the contents of file ``filename``
-        raises IOError if the file does not exist
-        """
         if not os.path.exists(filename):
             raise IOError("File does not exist: " + filename)
         return magic_file(self._cookie, filename)
@@ -70,7 +57,7 @@ class Magic(object):
             self._cookie = None
 
 
-class MoreMagic(object):
+class Magic2(object):
     """
     More natural, yet less efficient implementation of the library.
     """
@@ -115,12 +102,12 @@ class MoreMagic(object):
         raise ValueError
 
     @classmethod
-    def from_file(cls, filename):
-        return cls(from_type=FROM_FILE, from_arg=filename)
+    def from_file(cls, filename, flags=None):
+        return cls(from_type=FROM_FILE, from_arg=filename, flags=flags)
 
     @classmethod
-    def from_buffer(cls, buf):
-        return cls(from_type=FROM_BUFFER, from_arg=buf)
+    def from_buffer(cls, buf, flags=None):
+        return cls(from_type=FROM_BUFFER, from_arg=buf, flags=flags)
 
     @property
     def description(self):
@@ -143,7 +130,7 @@ class MoreMagic(object):
         return self._return()
 
     @property
-    def charset(self):
+    def encoding(self):
         self._prepare()
         self._setflags(
             self.flags
@@ -151,3 +138,19 @@ class MoreMagic(object):
             | MAGIC_MIME_ENCODING
         )
         return self._return()
+
+    @property
+    def mime(self):
+        self._prepare()
+        self._setflags(
+            self.flags
+            | MAGIC_MIME_TYPE
+            | MAGIC_MIME_ENCODING
+        )
+        return self._return()
+
+    def __str__(self):
+        return self.description
+
+    def __unicode__(self):
+        return unicode(self.description)
