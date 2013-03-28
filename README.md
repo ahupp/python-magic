@@ -7,7 +7,8 @@ functionality is exposed to the command line by the Unix command
 `file`.
 
 **Important note** this is a modified version of the library,
-and is not compatible (at the moment) with the old library!
+and is not guaranteed to be 100% compatible with the old library,
+although some work has been done to support retro-compatibility.
 
 
 ## Example Usage

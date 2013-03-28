@@ -3,6 +3,7 @@ Test data for the tests.
 """
 
 import os
+
 envvar = 'PYMAGIC_TEST_DATA'
 if envvar in os.environ:
     TEST_DATA_DIR = os.environ[envvar]
@@ -26,7 +27,8 @@ TEST_FILES = {
     "test.gz":            (
         b"application/x-gzip",
         b"binary",
-        b"gzip compressed data, was \"test\", from Unix, last modified: Sun Jun 29 03:32:52 2008",
+        lambda x: x.startswith(
+            b"gzip compressed data, was \"test\", from Unix, last modified:"),
         b"application/x-gzip; charset=binary",
     ),
     "test.pdf":           (
@@ -65,8 +67,11 @@ TEST_FILES_COMPRESSED = {
     "test.gz":            (
         b"text/plain",
         b"us-asciibinarybinary",
-        b"ASCII text (gzip compressed data, was \"test\", from Unix, last modified: Sun Jun 29 03:32:52 2008)",
-        b"text/plain; charset=us-ascii compressed-encoding=application/x-gzip; charset=binary; charset=binary",
+        lambda x: x.startswith(
+            b"ASCII text (gzip compressed data, was \"test\", from Unix, "
+            b"last modified:"),
+        b"text/plain; charset=us-ascii compressed-encoding=application"
+        b"/x-gzip; charset=binary; charset=binary",
     ),
     "test.pdf":           (
         b"application/pdf",
@@ -87,3 +92,13 @@ TEST_FILES_COMPRESSED = {
         b"text/plain; charset=us-ascii",
     ),
 }
+
+
+class MagicTestCaseMixin(object):
+    def assertMatches(self, value, match):
+        if hasattr(match, '__call__'):  # this is a callable
+            self.assertTrue(match(value))
+        elif hasattr(match, 'search'):  # this is a regex
+            self.assertRegexpMatches(value, match)
+        else:  # just compare 'em..
+            self.assertEqual(match, value)

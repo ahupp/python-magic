@@ -7,10 +7,10 @@ import unittest
 from magic.wrapper import MAGIC_MIME, \
     MAGIC_MIME_ENCODING, MAGIC_COMPRESS, MAGIC_MIME_TYPE
 from magic.pythonic import Magic, Magic2
-from ._test_data import TEST_DATA_DIR, TEST_FILES, TEST_FILES_COMPRESSED
+from ._test_data import TEST_DATA_DIR, TEST_FILES, TEST_FILES_COMPRESSED, MagicTestCaseMixin
 
 
-class TestMagicPythonic(unittest.TestCase):
+class TestMagicPythonic(MagicTestCaseMixin, unittest.TestCase):
     def test_files(self):
         m_desc = Magic()
         m_mime_type = Magic(MAGIC_MIME_TYPE)
@@ -27,10 +27,10 @@ class TestMagicPythonic(unittest.TestCase):
             read_desc = m_desc.from_file(file_path)
             read_mime = m_mime.from_file(file_path)
 
-            self.assertEqual(mime_type, read_mime_type)
-            self.assertEqual(mime_encoding, read_mime_encoding)
-            self.assertEqual(mime, read_mime)
-            self.assertEqual(desc, read_desc)
+            self.assertMatches(read_mime_type, mime_type)
+            self.assertMatches(read_mime_encoding, mime_encoding)
+            self.assertMatches(read_mime, mime)
+            self.assertMatches(read_desc, desc)
 
     def test_compressed_files(self):
         m_desc = Magic(MAGIC_COMPRESS)
@@ -48,13 +48,13 @@ class TestMagicPythonic(unittest.TestCase):
             read_desc = m_desc.from_file(file_path)
             read_mime = m_mime.from_file(file_path)
 
-            self.assertEqual(mime_type, read_mime_type)
-            self.assertEqual(mime_encoding, read_mime_encoding)
-            self.assertEqual(mime, read_mime)
-            self.assertEqual(desc, read_desc)
+            self.assertMatches(read_mime_type, mime_type)
+            self.assertMatches(read_mime_encoding, mime_encoding)
+            self.assertMatches(read_mime, mime)
+            self.assertMatches(read_desc, desc)
 
 
-class TestMagic2(unittest.TestCase):
+class TestMagic2(MagicTestCaseMixin, unittest.TestCase):
     def test_files(self):
         for filename, expected in sorted(TEST_FILES.items()):
             mime_type, mime_encoding, desc, mime = expected
@@ -62,10 +62,10 @@ class TestMagic2(unittest.TestCase):
             file_path = os.path.join(TEST_DATA_DIR, filename)
             m = Magic2.from_file(file_path)
 
-            self.assertEqual(mime_type, m.mimetype)
-            self.assertEqual(mime_encoding, m.encoding)
-            self.assertEqual(mime, m.mime)
-            self.assertEqual(desc, m.description)
+            self.assertMatches(m.mimetype, mime_type)
+            self.assertMatches(m.encoding, mime_encoding)
+            self.assertMatches(m.mime, mime)
+            self.assertMatches(m.description, desc)
 
     def test_compressed_files(self):
         for filename, expected in sorted(TEST_FILES_COMPRESSED.items()):
@@ -74,7 +74,7 @@ class TestMagic2(unittest.TestCase):
             file_path = os.path.join(TEST_DATA_DIR, filename)
             m = Magic2.from_file(file_path, MAGIC_COMPRESS)
 
-            self.assertEqual(mime_type, m.mimetype)
-            self.assertEqual(mime_encoding, m.encoding)
-            self.assertEqual(mime, m.mime)
-            self.assertEqual(desc, m.description)
+            self.assertMatches(m.mimetype, mime_type)
+            self.assertMatches(m.encoding, mime_encoding)
+            self.assertMatches(m.mime, mime)
+            self.assertMatches(m.description, desc)

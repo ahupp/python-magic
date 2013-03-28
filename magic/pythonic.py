@@ -6,7 +6,7 @@ import os
 
 from magic.wrapper import MAGIC_NONE, magic_open, magic_load, magic_buffer, \
     magic_file, magic_close, magic_setflags, MAGIC_MIME_TYPE, \
-    MAGIC_MIME_ENCODING
+    MAGIC_MIME_ENCODING, MAGIC_COMPRESS
 
 
 ## Internal use constants
@@ -22,10 +22,17 @@ class Magic(object):
     _flags = None
     _cookie = None
 
-    def __init__(self, flags=None, magic_db=None):
+    def __init__(self, flags=None, magic_file=None, mime=False,
+                 mime_encoding=False, compress=False):
         self._flags = flags or MAGIC_NONE
+        if mime:
+            self._flags |= MAGIC_MIME_TYPE
+        if mime_encoding:
+            self._flags |= MAGIC_MIME_ENCODING
+        if compress:
+            self._flags |= MAGIC_COMPRESS
         self._cookie = magic_open(self.flags)
-        magic_load(self._cookie, magic_db)
+        magic_load(self._cookie, magic_file)
 
     @property
     def flags(self):
