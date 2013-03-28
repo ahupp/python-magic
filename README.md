@@ -6,14 +6,24 @@ their headers according to a predefined list of file types. This
 functionality is exposed to the command line by the Unix command
 `file`.
 
+**Important note** this is a modified version of the library,
+and is not compatible (at the moment) with the old library!
+
+
 ## Example Usage
 
-    >>> import magic
-    >>> magic.from_file("testdata/test.pdf")
+There are three ways to use the library:
+
+* Directly import & call the (wrapped) underlying C methods
+* Use the ``Magic`` class (the object-oriented version of the C library)
+* Use the ``Magic2`` (Magic squared) library, like this:
+
+    >>> from magic import Magic2
+    >>> Magic2.from_file("testdata/test.pdf").description
     'PDF document, version 1.2'
-    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
+    >>> Magic2.from_buffer(open("testdata/test.pdf").read(1024)).description
     'PDF document, version 1.2'
-    >>> magic.from_file("testdata/test.pdf", mime=True)
+    >>> Magic2.from_file("testdata/test.pdf).mimetype
     'application/pdf'
 
 ## Installation
@@ -34,6 +44,16 @@ On Windows, you need to download and save the following libraries under
 -   `regex2.dll` from [sourceforge.net/projects/gnuwin32/files/regex/](http://sourceforge.net/projects/gnuwin32/files/regex/)
 -   `zlib1.dll` from [sourceforge.net/projects/gnuwin32/files/zlib/](http://sourceforge.net/projects/gnuwin32/files/zlib/)
 -   `magic1.dll` from [sourceforge.net/projects/gnuwin32/files/file/](http://sourceforge.net/projects/gnuwin32/files/file/)
+
+## Testing
+
+To run the test cases, simply run:
+
+    python setup.py test
+
+or, if you prefer:
+
+    python -m unittest discover -v
 
 ## Author
 
@@ -57,6 +77,7 @@ Thanks to these folks on github who submitted features and bugfixes.
 -   sacha@ssl.co.uk
 -   SimpleSeb
 -   [tehmaze](https://github.com/tehmaze)
+-   [Samuele Santi](https://github.com/rshk)
 
 ## License
 
