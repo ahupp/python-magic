@@ -16,15 +16,17 @@ There are three ways to use the library:
 
 * Directly import & call the (wrapped) underlying C methods
 * Use the ``Magic`` class (the object-oriented version of the C library)
-* Use the ``Magic2`` (Magic squared) library, like this:
+* Use the ``Magic2`` (Magic squared) library:
 
-    >>> from magic import Magic2
-    >>> Magic2.from_file("testdata/test.pdf").description
-    'PDF document, version 1.2'
-    >>> Magic2.from_buffer(open("testdata/test.pdf").read(1024)).description
-    'PDF document, version 1.2'
-    >>> Magic2.from_file("testdata/test.pdf).mimetype
-    'application/pdf'
+```python
+>>> from magic import Magic2
+>>> Magic2.from_file("testdata/test.pdf").description
+'PDF document, version 1.2'
+>>> Magic2.from_buffer(open("testdata/test.pdf").read(1024)).description
+'PDF document, version 1.2'
+>>> Magic2.from_file("testdata/test.pdf).mimetype
+'application/pdf'
+```
 
 ## Installation
 
