@@ -1,0 +1,6 @@
+*.py[co]
+!testdata/*.pyc
+*.egg
+*.egg-info
+*~
+/.idea
