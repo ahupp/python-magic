@@ -10,6 +10,7 @@ functionality is exposed to the command line by the Unix command
 and is not guaranteed to be 100% compatible with the old library,
 although some work has been done to support retro-compatibility.
 
+[![Build Status](https://travis-ci.org/rshk/python-magic.png)](https://travis-ci.org/rshk/python-magic)
 
 ## Example Usage
 
