@@ -64,7 +64,7 @@ class Magic:
         raises IOError if the file does not exist
         """
 
-        if not os.path.exists(filename):
+        if not os.path.lexists(filename):
             raise IOError("File does not exist: " + filename)
 
         return magic_file(self.cookie, filename)
