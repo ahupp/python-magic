@@ -6,15 +6,29 @@ their headers according to a predefined list of file types. This
 functionality is exposed to the command line by the Unix command
 `file`.
 
+**Important note** this is a modified version of the library,
+and is not guaranteed to be 100% compatible with the old library,
+although some work has been done to support retro-compatibility.
+
+[![Build Status](https://travis-ci.org/rshk/python-magic.png)](https://travis-ci.org/rshk/python-magic)
+
 ## Example Usage
 
-    >>> import magic
-    >>> magic.from_file("testdata/test.pdf")
-    'PDF document, version 1.2'
-    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
-    'PDF document, version 1.2'
-    >>> magic.from_file("testdata/test.pdf", mime=True)
-    'application/pdf'
+There are three ways to use the library:
+
+* Directly import & call the (wrapped) underlying C methods
+* Use the ``Magic`` class (the object-oriented version of the C library)
+* Use the ``Magic2`` (Magic squared) library:
+
+```python
+>>> from magic import Magic2
+>>> Magic2.from_file("testdata/test.pdf").description
+'PDF document, version 1.2'
+>>> Magic2.from_buffer(open("testdata/test.pdf").read(1024)).description
+'PDF document, version 1.2'
+>>> Magic2.from_file("testdata/test.pdf").mimetype
+'application/pdf'
+```
 
 ## Installation
 
@@ -26,6 +40,21 @@ Other sources:
 - pypi: http://pypi.python.org/pypi/python-magic/
 - github: https://github.com/ahupp/python-magic
 
+### Python compatibility
+
+The library has been tested compatible (a.k.a. full test suite running) with
+the following Python versions:
+
+* CPython 2.6.4
+* CPython 2.7.3
+* CPython 3.3.0
+* PyPy 1.9.0 (2.7.2)
+
+It is known **not** to work on:
+
+* Python < 2.6
+* Python 3.0
+
 ### Dependencies on Windows
 
 On Windows, you need to download and save the following libraries under
@@ -34,6 +63,16 @@ On Windows, you need to download and save the following libraries under
 -   `regex2.dll` from [sourceforge.net/projects/gnuwin32/files/regex/](http://sourceforge.net/projects/gnuwin32/files/regex/)
 -   `zlib1.dll` from [sourceforge.net/projects/gnuwin32/files/zlib/](http://sourceforge.net/projects/gnuwin32/files/zlib/)
 -   `magic1.dll` from [sourceforge.net/projects/gnuwin32/files/file/](http://sourceforge.net/projects/gnuwin32/files/file/)
+
+## Testing
+
+To run the test cases, simply run:
+
+    python setup.py test
+
+or, if you prefer:
+
+    python -m unittest discover -v
 
 ## Author
 
@@ -57,6 +96,7 @@ Thanks to these folks on github who submitted features and bugfixes.
 -   sacha@ssl.co.uk
 -   SimpleSeb
 -   [tehmaze](https://github.com/tehmaze)
+-   [Samuele Santi](https://github.com/rshk)
 
 ## License
 
