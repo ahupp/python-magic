@@ -21,6 +21,7 @@ import sys
 import os.path
 import ctypes
 import ctypes.util
+import threading
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
@@ -51,11 +52,13 @@ class Magic:
 
         magic_load(self.cookie, magic_file)
 
+        self.thread = threading.current_thread()
 
     def from_buffer(self, buf):
         """
         Identify the contents of `buf`
         """
+        self._thread_check()
         return magic_buffer(self.cookie, buf)
 
     def from_file(self, filename):
@@ -63,11 +66,18 @@ class Magic:
         Identify the contents of file `filename`
         raises IOError if the file does not exist
         """
-
+        self._thread_check()
         if not os.path.exists(filename):
             raise IOError("File does not exist: " + filename)
 
         return magic_file(self.cookie, filename)
+
+    def _thread_check(self):
+        if self.thread != threading.current_thread():
+            raise Exception('attempting to use libmagic on multiple threads will '
+                            'end in SEGV.  Prefer to use the module functions '
+                            'from_file or from_buffer, or carefully manage direct '
+                            'use of the Magic class')
 
     def __del__(self):
         # during shutdown magic_close may have been cleared already
@@ -75,26 +85,14 @@ class Magic:
             magic_close(self.cookie)
             self.cookie = None
 
-_magic_mime = None
-_magic = None
 
-def _get_magic_mime():
-    global _magic_mime
-    if not _magic_mime:
-        _magic_mime = Magic(mime=True)
-    return _magic_mime
-
-def _get_magic():
-    global _magic
-    if not _magic:
-        _magic = Magic()
-    return _magic
+instances = threading.local()
 
 def _get_magic_type(mime):
-    if mime:
-        return _get_magic_mime()
-    else:
-        return _get_magic()
+    i = instances.__dict__.get(mime)
+    if i is None:
+        i = instances.__dict__[mime] = Magic(mime=mime)
+    return i
 
 def from_file(filename, mime=False):
     m = _get_magic_type(mime)

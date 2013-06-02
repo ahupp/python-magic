@@ -35,14 +35,20 @@ class TestMagic(unittest.TestCase):
             else:
                 target = desc
                 
-            self.assertEqual(target, self.m.from_buffer(open(filename, 'rb').read(1024)))
+            snippet = open(filename, 'rb').read(1024)
+            self.assertEqual(target, self.m.from_buffer(snippet))
             self.assertEqual(target, self.m.from_file(filename), filename)
+
+            self.assertEqual(target, magic.from_buffer(snippet, mime=self.mime))
+            self.assertEqual(target, magic.from_file(filename, mime=self.mime), filename)
         
 
     def testErrors(self):
         self.assertRaises(IOError, self.m.from_file, "nonexistent")
+        self.assertRaises(IOError, lambda: magic.from_file("nonexistent", mime=self.mime))
+
         self.assertRaises(magic.MagicException, magic.Magic, magic_file="noneexistent")
-        os.environ['MAGIC'] = '/nonexistetn'
+        os.environ['MAGIC'] = '/nonexistent'
         self.assertRaises(magic.MagicException, magic.Magic)
         del os.environ['MAGIC']
 
@@ -58,9 +64,10 @@ class TestMagicMimeEncoding(unittest.TestCase):
             filename = path.join(path.dirname(__file__),
                                  "testdata",
                                  filename)
-            self.assertEqual(encoding, self.m.from_buffer(open(filename, 'rb').read(1024)))
+            snippet = open(filename, 'rb').read(1024)
+            
+            self.assertEqual(encoding, self.m.from_buffer(snippet))
             self.assertEqual(encoding, self.m.from_file(filename), filename)
-
 
 if __name__ == '__main__':
     unittest.main()
