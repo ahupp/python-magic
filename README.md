@@ -6,7 +6,7 @@ their headers according to a predefined list of file types. This
 functionality is exposed to the command line by the Unix command
 `file`.
 
-## Example Usage
+## Usage
 
     >>> import magic
     >>> magic.from_file("testdata/test.pdf")
@@ -15,6 +15,12 @@ functionality is exposed to the command line by the Unix command
     'PDF document, version 1.2'
     >>> magic.from_file("testdata/test.pdf", mime=True)
     'application/pdf'
+
+There is also a `Magic` class that provides more direct control,
+including overriding the magic database file and turning on character
+encoding dectection.  This is not recommended for general use.  In
+particular, it its not safe for sharing across multiple threads and
+will fail throw if this is attempted.
 
 ## Installation
 
@@ -34,6 +40,24 @@ On Windows, you need to download and save the following libraries under
 -   `regex2.dll` from [sourceforge.net/projects/gnuwin32/files/regex/](http://sourceforge.net/projects/gnuwin32/files/regex/)
 -   `zlib1.dll` from [sourceforge.net/projects/gnuwin32/files/zlib/](http://sourceforge.net/projects/gnuwin32/files/zlib/)
 -   `magic1.dll` from [sourceforge.net/projects/gnuwin32/files/file/](http://sourceforge.net/projects/gnuwin32/files/file/)
+
+On OSX:
+
+- When using Homebrew: `brew install file-formula`
+- When using macports: `port install file`
+
+### Troubleshooting
+
+- 'MagicException: could not find any magic files!': some
+  installations of libmagic do not correctly point to their magic
+  database file.  Try specifying the path to the file explictly in the
+  constructor: `magic.Magic(magic_file="path_to_magic_file")`.
+
+- 'WindowsError: [Error 193] %1 is not a valid Win32 application':
+  Attempting to run the 32-bit libmagic DLL in a 64-bit build of
+  python will fail with this error.  I'm not aware of any publically
+  available 64-bit builds of libmagic.  You'll either need to build
+  them yourself (pleae share docs!), or switch to a 32-bit Python.
 
 ## Author
 
