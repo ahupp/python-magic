@@ -32,7 +32,7 @@ Other sources:
 - pypi: http://pypi.python.org/pypi/python-magic/
 - github: https://github.com/ahupp/python-magic
 
-### Dependencies on Windows
+### Dependencies
 
 On Windows, you need to download and save the following libraries under
 `C:\Windows\System32`:
