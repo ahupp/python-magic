@@ -80,7 +80,16 @@ class Magic:
                             'use of the Magic class')
 
     def __del__(self):
-        # during shutdown magic_close may have been cleared already
+        # no _thread_check here because there can be no other
+        # references to this object at this point.
+
+        # during shutdown magic_close may have been cleared already so
+        # make sure it exists before using it.
+
+        # the self.cookie check should be unnessary and was an
+        # incorrect fix for a threading problem, however I'm leaving
+        # it in because it's harmless and I'm slightly afraid to
+        # remove it.
         if self.cookie and magic_close:
             magic_close(self.cookie)
             self.cookie = None
@@ -95,10 +104,26 @@ def _get_magic_type(mime):
     return i
 
 def from_file(filename, mime=False):
+    """"
+    Accepts a filename and returns the detected filetype.  Return
+    value is the mimetype if mime=True, otherwise a human readable
+    name.
+    
+    >>> magic.from_file("testdata/test.pdf", mime=True)
+    'application/pdf'
+    """
     m = _get_magic_type(mime)
     return m.from_file(filename)
 
 def from_buffer(buffer, mime=False):
+    """
+    Accepts a binary string and returns the detected filetype.  Return
+    value is the mimetype if mime=True, otherwise a human readable
+    name.
+
+    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
+    'PDF document, version 1.2'
+    """
     m = _get_magic_type(mime)
     return m.from_buffer(buffer)
 
