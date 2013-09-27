@@ -7,16 +7,16 @@ from os import path
 
 
 testfile = [
-    ("magic.pyc", b"python 2.4 byte-compiled", b"application/octet-stream"),
-    ("test.pdf", b"PDF document, version 1.2", b"application/pdf"),
-    ("test.gz", b'gzip compressed data, was "test", from Unix, last modified: '
-     b'Sat Jun 28 18:32:52 2008', b"application/x-gzip"),
-    ("text.txt", b"ASCII text", b"text/plain"),
+    ("magic.pyc", "python 2.4 byte-compiled", "application/octet-stream"),
+    ("test.pdf", "PDF document, version 1.2", "application/pdf"),
+    ("test.gz", 'gzip compressed data, was "test", from Unix, last modified: '
+     'Sat Jun 28 18:32:52 2008', "application/x-gzip"),
+    ("text.txt", "ASCII text", "text/plain"),
     # is there no better way to encode a unicode literal across python2/3.[01]/3.3?
-    (b"\xce\xbb".decode('utf-8'), b"empty", b"application/x-empty")
+    ("\xce\xbb".decode('utf-8'), "empty", "application/x-empty")
     ]
 
-testFileEncoding = [('text-iso8859-1.txt', b'iso-8859-1')]
+testFileEncoding = [('text-iso8859-1.txt', 'iso-8859-1')]
 
 class TestMagic(unittest.TestCase):
 
@@ -36,11 +36,15 @@ class TestMagic(unittest.TestCase):
                 target = desc
                 
             snippet = open(filename, 'rb').read(1024)
-            self.assertEqual(target, self.m.from_buffer(snippet))
-            self.assertEqual(target, self.m.from_file(filename), filename)
+            
+            # do this rather than b"" literals since those aren't supported in 2.4
+            target_bytes = target.encode('utf-8')
+            self.assertEqual(target_bytes, self.m.from_buffer(snippet))
+            self.assertEqual(target_bytes, self.m.from_file(filename), filename)
 
-            self.assertEqual(target, magic.from_buffer(snippet, mime=self.mime))
-            self.assertEqual(target, magic.from_file(filename, mime=self.mime), filename)
+            self.assertEqual(target_bytes, magic.from_buffer(snippet, mime=self.mime))
+            self.assertEqual(target_bytes, magic.from_file(filename, mime=self.mime), 
+                             filename)
         
 
     def testErrors(self):

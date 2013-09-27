@@ -52,7 +52,7 @@ class Magic:
 
         magic_load(self.cookie, magic_file)
 
-        self.thread = threading.current_thread()
+        self.thread = threading.currentThread()
 
     def from_buffer(self, buf):
         """
@@ -73,7 +73,7 @@ class Magic:
         return magic_file(self.cookie, filename)
 
     def _thread_check(self):
-        if self.thread != threading.current_thread():
+        if self.thread != threading.currentThread():
             raise Exception('attempting to use libmagic on multiple threads will '
                             'end in SEGV.  Prefer to use the module functions '
                             'from_file or from_buffer, or carefully manage direct '
