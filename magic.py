@@ -33,20 +33,23 @@ class Magic:
 
     """
 
-    def __init__(self, mime=False, magic_file=None, mime_encoding=False):
+    def __init__(self, mime=False, magic_file=None, mime_encoding=False,
+                 keep_going=False):
         """
         Create a new libmagic wrapper.
 
         mime - if True, mimetypes are returned instead of textual descriptions
         mime_encoding - if True, codec is returned
         magic_file - use a mime database other than the system default
-
+        keep_going - don't stop at the first match, keep going
         """
         flags = MAGIC_NONE
         if mime:
             flags |= MAGIC_MIME
         elif mime_encoding:
             flags |= MAGIC_MIME_ENCODING
+        if keep_going:
+            flags |= MAGIC_CONTINUE
 
         self.cookie = magic_open(flags)
 
