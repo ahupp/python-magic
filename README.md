@@ -43,7 +43,7 @@ On Windows, you need to download and save the following libraries under
 
 On OSX:
 
-- When using Homebrew: `brew install file-formula`
+- When using Homebrew: `brew install libmagic`
 - When using macports: `port install file`
 
 ### Troubleshooting
