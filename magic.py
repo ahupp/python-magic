@@ -24,7 +24,7 @@ import ctypes
 import ctypes.util
 import threading
 
-from ctypes import c_char_p, c_int, c_size_t, c_void_p
+from ctypes import c_char_p, c_int, c_size_t, c_void_p, Structure, POINTER
 
 class MagicException(Exception): pass
 
@@ -160,7 +160,10 @@ if not libmagic or not libmagic._name:
     # It is better to raise an ImportError since we are importing magic module
     raise ImportError('failed to find libmagic.  Check your installation')
 
-magic_t = ctypes.c_void_p
+class magic_set(Structure):
+    pass
+magic_set._fields_ = []
+magic_t = POINTER(magic_set)
 
 def errorcheck(result, func, args):
     err = magic_error(args[0])
@@ -211,7 +214,6 @@ def magic_buffer(cookie, buf):
 _magic_load = libmagic.magic_load
 _magic_load.restype = c_int
 _magic_load.argtypes = [magic_t, c_char_p]
-_magic_load.errcheck = errorcheck
 
 def magic_load(cookie, filename):
     return _magic_load(cookie, coerce_filename(filename))
