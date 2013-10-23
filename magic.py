@@ -63,7 +63,10 @@ class Magic:
         Identify the contents of `buf`
         """
         self._thread_check()
-        return magic_buffer(self.cookie, buf)
+        try:
+            return magic_buffer(self.cookie, buf)
+        except MagicException as e:
+            return self._handle509Bug(e)
 
     def from_file(self, filename):
         """
@@ -73,8 +76,17 @@ class Magic:
         self._thread_check()
         if not os.path.exists(filename):
             raise IOError("File does not exist: " + filename)
+        try:
+            return magic_file(self.cookie, filename)
+        except MagicException as e:
+            return self._handle509Bug(e)
 
-        return magic_file(self.cookie, filename)
+    def _handle509Bug(self, e):
+        # libmagic 5.09 has a bug where it might mail to identify the
+        # mimetype of a file and returns null from magic_file (and
+        # likely _buffer), but also does not return an error message.
+        if e.message is None and (self.flags & MAGIC_MIME):
+            return "application/octet-stream"
 
     def _thread_check(self):
         if self.thread != threading.currentThread():
