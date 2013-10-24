@@ -44,15 +44,15 @@ class Magic:
         magic_file - use a mime database other than the system default
         keep_going - don't stop at the first match, keep going
         """
-        flags = MAGIC_NONE
+        self.flags = MAGIC_NONE
         if mime:
-            flags |= MAGIC_MIME
+            self.flags |= MAGIC_MIME
         elif mime_encoding:
-            flags |= MAGIC_MIME_ENCODING
+            self.flags |= MAGIC_MIME_ENCODING
         if keep_going:
-            flags |= MAGIC_CONTINUE
+            self.flags |= MAGIC_CONTINUE
 
-        self.cookie = magic_open(flags)
+        self.cookie = magic_open(self.flags)
 
         magic_load(self.cookie, magic_file)
 
@@ -124,7 +124,7 @@ def from_file(filename, mime=False):
     Accepts a filename and returns the detected filetype.  Return
     value is the mimetype if mime=True, otherwise a human readable
     name.
-    
+
     >>> magic.from_file("testdata/test.pdf", mime=True)
     'application/pdf'
     """
@@ -187,7 +187,7 @@ def errorcheck_negative_one(result, func, args):
         raise MagicException(err)
     else:
         return result
-    
+
 
 def coerce_filename(filename):
     if filename is None:
