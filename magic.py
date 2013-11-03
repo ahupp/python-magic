@@ -26,7 +26,10 @@ import threading
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
-class MagicException(Exception): pass
+class MagicException(Exception):
+    def __init__(self, magic_err, *args, **kwargs):
+        self.magic_err = magic_err
+        Exception.__init__(self, magic_err, *args, **kwargs)
 
 class Magic:
     """
@@ -56,6 +59,8 @@ class Magic:
 
         magic_load(self.cookie, magic_file)
 
+        self.magic_version_num = magic_version()
+
         self.thread = threading.currentThread()
 
     def from_buffer(self, buf):
@@ -82,11 +87,16 @@ class Magic:
             return self._handle509Bug(e)
 
     def _handle509Bug(self, e):
-        # libmagic 5.09 has a bug where it might mail to identify the
-        # mimetype of a file and returns null from magic_file (and
+        # starting from 5.09 libmagic has a bug where it might fail to
+        # identify the mimetype of a file and returns null from magic_file (and
         # likely _buffer), but also does not return an error message.
-        if e.message is None and (self.flags & MAGIC_MIME):
-            return "application/octet-stream"
+        # this fix incorporates the specific broken condition for those versions
+        # the bug was fixed in 5.15 (not sure by what though)
+        # see: https://bugs.launchpad.net/ubuntu/+source/file/+bug/1243938
+        # and: https://github.com/ahupp/python-magic/issues/47
+        if self.magic_version_num < 510 and e.magic_err is not None \
+            and e.message is None and (self.flags & MAGIC_MIME_TYPE):
+                return "application/octet-stream"
 
     def _thread_check(self):
         if self.thread != threading.currentThread():
@@ -194,6 +204,10 @@ def coerce_filename(filename):
         return None
     return filename.encode(sys.getfilesystemencoding())
 
+magic_version = libmagic.magic_version
+magic_version.restype = c_int
+magic_version.argtypes = []
+
 magic_open = libmagic.magic_open
 magic_open.restype = magic_t
 magic_open.argtypes = [c_int]
@@ -260,6 +274,8 @@ MAGIC_COMPRESS = 0x000004 # Check inside compressed files
 MAGIC_DEVICES = 0x000008 # Look at the contents of devices
 
 MAGIC_MIME = 0x000010 # Return a mime string
+
+MAGIC_MIME_TYPE = 0x000010 # Return the MIME type
 
 MAGIC_MIME_ENCODING = 0x000400 # Return the MIME encoding
 
