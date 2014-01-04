@@ -81,5 +81,6 @@ Thanks to these folks on github who submitted features and bugfixes.
 
 ## License
 
-python-magic is distributed under the [PSF License](http://www.python.org/psf/license/).
+python-magic is distributed under the MIT license.  See the included
+LICENSE file for details.
 
