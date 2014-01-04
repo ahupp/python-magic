@@ -8,7 +8,10 @@ class MagicTest(unittest.TestCase):
 
     def assert_values(self, m, expected_values):
         for filename, expected_value in expected_values.items():
-            filename = os.path.join(self.TESTDATA_DIR, filename)
+            try:
+                filename = os.path.join(self.TESTDATA_DIR, filename)
+            except TypeError:
+                filename = os.path.join(self.TESTDATA_DIR.encode('utf-8'), filename)
 
             value = m.from_buffer(open(filename, 'rb').read())
             expected_value_bytes = expected_value.encode('utf-8')
@@ -25,6 +28,7 @@ class MagicTest(unittest.TestCase):
             'test.gz': 'application/x-gzip',
             'text.txt': 'text/plain',
             b'\xce\xbb'.decode('utf-8'): 'text/plain',
+            b'\xce\xbb': 'text/plain',
         })
 
     def test_descriptions(self):
