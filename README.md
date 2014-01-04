@@ -34,12 +34,9 @@ Other sources:
 
 ### Dependencies
 
-On Windows, you need to download and save the following libraries under
-`C:\Windows\System32`:
-
--   `regex2.dll` from [sourceforge.net/projects/gnuwin32/files/regex/](http://sourceforge.net/projects/gnuwin32/files/regex/)
--   `zlib1.dll` from [sourceforge.net/projects/gnuwin32/files/zlib/](http://sourceforge.net/projects/gnuwin32/files/zlib/)
--   `magic1.dll` from [sourceforge.net/projects/gnuwin32/files/file/](http://sourceforge.net/projects/gnuwin32/files/file/)
+On Windows, install Cygwin (http://cygwin.com/install.html).  To find
+the libraries, either add <your-cygwin-install>/bin to the $PATH or
+copy cygwin1.dll, cygz.dll, and cygmagic-1.dll to C:\Windows\System32
 
 On OSX:
 
