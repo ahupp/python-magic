@@ -14,5 +14,16 @@ supports both textual and MIME-type output.
 """,
       keywords="mime magic file",
       license="PSF",
-      test_suite='test'
+      test_suite='test',
+      classifiers=[
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: Python Software Foundation License',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.2',
+          'Programming Language :: Python :: 3.3',
+      ],
       )
