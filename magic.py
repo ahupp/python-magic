@@ -148,7 +148,7 @@ def from_buffer(buffer, mime=False):
 
 libmagic = None
 # Let's try to find magic or magic1
-dll = ctypes.util.find_library('magic') or ctypes.util.find_library('magic1')
+dll = ctypes.util.find_library('magic') or ctypes.util.find_library('magic1') or ctypes.util.find_library('cygmagic-1')
 
 # This is necessary because find_library returns None if it doesn't find the library
 if dll:
