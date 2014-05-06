@@ -17,7 +17,7 @@ supports both textual and MIME-type output.
       test_suite='test',
       classifiers=[
           'Intended Audience :: Developers',
-          'License :: OSI Approved :: Python Software Foundation License',
+          'Python Software Foundation License',
           'Programming Language :: Python',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.6',
