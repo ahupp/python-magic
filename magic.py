@@ -23,6 +23,7 @@ import os.path
 import ctypes
 import ctypes.util
 import threading
+import subprocess
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
@@ -143,6 +144,13 @@ def from_buffer(buffer, mime=False):
     m = _get_magic_type(mime)
     return m.from_buffer(buffer)
 
+def maybe_get_brew_lib_paths(brew_lib_path):
+    try:
+        brew_prefix = subprocess.check_output(["brew", "--prefix"]).rstrip('\n')
+        return glob.glob(brew_prefix + brew_lib_path)
+    except (OSError, # Binary not in path
+            subprocess.CalledProcessError): # Non-zero return code
+        return []
 
 
 
@@ -155,10 +163,13 @@ if dll:
     libmagic = ctypes.CDLL(dll)
 
 if not libmagic or not libmagic._name:
+    brew_lib_path = '/Cellar/libmagic/*/lib/libmagic.dylib'
+    brew_prefix = '/usr/local' # Recommended prefix
     platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib',
                                   '/usr/local/lib/libmagic.dylib'] +
                          # Assumes there will only be one version installed
-                         glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),
+                         glob.glob(brew_prefix + brew_lib_path) +
+                         maybe_get_brew_lib_paths(brew_lib_path),
                        'win32':  ['magic1.dll','cygmagic-1.dll']}
     for dll in platform_to_lib.get(sys.platform, []):
         try:
