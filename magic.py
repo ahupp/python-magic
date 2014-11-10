@@ -35,7 +35,7 @@ class Magic:
     """
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False,
-                 keep_going=False):
+                 keep_going=False, uncompress=False):
         """
         Create a new libmagic wrapper.
 
@@ -43,6 +43,7 @@ class Magic:
         mime_encoding - if True, codec is returned
         magic_file - use a mime database other than the system default
         keep_going - don't stop at the first match, keep going
+        uncompress - Try to look inside compressed files.
         """
         self.flags = MAGIC_NONE
         if mime:
@@ -51,6 +52,9 @@ class Magic:
             self.flags |= MAGIC_MIME_ENCODING
         if keep_going:
             self.flags |= MAGIC_CONTINUE
+
+        if uncompress:
+            self.flags |= MAGIC_COMPRESS
 
         self.cookie = magic_open(self.flags)
 
@@ -82,7 +86,7 @@ class Magic:
             return self._handle509Bug(e)
 
     def _handle509Bug(self, e):
-        # libmagic 5.09 has a bug where it might mail to identify the
+        # libmagic 5.09 has a bug where it might fail to identify the
         # mimetype of a file and returns null from magic_file (and
         # likely _buffer), but also does not return an error message.
         if e.message is None and (self.flags & MAGIC_MIME):
@@ -102,7 +106,7 @@ class Magic:
         # during shutdown magic_close may have been cleared already so
         # make sure it exists before using it.
 
-        # the self.cookie check should be unnessary and was an
+        # the self.cookie check should be unnecessary and was an
         # incorrect fix for a threading problem, however I'm leaving
         # it in because it's harmless and I'm slightly afraid to
         # remove it.
