@@ -18,9 +18,20 @@ functionality is exposed to the command line by the Unix command
 
 There is also a `Magic` class that provides more direct control,
 including overriding the magic database file and turning on character
-encoding dectection.  This is not recommended for general use.  In
-particular, it its not safe for sharing across multiple threads and
+encoding detection.  This is not recommended for general use.  In
+particular, it's not safe for sharing across multiple threads and
 will fail throw if this is attempted.
+
+    >>> f = magic.Magic(uncompress=True)
+    >>> f.from_file('testdata/test.gz')
+    'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28
+    21:32:52 2008, from Unix)'
+
+You can also combine the flag options:
+
+    >>> f = magic.Magic(mime=True, uncompress=True)
+    >>> f.from_file('testdata/test.gz')
+    'text/plain'
 
 ## Installation
 
@@ -54,12 +65,12 @@ On OSX:
   Attempting to run the 32-bit libmagic DLL in a 64-bit build of
   python will fail with this error.  I'm not aware of any publically
   available 64-bit builds of libmagic.  You'll either need to build
-  them yourself (pleae share docs!), or switch to a 32-bit Python.
+  them yourself (please share docs!), or switch to a 32-bit Python.
 
 ## Author
 
 Written by Adam Hupp in 2001 for a project that never got off the
-ground.  It origionally used SWIG for the C library bindings, but
+ground.  It originally used SWIG for the C library bindings, but
 switched to ctypes once that was part of the python standard library.
 
 You can contact me via my [website](http://hupp.org/adam) or
