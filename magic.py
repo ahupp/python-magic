@@ -276,9 +276,11 @@ MAGIC_COMPRESS = 0x000004 # Check inside compressed files
 
 MAGIC_DEVICES = 0x000008 # Look at the contents of devices
 
-MAGIC_MIME = 0x000010 # Return a mime string
+MAGIC_MIME_TYPE = 0x000010 # Return a MIME type
 
 MAGIC_MIME_ENCODING = 0x000400 # Return the MIME encoding
+
+MAGIC_MIME = MAGIC_MIME_TYPE | MAGIC_MIME_ENCODING
 
 MAGIC_CONTINUE = 0x000020 # Return all matches
 
