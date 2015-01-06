@@ -33,6 +33,10 @@ You can also combine the flag options:
     >>> f.from_file('testdata/test.gz')
     'text/plain'
 
+## Name Conflict
+
+There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while.If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be recociled.
+
 ## Installation
 
 The current stable version of python-magic is available on pypi and
