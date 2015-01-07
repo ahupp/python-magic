@@ -13,9 +13,10 @@ class MagicTest(unittest.TestCase):
             except TypeError:
                 filename = os.path.join(self.TESTDATA_DIR.encode('utf-8'), filename)
 
-            value = m.from_buffer(open(filename, 'rb').read())
-            expected_value_bytes = expected_value.encode('utf-8')
-            self.assertEqual(value, expected_value_bytes)
+            with open(filename, 'rb') as f:
+                value = m.from_buffer(f.read())
+                expected_value_bytes = expected_value.encode('utf-8')
+                self.assertEqual(value, expected_value_bytes)
 
             value = m.from_file(filename)
             self.assertEqual(value, expected_value_bytes)
