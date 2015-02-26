@@ -8,13 +8,15 @@ functionality is exposed to the command line by the Unix command
 
 ## Usage
 
-    >>> import magic
-    >>> magic.from_file("testdata/test.pdf")
-    'PDF document, version 1.2'
-    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
-    'PDF document, version 1.2'
-    >>> magic.from_file("testdata/test.pdf", mime=True)
-    'application/pdf'
+```python
+>>> import magic
+>>> magic.from_file("testdata/test.pdf")
+'PDF document, version 1.2'
+>>> magic.from_buffer(open("testdata/test.pdf").read(1024))
+'PDF document, version 1.2'
+>>> magic.from_file("testdata/test.pdf", mime=True)
+'application/pdf'
+```
 
 There is also a `Magic` class that provides more direct control,
 including overriding the magic database file and turning on character
@@ -22,16 +24,20 @@ encoding detection.  This is not recommended for general use.  In
 particular, it's not safe for sharing across multiple threads and
 will fail throw if this is attempted.
 
-    >>> f = magic.Magic(uncompress=True)
-    >>> f.from_file('testdata/test.gz')
-    'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28
-    21:32:52 2008, from Unix)'
+```python
+>>> f = magic.Magic(uncompress=True)
+>>> f.from_file('testdata/test.gz')
+'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28
+21:32:52 2008, from Unix)'
+```
 
 You can also combine the flag options:
 
-    >>> f = magic.Magic(mime=True, uncompress=True)
-    >>> f.from_file('testdata/test.gz')
-    'text/plain'
+```python
+>>> f = magic.Magic(mime=True, uncompress=True)
+>>> f.from_file('testdata/test.gz')
+'text/plain'
+```
 
 ## Name Conflict
 
