@@ -99,7 +99,7 @@ class Magic:
                             'from_file or from_buffer, or carefully manage direct '
                             'use of the Magic class')
 
-    def __del__(self):
+    def close(self):
         # no _thread_check here because there can be no other
         # references to this object at this point.
 
@@ -113,6 +113,14 @@ class Magic:
         if self.cookie and magic_close:
             magic_close(self.cookie)
             self.cookie = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.close()
+
+    __del__ = close
 
 
 instances = threading.local()
