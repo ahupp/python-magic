@@ -74,5 +74,12 @@ class MagicTest(unittest.TestCase):
         m = magic.Magic(mime=True, keep_going=True)
         self.assertEqual(m.from_file(filename), 'image/jpeg'.encode('utf-8'))
 
+    def test_context_manager(self):
+        m = magic.Magic(mime=True)
+        with m as ctx:
+            assert ctx is m
+
+        assert not m.cookie
+
 if __name__ == '__main__':
     unittest.main()
