@@ -26,7 +26,7 @@ class MagicTest(unittest.TestCase):
         self.assert_values(m, {
             'magic.pyc': 'application/octet-stream',
             'test.pdf': 'application/pdf',
-            'test.gz': 'application/x-gzip',
+            'test.gz': 'application/gzip',
             'text.txt': 'text/plain',
             b'\xce\xbb'.decode('utf-8'): 'text/plain',
             b'\xce\xbb': 'text/plain',
@@ -39,8 +39,8 @@ class MagicTest(unittest.TestCase):
             self.assert_values(m, {
                 'magic.pyc': 'python 2.4 byte-compiled',
                 'test.pdf': 'PDF document, version 1.2',
-                'test.gz': 'gzip compressed data, was "test", from Unix, '
-                           'last modified: Sun Jun 29 01:32:52 2008',
+                'test.gz': 
+                'gzip compressed data, was "test", last modified: Sat Jun 28 18:32:52 2008, from Unix' ,
                 'text.txt': 'ASCII text',
             })
         finally:
@@ -69,7 +69,7 @@ class MagicTest(unittest.TestCase):
 
         m = magic.Magic(mime=True)
         self.assertEqual(m.from_file(filename), 
-                         'application/octet-stream'.encode('utf-8'))
+                         'image/jpeg'.encode('utf-8'))
         
         m = magic.Magic(mime=True, keep_going=True)
         self.assertEqual(m.from_file(filename), 'image/jpeg'.encode('utf-8'))
