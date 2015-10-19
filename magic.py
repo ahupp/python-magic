@@ -57,33 +57,32 @@ class Magic:
             self.flags |= MAGIC_COMPRESS
 
         self.cookie = magic_open(self.flags)
-
+        self.lock = threading.Lock()
+        
         magic_load(self.cookie, magic_file)
-
-        self.thread = threading.currentThread()
 
     def from_buffer(self, buf):
         """
         Identify the contents of `buf`
         """
-        self._thread_check()
-        try:
-            return magic_buffer(self.cookie, buf)
-        except MagicException as e:
-            return self._handle509Bug(e)
+        with self.lock:
+            try:
+                return magic_buffer(self.cookie, buf)
+            except MagicException as e:
+                return self._handle509Bug(e)
 
     def from_file(self, filename):
         """
         Identify the contents of file `filename`
         raises IOError if the file does not exist
         """
-        self._thread_check()
         if not os.path.exists(filename):
             raise IOError("File does not exist: " + filename)
-        try:
-            return magic_file(self.cookie, filename)
-        except MagicException as e:
-            return self._handle509Bug(e)
+        with self.lock:
+            try:
+                return magic_file(self.cookie, filename)
+            except MagicException as e:
+                return self._handle509Bug(e)
 
     def _handle509Bug(self, e):
         # libmagic 5.09 has a bug where it might fail to identify the
@@ -91,13 +90,6 @@ class Magic:
         # likely _buffer), but also does not return an error message.
         if e.message is None and (self.flags & MAGIC_MIME):
             return "application/octet-stream"
-
-    def _thread_check(self):
-        if self.thread != threading.currentThread():
-            raise Exception('attempting to use libmagic on multiple threads will '
-                            'end in SEGV.  Prefer to use the module functions '
-                            'from_file or from_buffer, or carefully manage direct '
-                            'use of the Magic class')
 
     def __del__(self):
         # no _thread_check here because there can be no other
@@ -114,13 +106,12 @@ class Magic:
             magic_close(self.cookie)
             self.cookie = None
 
-
-instances = threading.local()
+_instances = {}
 
 def _get_magic_type(mime):
-    i = instances.__dict__.get(mime)
+    i = _instances.get(mime)
     if i is None:
-        i = instances.__dict__[mime] = Magic(mime=mime)
+        i = _instances[mime] = Magic(mime=mime)
     return i
 
 def from_file(filename, mime=False):
