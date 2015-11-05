@@ -26,7 +26,12 @@ import threading
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
-class MagicException(Exception): pass
+
+class MagicException(Exception):
+    def __init__(self, message):
+        super(MagicException, self).__init__(message)
+        self.message = message
+
 
 class Magic:
     """
