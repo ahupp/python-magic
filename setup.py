@@ -1,5 +1,7 @@
-from setuptools import setup, Extension
-#from distutils.core import setup, Extension
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from setuptools import setup
 
 setup(name='python-magic',
       description='File type identification using libmagic',
@@ -14,7 +16,7 @@ supports both textual and MIME-type output.
 """,
       keywords="mime magic file",
       license="PSF",
-      test_suite='test',
+      test_suite='tests',
       classifiers=[
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
