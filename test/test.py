@@ -1,3 +1,7 @@
+import os
+# for output which reports a local time
+os.environ['TZ'] = 'GMT'
+
 import os.path
 import unittest
 
@@ -39,8 +43,8 @@ class MagicTest(unittest.TestCase):
             self.assert_values(m, {
                 'magic.pyc': 'python 2.4 byte-compiled',
                 'test.pdf': 'PDF document, version 1.2',
-                'test.gz': 
-                'gzip compressed data, was "test", last modified: Sat Jun 28 18:32:52 2008, from Unix' ,
+                'test.gz':
+                'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix',
                 'text.txt': 'ASCII text',
             })
         finally:
