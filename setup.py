@@ -1,5 +1,7 @@
-from setuptools import setup, Extension
-#from distutils.core import setup, Extension
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from setuptools import setup
 
 setup(name='python-magic',
       description='File type identification using libmagic',
