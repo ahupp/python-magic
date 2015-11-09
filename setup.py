@@ -21,5 +21,6 @@ supports both textual and MIME-type output.
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python',
+          'Programming Language :: Python :: 3',
       ],
       )
