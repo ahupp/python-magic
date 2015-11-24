@@ -1,5 +1,10 @@
 language: python
 
+# needed to use trusty
+sudo: required
+
+dist: trusty
+
 python:
   - "2.6"
   - "2.7"
