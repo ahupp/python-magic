@@ -1,7 +1,7 @@
 import os
 # for output which reports a local time
 os.environ['TZ'] = 'GMT'
-
+import shutil
 import os.path
 import unittest
 
@@ -26,15 +26,20 @@ class MagicTest(unittest.TestCase):
             self.assertEqual(value, expected_value_bytes)
         
     def test_mime_types(self):
-        m = magic.Magic(mime=True)
-        self.assert_values(m, {
-            'magic.pyc': 'application/octet-stream',
-            'test.pdf': 'application/pdf',
-            'test.gz': 'application/gzip',
-            'text.txt': 'text/plain',
-            b'\xce\xbb'.decode('utf-8'): 'text/plain',
-            b'\xce\xbb': 'text/plain',
-        })
+        dest = os.path.join(MagicTest.TESTDATA_DIR, b'\xce\xbb'.decode('utf-8'))
+        shutil.copyfile(os.path.join(MagicTest.TESTDATA_DIR, 'lambda'), dest)
+        try:
+            m = magic.Magic(mime=True)
+            self.assert_values(m, {
+                'magic.pyc': 'application/octet-stream',
+                'test.pdf': 'application/pdf',
+                'test.gz': 'application/gzip',
+                'text.txt': 'text/plain',
+                b'\xce\xbb'.decode('utf-8'): 'text/plain',
+                b'\xce\xbb': 'text/plain',
+            })
+        finally:
+            os.unlink(dest)
 
     def test_descriptions(self):
         m = magic.Magic()
