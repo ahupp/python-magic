@@ -15,12 +15,13 @@ identification library.  It makes use of the local magic database and
 supports both textual and MIME-type output.
 """,
       keywords="mime magic file",
-      license="PSF",
+      license="MIT",
       test_suite='test',
       classifiers=[
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 3',
       ],
       )
