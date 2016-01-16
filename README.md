@@ -75,6 +75,9 @@ On OSX:
   available 64-bit builds of libmagic.  You'll either need to build
   them yourself (please share docs!), or switch to a 32-bit Python.
 
+- 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing 
+  Windows Python and Cygwin Python. Make sure your libmagic and python builds are consistent.
+
 ## Author
 
 Written by Adam Hupp in 2001 for a project that never got off the
