@@ -77,12 +77,9 @@ class Magic:
                 return self._handle509Bug(e)
 
     def from_file(self, filename):
-        """
-        Identify the contents of file `filename`
-        raises IOError if the file does not exist
-        """
-        if not os.path.exists(filename):
-            raise IOError("File does not exist: " + filename)
+        # raise FileNotFoundException or IOError if the file does not exist
+        with open(filename):
+            pass
         with self.lock:
             try:
                 return magic_file(self.cookie, filename)
