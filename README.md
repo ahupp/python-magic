@@ -41,7 +41,7 @@ You can also combine the flag options:
 
 ## Name Conflict
 
-There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while.If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be recociled.
+There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while.If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be reconciled.
 
 ## Installation
 
@@ -66,7 +66,7 @@ On OSX:
 
 - 'MagicException: could not find any magic files!': some
   installations of libmagic do not correctly point to their magic
-  database file.  Try specifying the path to the file explictly in the
+  database file.  Try specifying the path to the file explicitly in the
   constructor: `magic.Magic(magic_file="path_to_magic_file")`.
 
 - 'WindowsError: [Error 193] %1 is not a valid Win32 application':
@@ -105,4 +105,5 @@ Thanks to these folks on github who submitted features and bugfixes.
 
 python-magic is distributed under the MIT license.  See the included
 LICENSE file for details.
+
 
