@@ -92,5 +92,16 @@ class MagicTest(unittest.TestCase):
         m = magic.Magic(mime=True, keep_going=True)
         self.assertEqual(m.from_file(filename), 'image/jpeg'.encode('utf-8'))
 
+
+    def test_rethrow(self):
+        old = magic.magic_buffer
+        try:
+            def t(x,y):
+                raise magic.MagicException("passthrough")
+            magic.magic_buffer = t
+            
+            self.assertRaises(magic.MagicException, magic.from_buffer, "hello", True)
+        finally:
+            magic.magic_buffer = old
 if __name__ == '__main__':
     unittest.main()

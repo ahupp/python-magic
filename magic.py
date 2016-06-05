@@ -92,7 +92,9 @@ class Magic:
         # likely _buffer), but also does not return an error message.
         if e.message is None and (self.flags & MAGIC_MIME):
             return "application/octet-stream"
-
+        else:
+            raise e
+        
     def __del__(self):
         # no _thread_check here because there can be no other
         # references to this object at this point.
