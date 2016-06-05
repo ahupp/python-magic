@@ -72,7 +72,7 @@ class Magic:
         """
         with self.lock:
             try:
-                return magic_buffer(self.cookie, buf)
+                return maybe_decode(magic_buffer(self.cookie, buf))
             except MagicException as e:
                 return self._handle509Bug(e)
 
@@ -82,7 +82,7 @@ class Magic:
             pass
         with self.lock:
             try:
-                return magic_file(self.cookie, filename)
+                return maybe_decode(magic_file(self.cookie, filename))
             except MagicException as e:
                 return self._handle509Bug(e)
 
@@ -189,6 +189,14 @@ def errorcheck_negative_one(result, func, args):
         return result
 
 
+# return str on python3.  Don't want to unconditionally
+# decode because that results in unicode on python2
+def maybe_decode(s):
+    if str == bytes:
+        return s
+    else:
+        return s.decode('utf-8')
+    
 def coerce_filename(filename):
     if filename is None:
         return None

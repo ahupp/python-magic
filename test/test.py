@@ -22,13 +22,11 @@ class MagicTest(unittest.TestCase):
                 expected_value = (expected_value,)
 
             for i in expected_value:
-                expected_value_bytes = i.encode('utf-8')
-
                 with open(filename, 'rb') as f:
                     buf_value = m.from_buffer(f.read())
 
                 file_value = m.from_file(filename)
-                if buf_value == expected_value_bytes and file_value == expected_value_bytes:
+                if buf_value == i and file_value == i:
                     break
             else:
                 self.assertTrue(False, "no match for " + repr(expected_value))
@@ -86,11 +84,10 @@ class MagicTest(unittest.TestCase):
         filename = os.path.join(self.TESTDATA_DIR, 'keep-going.jpg')
 
         m = magic.Magic(mime=True)
-        self.assertEqual(m.from_file(filename), 
-                         'image/jpeg'.encode('utf-8'))
+        self.assertEqual(m.from_file(filename), 'image/jpeg')
         
         m = magic.Magic(mime=True, keep_going=True)
-        self.assertEqual(m.from_file(filename), 'image/jpeg'.encode('utf-8'))
+        self.assertEqual(m.from_file(filename), 'image/jpeg')
 
 
     def test_rethrow(self):
