@@ -1,4 +1,5 @@
 # python-magic
+![pypi badge](https://badge.fury.io/py/python-magic.png)
 
 python-magic is a python interface to the libmagic file type
 identification library.  libmagic identifies file types by checking
