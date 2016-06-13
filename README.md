@@ -1,5 +1,6 @@
 # python-magic
-![pypi badge](https://badge.fury.io/py/python-magic.png)
+[![PyPI version](https://badge.fury.io/py/python-magic.svg)](https://badge.fury.io/py/python-magic)
+[![Build Status](https://travis-ci.org/ahupp/python-magic.svg?branch=master)](https://travis-ci.org/ahupp/python-magic)
 
 python-magic is a python interface to the libmagic file type
 identification library.  libmagic identifies file types by checking
