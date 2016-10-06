@@ -79,7 +79,7 @@ class Magic:
     def from_file(self, filename):
         # raise FileNotFoundError if the file/directory does not exist
         if not os.path.lexists(filename):
-            raise Exception("FileNotFoundError")
+            raise IOError('File not found')
         with self.lock:
             try:
                 return maybe_decode(magic_file(self.cookie, filename))
