@@ -53,7 +53,7 @@ class Magic:
         self.flags = MAGIC_NONE
         if mime:
             self.flags |= MAGIC_MIME
-        elif mime_encoding:
+        if mime_encoding:
             self.flags |= MAGIC_MIME_ENCODING
         if keep_going:
             self.flags |= MAGIC_CONTINUE
