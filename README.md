@@ -57,7 +57,7 @@ Other sources:
 
 ### Dependencies
 
-On Windows, copy magic1.dll, regex2.dll, and zlib1.dll onto your PATH from the Binaries and Dependencies zipfiles provided by the [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) project.  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass it's location to `Magic(magic_file=...)`
+On Windows, copy magic1.dll, regex2.dll, and zlib1.dll onto your PATH from the Binaries and Dependencies zipfiles provided by the [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) project.  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass it's location to `Magic(magic_file=...)`.  If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries which can be found here: https://github.com/pidydx/libmagicwin64 (note: untested)
 
 On OSX:
 
@@ -73,9 +73,7 @@ On OSX:
 
 - 'WindowsError: [Error 193] %1 is not a valid Win32 application':
   Attempting to run the 32-bit libmagic DLL in a 64-bit build of
-  python will fail with this error.  I'm not aware of any publically
-  available 64-bit builds of libmagic.  You'll either need to build
-  them yourself (please share docs!), or switch to a 32-bit Python.
+  python will fail with this error.  Here are 64-bit builds of libmagic for windows: https://github.com/pidydx/libmagicwin64
 
 - 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing 
   Windows Python and Cygwin Python. Make sure your libmagic and python builds are consistent.
