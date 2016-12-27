@@ -160,7 +160,9 @@ if not libmagic or not libmagic._name:
                          # Assumes there will only be one version installed
                          glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),
                        'win32': windows_dlls,
-                       'cygwin': windows_dlls }
+                       'cygwin': windows_dlls,
+                       'linux': 'libmagic.so.1',    # fallback for some Linuxes (e.g. Alpine) where library search does not work
+                      }
     for dll in platform_to_lib.get(sys.platform, []):
         try:
             libmagic = ctypes.CDLL(dll)
