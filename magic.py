@@ -163,7 +163,8 @@ if not libmagic or not libmagic._name:
                        'cygwin': windows_dlls,
                        'linux': ['libmagic.so.1'],    # fallback for some Linuxes (e.g. Alpine) where library search does not work
                       }
-    for dll in platform_to_lib.get(sys.platform, []):
+    platform = 'linux' if sys.platform.startswith('linux') else sys.platform
+    for dll in platform_to_lib.get(platform, []):
         try:
             libmagic = ctypes.CDLL(dll)
             break
