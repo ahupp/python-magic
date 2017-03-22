@@ -162,6 +162,7 @@ if not libmagic or not libmagic._name:
                        'win32': windows_dlls,
                        'cygwin': windows_dlls,
                        'linux': ['libmagic.so.1'],    # fallback for some Linuxes (e.g. Alpine) where library search does not work
+                       'sunos5': ['libmagic.so.1'],    # quick fix for smartos
                       }
     platform = 'linux' if sys.platform.startswith('linux') else sys.platform
     for dll in platform_to_lib.get(platform, []):
