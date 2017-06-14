@@ -59,6 +59,10 @@ Other sources:
 
 On Windows, copy magic1.dll, regex2.dll, and zlib1.dll onto your PATH from the Binaries and Dependencies zipfiles provided by the [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) project.  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass it's location to `Magic(magic_file=...)`.  If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries which can be found here: https://github.com/pidydx/libmagicwin64 (note: untested)
 
+On Linux:
+
+- When using Debian: `apt install libmagic1`
+
 On OSX:
 
 - When using Homebrew: `brew install libmagic`
