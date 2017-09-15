@@ -37,7 +37,7 @@ class MagicTest(unittest.TestCase):
         try:
             m = magic.Magic(mime=True)
             self.assert_values(m, {
-                'magic.pyc': 'application/octet-stream',
+                'magic._pyc_': 'application/octet-stream',
                 'test.pdf': 'application/pdf',
                 'test.gz': 'application/gzip',
                 'text.txt': 'text/plain',
@@ -52,7 +52,7 @@ class MagicTest(unittest.TestCase):
         os.environ['TZ'] = 'UTC'  # To get the last modified date of test.gz in UTC
         try:
             self.assert_values(m, {
-                'magic.pyc': 'python 2.4 byte-compiled',
+                'magic._pyc_': 'python 2.4 byte-compiled',
                 'test.pdf': 'PDF document, version 1.2',
                 'test.gz':
                 ('gzip compressed data, was "test", from Unix, last modified: Sun Jun 29 01:32:52 2008',
