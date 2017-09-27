@@ -213,7 +213,7 @@ def coerce_filename(filename):
                   (sys.version_info[0] >= 3 and
                    isinstance(filename, str))
     if is_unicode:
-        return filename.encode('utf-8')
+        return filename.encode('utf-8', 'surrogateescape')
     else:
         return filename
 
