@@ -87,7 +87,7 @@ class MagicTest(unittest.TestCase):
         self.assertEqual(m.from_file(filename), 'image/jpeg')
         
         m = magic.Magic(mime=True, keep_going=True)
-        self.assertEqual(m.from_file(filename), 'image/jpeg')
+        self.assertEqual(m.from_file(filename), 'image/jpeg\\012- application/octet-stream')
 
 
     def test_rethrow(self):
