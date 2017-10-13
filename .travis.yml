@@ -15,13 +15,11 @@ python:
   - "nightly"
 
 install:
-  - pip install coveralls
-  - pip install codecov
   - python setup.py install
 
 script:
   - coverage run setup.py test
 
 after_success:
-  - coveralls
-  - codecov
+  - pip install coveralls && coveralls
+  - pip install codecov && codecov
