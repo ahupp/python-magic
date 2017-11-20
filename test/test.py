@@ -30,6 +30,13 @@ class MagicTest(unittest.TestCase):
                     break
             else:
                 self.assertTrue(False, "no match for " + repr(expected_value))
+
+    def test_from_buffer_str_and_bytes(self):
+        m = magic.Magic(mime=True)
+        s = '#!/usr/bin/env python\nprint("foo")'
+        self.assertEqual("text/x-python", m.from_buffer(s))
+        b = b'#!/usr/bin/env python\nprint("foo")'
+        self.assertEqual("text/x-python", m.from_buffer(b))
                 
     def test_mime_types(self):
         dest = os.path.join(MagicTest.TESTDATA_DIR, b'\xce\xbb'.decode('utf-8'))
