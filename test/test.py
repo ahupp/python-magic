@@ -74,6 +74,12 @@ class MagicTest(unittest.TestCase):
             in ("text/x-python", "text/x-script.python"))
 
 
+
+    def test_open_file(self):
+        m = magic.Magic(mime=True)
+        with open(os.path.join(self.TESTDATA_DIR, "test.pdf")) as f:
+            self.assertEqual("application/pdf", m.from_open_file(f))
+
     def test_mime_types(self):
         dest = os.path.join(MagicTest.TESTDATA_DIR,
                             b'\xce\xbb'.decode('utf-8'))
