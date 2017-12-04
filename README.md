@@ -41,6 +41,10 @@ You can also combine the flag options:
 'text/plain'
 ```
 
+## Versioning
+
+Minor version bumps should be backwards compatible.  Major bumps are not.
+
 ## Name Conflict
 
 There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while.If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be reconciled.
