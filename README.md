@@ -45,9 +45,18 @@ You can also combine the flag options:
 
 Minor version bumps should be backwards compatible.  Major bumps are not.
 
-## Name Conflict
+## Compatability
 
-There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while.If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be reconciled.
+There are, sadly, 3 libraries using the package name `magic`.  The others are:
+
+1. libmagic itself distributes a `magic` python module with a somewhat
+different API.  python-magic includes a copy of this module to avoid
+unnessary breakage when both versions are installed.  Maybe someday
+they will converge.
+
+2. python-libmagic also uses the same module name, and has a similar
+but not identical API.  If you run into errors about "magic.h" not
+being present, you should uninstall python-libmagic.
 
 ## Installation
 
@@ -64,7 +73,7 @@ Other sources:
 You'll need DLLs for libmagic.  @julian-r has uploaded a version of this project that includes binaries to pypi:
 https://pypi.python.org/pypi/python-magic-bin/0.4.14
 
-Other sources of the libraries in the past have been [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) .  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass its location to `Magic(magic_file=...)`.  
+Other sources of the libraries in the past have been [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) .  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass its location to `Magic(magic_file=...)`.
 
 If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries which can be found here: https://github.com/pidydx/libmagicwin64. Newer version can be found here: https://github.com/nscaife/file-windows.
 
@@ -86,7 +95,7 @@ If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries 
   Attempting to run the 32-bit libmagic DLL in a 64-bit build of
   python will fail with this error.  Here are 64-bit builds of libmagic for windows: https://github.com/pidydx/libmagicwin64
 
-- 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing 
+- 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing
   Windows Python and Cygwin Python. Make sure your libmagic and python builds are consistent.
 
 ## Author
@@ -116,5 +125,3 @@ Thanks to these folks on github who submitted features and bugfixes.
 
 python-magic is distributed under the MIT license.  See the included
 LICENSE file for details.
-
-

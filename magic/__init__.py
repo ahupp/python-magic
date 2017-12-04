@@ -23,6 +23,7 @@ import os.path
 import ctypes
 import ctypes.util
 import threading
+import logging
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
@@ -63,7 +64,7 @@ class Magic:
 
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
-        
+
         magic_load(self.cookie, magic_file)
 
     def from_buffer(self, buf):
@@ -90,8 +91,10 @@ class Magic:
 
     def from_file(self, filename):
         # raise FileNotFoundException or IOError if the file does not exist
-        with open(filename):
+        # use __builtins__ because the compat stuff at the bottom shadows the builtin open
+        with __builtins__['open'](filename):
             pass
+
         with self.lock:
             try:
                 return maybe_decode(magic_file(self.cookie, filename))
@@ -106,7 +109,7 @@ class Magic:
             return "application/octet-stream"
         else:
             raise e
-        
+
     def __del__(self):
         # no _thread_check here because there can be no other
         # references to this object at this point.
@@ -211,13 +214,13 @@ def maybe_decode(s):
         return s
     else:
         return s.decode('utf-8')
-    
+
 def coerce_filename(filename):
     if filename is None:
         return None
 
     # ctypes will implicitly convert unicode strings to bytes with
-    # .encode('ascii').  If you use the filesystem encoding 
+    # .encode('ascii').  If you use the filesystem encoding
     # then you'll get inconsistent behavior (crashes) depending on the user's
     # LANG environment variable
     is_unicode = (sys.version_info[0] <= 2 and
@@ -310,3 +313,45 @@ MAGIC_NO_CHECK_ASCII = 0x020000 # Don't check for ascii files
 MAGIC_NO_CHECK_TROFF = 0x040000 # Don't check ascii/troff
 MAGIC_NO_CHECK_FORTRAN = 0x080000 # Don't check ascii/fortran
 MAGIC_NO_CHECK_TOKENS = 0x100000 # Don't check ascii/tokens
+
+# This package name conflicts with the one provided by upstream
+# libmagic.  This is a common source of confusion for users.  To
+# resolve, We ship a copy of that module, and expose it's functions
+# wrapped in deprecation warnings.
+def add_compat(to_module):
+
+    import warnings, re
+    from magic import compat
+
+    def deprecation_wrapper(compat, fn, alternate):
+        def _(*args, **kwargs):
+            warnings.warn(
+                "Using compatability mode with libmagic's python binding",
+                DeprecationWarning)
+
+            return compat[fn](*args, **kwargs)
+        return _
+
+    fn = [('detect_from_filename', 'magic.from_file'),
+          ('detect_from_content', 'magic.from_buffer'),
+          ('detect_from_fobj', 'magic.Magic.from_open_file'),
+          ('open', 'magic.Magic')]
+    for (fname, alternate) in fn:
+        to_module[fname] = deprecation_wrapper(compat.__dict__, fname, alternate)
+
+    # copy constants over, ensuring there's no conflicts
+    is_const_re = re.compile("^[A-Z_]+$")
+    allowed_inconsistent = set(['MAGIC_MIME'])
+    for name, value in compat.__dict__.items():
+        if is_const_re.match(name):
+            if name in to_module:
+                if name in allowed_inconsistent:
+                    continue
+                if to_module[name] != value:
+                    raise Exception("inconsistent value for " + name)
+                else:
+                    continue
+            else:
+                to_module[name] = value
+
+add_compat(globals())
