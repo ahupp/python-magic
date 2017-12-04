@@ -24,6 +24,7 @@ def run_test(versions):
         found = True
         print("Testing %s" % i)
         subprocess.run([i, os.path.join(this_dir, "test.py")], env=new_env, check=True)
+        subprocess.run([i, os.path.join(this_dir, "libmagic_test.py")], env=new_env, check=True)
 
     if not found:
         sys.exit("No versions found: " + str(versions))

@@ -21,6 +21,7 @@ import glob
 import ctypes
 import ctypes.util
 import threading
+import logging
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
 
@@ -113,8 +114,10 @@ class Magic:
 
     def from_file(self, filename):
         # raise FileNotFoundException or IOError if the file does not exist
-        with open(filename):
+        # use __builtins__ because the compat stuff at the bottom shadows the builtin open
+        with __builtins__['open'](filename):
             pass
+
         with self.lock:
             try:
                 return maybe_decode(magic_file(self.cookie, filename))
@@ -435,3 +438,45 @@ MAGIC_PARAM_ELF_SHNUM_MAX = 3 # Max ELF program sections processed
 MAGIC_PARAM_ELF_NOTES_MAX = 4 # # Max ELF sections processed
 MAGIC_PARAM_REGEX_MAX = 5 # Length limit for regex searches
 MAGIC_PARAM_BYTES_MAX = 6 # Max number of bytes to read from file
+
+# This package name conflicts with the one provided by upstream
+# libmagic.  This is a common source of confusion for users.  To
+# resolve, We ship a copy of that module, and expose it's functions
+# wrapped in deprecation warnings.
+def add_compat(to_module):
+
+    import warnings, re
+    from magic import compat
+
+    def deprecation_wrapper(compat, fn, alternate):
+        def _(*args, **kwargs):
+            warnings.warn(
+                "Using compatability mode with libmagic's python binding",
+                DeprecationWarning)
+
+            return compat[fn](*args, **kwargs)
+        return _
+
+    fn = [('detect_from_filename', 'magic.from_file'),
+          ('detect_from_content', 'magic.from_buffer'),
+          ('detect_from_fobj', 'magic.Magic.from_open_file'),
+          ('open', 'magic.Magic')]
+    for (fname, alternate) in fn:
+        to_module[fname] = deprecation_wrapper(compat.__dict__, fname, alternate)
+
+    # copy constants over, ensuring there's no conflicts
+    is_const_re = re.compile("^[A-Z_]+$")
+    allowed_inconsistent = set(['MAGIC_MIME'])
+    for name, value in compat.__dict__.items():
+        if is_const_re.match(name):
+            if name in to_module:
+                if name in allowed_inconsistent:
+                    continue
+                if to_module[name] != value:
+                    raise Exception("inconsistent value for " + name)
+                else:
+                    continue
+            else:
+                to_module[name] = value
+
+add_compat(globals())

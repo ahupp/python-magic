@@ -113,14 +113,6 @@ To run against a specific python version:
 
 Minor version bumps should be backwards compatible.  Major bumps are not.
 
-## Name Conflict
-
-There are, sadly, two libraries which use the module name `magic`.
-Both have been around for quite a while. If you are using this module
-and get an error using a method like `open`, your code is expecting
-the other one.  Hopefully one day these will be reconciled.
-
-
 ## Author
 
 Written by Adam Hupp in 2001 for a project that never got off the
@@ -151,4 +143,3 @@ python-magic is distributed under the MIT license.  See the included
 LICENSE file for details.
 
 I am providing code in the repository to you under an open source license. Because this is my personal repository, the license you receive to my code is from me and not my employer (Facebook).
-
