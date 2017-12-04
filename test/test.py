@@ -38,6 +38,12 @@ class MagicTest(unittest.TestCase):
         b = b'#!/usr/bin/env python\nprint("foo")'
         self.assertEqual("text/x-python", m.from_buffer(b))
 
+
+    def test_open_file(self):
+        m = magic.Magic(mime=True)
+        with open(os.path.join(self.TESTDATA_DIR, "test.pdf")) as f:
+            self.assertEqual("application/pdf", m.from_open_file(f))
+
     def test_mime_types(self):
         dest = os.path.join(MagicTest.TESTDATA_DIR, b'\xce\xbb'.decode('utf-8'))
         shutil.copyfile(os.path.join(MagicTest.TESTDATA_DIR, 'lambda'), dest)
