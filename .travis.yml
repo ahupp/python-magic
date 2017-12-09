@@ -3,7 +3,8 @@ language: python
 # needed to use trusty
 sudo: required
 
-dist: xenial
+dist: trusty
+#dist: xenial
 
 python:
   - "2.6"
