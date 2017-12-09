@@ -61,10 +61,10 @@ Other sources:
 
 ### Windows
 
-You'll need DLLs for libmagic.  @julian-r has uploaded a versoin of this project that includes binaries to pypi:
+You'll need DLLs for libmagic.  @julian-r has uploaded a version of this project that includes binaries to pypi:
 https://pypi.python.org/pypi/python-magic-bin/0.4.14
 
-Other sources of the libraries in the past have been [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) .  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass it's location to `Magic(magic_file=...)`.  
+Other sources of the libraries in the past have been [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) .  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass its location to `Magic(magic_file=...)`.  
 
 If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries which can be found here: https://github.com/pidydx/libmagicwin64. Newer version can be found here: https://github.com/nscaife/file-windows.
 
