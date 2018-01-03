@@ -75,6 +75,11 @@ If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries 
 - When using Homebrew: `brew install libmagic`
 - When using macports: `port install file`
 
+On SmartOS:
+- Install libmagic for source https://github.com/threatstack/libmagic/
+- Depending on your ./configure --prefix settings set your LD_LIBRARY_PATH to <prefix>/lib
+
+
 ### Troubleshooting
 
 - 'MagicException: could not find any magic files!': some
