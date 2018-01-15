@@ -27,7 +27,11 @@ class MagicTestCase(unittest.TestCase):
         self.assert_result(result)
 
     def test_detect_from_content(self):
-        with open(self.filename) as fobj:
+        # differ from upstream by opening file in binary mode,
+        # this avoids hitting a bug in python3+libfile bindings
+        # see https://github.com/ahupp/python-magic/issues/152
+        # for a similar issue
+        with open(self.filename, 'rb') as fobj:
             result = magic.detect_from_content(fobj.read(4096))
         self.assert_result(result)
 
