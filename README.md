@@ -45,7 +45,7 @@ You can also combine the flag options:
 
 Minor version bumps should be backwards compatible.  Major bumps are not.
 
-## Compatability
+## Compatibility
 
 There are, sadly, 3 libraries using the package name `magic`.  The others are:
 

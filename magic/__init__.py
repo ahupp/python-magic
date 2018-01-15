@@ -27,6 +27,8 @@ import logging
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p
 
+# avoid shadowing the real open with the version from compat.py
+_real_open = open
 
 class MagicException(Exception):
     def __init__(self, message):
@@ -91,8 +93,7 @@ class Magic:
 
     def from_file(self, filename):
         # raise FileNotFoundException or IOError if the file does not exist
-        # use __builtins__ because the compat stuff at the bottom shadows the builtin open
-        with __builtins__['open'](filename):
+        with _real_open(filename):
             pass
 
         with self.lock:
@@ -337,7 +338,10 @@ def add_compat(to_module):
           ('detect_from_fobj', 'magic.Magic.from_open_file'),
           ('open', 'magic.Magic')]
     for (fname, alternate) in fn:
-        to_module[fname] = deprecation_wrapper(compat.__dict__, fname, alternate)
+        # for now, disable the deprecation warning until theres clarity on
+        # what the merged module should look like
+        to_module[fname] = compat.__dict__.get(fname)
+        #to_module[fname] = deprecation_wrapper(compat.__dict__, fname, alternate)
 
     # copy constants over, ensuring there's no conflicts
     is_const_re = re.compile("^[A-Z_]+$")
