@@ -32,6 +32,12 @@ class MagicTest(unittest.TestCase):
             else:
                 self.assertTrue(False, "no match for " + repr(expected_value))
 
+    def test_from_file_str_and_bytes(self):
+        self.assertEqual('application/pdf',
+                         magic.from_file("test/testdata/test.pdf", mime=True))
+        self.assertEqual('application/pdf',
+                         magic.from_file(b"test/testdata/test.pdf", mime=True))
+
     def test_from_buffer_str_and_bytes(self):
         m = magic.Magic(mime=True)
         s = '#!/usr/bin/env python\nprint("foo")'
