@@ -1,4 +1,4 @@
-import os, sys
+import os
 # for output which reports a local time
 os.environ['TZ'] = 'GMT'
 import shutil
@@ -6,6 +6,7 @@ import os.path
 import unittest
 
 import magic
+
 
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(__file__), 'testdata')
@@ -15,8 +16,8 @@ class MagicTest(unittest.TestCase):
             try:
                 filename = os.path.join(self.TESTDATA_DIR, filename)
             except TypeError:
-                filename = os.path.join(self.TESTDATA_DIR.encode('utf-8'), filename)
-
+                filename = os.path.join(
+                    self.TESTDATA_DIR.encode('utf-8'), filename)
 
             if type(expected_value) is not tuple:
                 expected_value = (expected_value,)
@@ -39,7 +40,8 @@ class MagicTest(unittest.TestCase):
         self.assertEqual("text/x-python", m.from_buffer(b))
 
     def test_mime_types(self):
-        dest = os.path.join(MagicTest.TESTDATA_DIR, b'\xce\xbb'.decode('utf-8'))
+        dest = os.path.join(MagicTest.TESTDATA_DIR,
+                            b'\xce\xbb'.decode('utf-8'))
         shutil.copyfile(os.path.join(MagicTest.TESTDATA_DIR, 'lambda'), dest)
         try:
             m = magic.Magic(mime=True)
@@ -56,14 +58,16 @@ class MagicTest(unittest.TestCase):
 
     def test_descriptions(self):
         m = magic.Magic()
-        os.environ['TZ'] = 'UTC'  # To get the last modified date of test.gz in UTC
+        os.environ['TZ'] = 'UTC'  # To get last modified date of test.gz in UTC
         try:
             self.assert_values(m, {
                 'magic._pyc_': 'python 2.4 byte-compiled',
                 'test.pdf': 'PDF document, version 1.2',
                 'test.gz':
-                ('gzip compressed data, was "test", from Unix, last modified: Sun Jun 29 01:32:52 2008',
-                 'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix'),
+                ('gzip compressed data, was "test", from Unix, last '
+                 'modified: Sun Jun 29 01:32:52 2008',
+                 'gzip compressed data, was "test", last modified'
+                 ': Sun Jun 29 01:32:52 2008, from Unix'),
                 'text.txt': 'ASCII text',
             })
         finally:
@@ -94,18 +98,21 @@ class MagicTest(unittest.TestCase):
         self.assertEqual(m.from_file(filename), 'image/jpeg')
 
         m = magic.Magic(mime=True, keep_going=True)
-        self.assertEqual(m.from_file(filename), 'image/jpeg\\012- application/octet-stream')
-
+        self.assertEqual(m.from_file(filename),
+                         'image/jpeg\\012- application/octet-stream')
 
     def test_rethrow(self):
         old = magic.magic_buffer
         try:
-            def t(x,y):
+            def t(x, y):
                 raise magic.MagicException("passthrough")
             magic.magic_buffer = t
 
-            self.assertRaises(magic.MagicException, magic.from_buffer, "hello", True)
+            with self.assertRaises(magic.MagicException):
+                magic.from_buffer("hello", True)
         finally:
             magic.magic_buffer = old
+
+
 if __name__ == '__main__':
     unittest.main()
