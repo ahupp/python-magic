@@ -1,2 +1,9 @@
+.coverage*
+.tox/
+bin/
 deb_dist
+htmlcov/
+lib/
 python_magic.egg-info
+pip-selfcheck.json
+pyvenv.cfg
