@@ -19,7 +19,6 @@ Usage:
 
 import sys
 import glob
-import os.path
 import ctypes
 import ctypes.util
 import threading
@@ -63,7 +62,7 @@ class Magic:
 
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
-        
+
         magic_load(self.cookie, magic_file)
 
     def from_buffer(self, buf):
@@ -76,7 +75,7 @@ class Magic:
                 # otherwise this string is passed as wchar*
                 # which is not what libmagic expects
                 if type(buf) == str and str != bytes:
-                   buf = buf.encode('utf-8', errors='replace')
+                    buf = buf.encode('utf-8', errors='replace')
                 return maybe_decode(magic_buffer(self.cookie, buf))
             except MagicException as e:
                 return self._handle509Bug(e)
@@ -99,7 +98,7 @@ class Magic:
             return "application/octet-stream"
         else:
             raise e
-        
+
     def __del__(self):
         # no _thread_check here because there can be no other
         # references to this object at this point.
@@ -117,11 +116,13 @@ class Magic:
 
 _instances = {}
 
+
 def _get_magic_type(mime):
     i = _instances.get(mime)
     if i is None:
         i = _instances[mime] = Magic(mime=mime)
     return i
+
 
 def from_file(filename, mime=False):
     """"
@@ -134,6 +135,7 @@ def from_file(filename, mime=False):
     """
     m = _get_magic_type(mime)
     return m.from_file(filename)
+
 
 def from_buffer(buffer, mime=False):
     """
@@ -148,25 +150,25 @@ def from_buffer(buffer, mime=False):
     return m.from_buffer(buffer)
 
 
-
-
 libmagic = None
 # Let's try to find magic or magic1
-dll = ctypes.util.find_library('magic') or ctypes.util.find_library('magic1') or ctypes.util.find_library('cygmagic-1')
+dll = ctypes.util.find_library('magic') \
+    or ctypes.util.find_library('magic1') \
+    or ctypes.util.find_library('cygmagic-1')
 
-# This is necessary because find_library returns None if it doesn't find the library
+# necessary because find_library returns None if it doesn't find the library
 if dll:
     libmagic = ctypes.CDLL(dll)
 
 if not libmagic or not libmagic._name:
-    windows_dlls = ['magic1.dll','cygmagic-1.dll']
+    windows_dlls = ['magic1.dll', 'cygmagic-1.dll']
     platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib',
                                   '/usr/local/lib/libmagic.dylib'] +
-                         # Assumes there will only be one version installed
-                         glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),
+                       # Assumes there will only be one version installed
+                       glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),  # flake8:noqa
                        'win32': windows_dlls,
                        'cygwin': windows_dlls,
-                       'linux': ['libmagic.so.1'],    # fallback for some Linuxes (e.g. Alpine) where library search does not work
+                       'linux': ['libmagic.so.1'],  # fallback for some Linuxes (e.g. Alpine) where library search does not work # flake8:noqa
                       }
     platform = 'linux' if sys.platform.startswith('linux') else sys.platform
     for dll in platform_to_lib.get(platform, []):
@@ -204,13 +206,13 @@ def maybe_decode(s):
         return s
     else:
         return s.decode('utf-8')
-    
+
 def coerce_filename(filename):
     if filename is None:
         return None
 
     # ctypes will implicitly convert unicode strings to bytes with
-    # .encode('ascii').  If you use the filesystem encoding 
+    # .encode('ascii').  If you use the filesystem encoding
     # then you'll get inconsistent behavior (crashes) depending on the user's
     # LANG environment variable
     is_unicode = (sys.version_info[0] <= 2 and
