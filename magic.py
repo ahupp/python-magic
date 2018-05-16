@@ -161,7 +161,7 @@ if dll:
     libmagic = ctypes.CDLL(dll)
 
 if not libmagic or not libmagic._name:
-    windows_dlls = ['magic1.dll', 'cygmagic-1.dll']
+    windows_dlls = ['magic1.dll', 'cygmagic-1.dll', 'libmagic-1.dll']
     platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib',
                                   '/usr/local/lib/libmagic.dylib'] +
                        # Assumes there will only be one version installed
@@ -220,7 +220,9 @@ def coerce_filename(filename):
                   (sys.version_info[0] >= 3 and
                    isinstance(filename, str))
     if is_unicode:
-        return filename.encode('utf-8', 'surrogateescape')
+        import locale
+        lan, encoding = locale.getdefaultlocale()
+        return filename.encode(encoding)
     else:
         return filename
 
