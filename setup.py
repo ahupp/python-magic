@@ -2,6 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup
+import io
+import os
+
+
+def read(file_name):
+    """Read a text file and return the content as a string."""
+    with io.open(os.path.join(os.path.dirname(__file__), file_name),
+                 encoding='utf-8') as f:
+        return f.read()
 
 setup(name='python-magic',
       description='File type identification using libmagic',
@@ -10,10 +19,8 @@ setup(name='python-magic',
       url="http://github.com/ahupp/python-magic",
       version='0.4.15',
       py_modules=['magic'],
-      long_description="""This module uses ctypes to access the libmagic file type
-identification library.  It makes use of the local magic database and
-supports both textual and MIME-type output.
-""",
+      long_description=read('README.md'),
+      long_description_content_type='text/markdown',
       keywords="mime magic file",
       license="MIT",
       test_suite='test',
