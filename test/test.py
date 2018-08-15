@@ -54,7 +54,7 @@ class MagicTest(unittest.TestCase):
             self.assert_values(m, {
                 'magic._pyc_': 'application/octet-stream',
                 'test.pdf': 'application/pdf',
-                'test.gz': 'application/gzip',
+                'test.gz': ('application/gzip', 'application/x-gzip'),
                 'text.txt': 'text/plain',
                 b'\xce\xbb'.decode('utf-8'): 'text/plain',
                 b'\xce\xbb': 'text/plain',
