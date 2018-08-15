@@ -11,7 +11,7 @@ import magic
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(__file__), 'testdata')
 
-    def assert_values(self, m, expected_values):
+    def assert_values(self, m, expected_values, buf_equals_file=True):
         for filename, expected_value in expected_values.items():
             try:
                 filename = os.path.join(self.TESTDATA_DIR, filename)
@@ -22,15 +22,16 @@ class MagicTest(unittest.TestCase):
             if type(expected_value) is not tuple:
                 expected_value = (expected_value,)
 
-            for i in expected_value:
-                with open(filename, 'rb') as f:
-                    buf_value = m.from_buffer(f.read())
+            with open(filename, 'rb') as f:
+                buf_value = m.from_buffer(f.read())
 
-                file_value = m.from_file(filename)
-                if buf_value == i and file_value == i:
-                    break
-            else:
-                self.assertTrue(False, "no match for " + repr(expected_value))
+            file_value = m.from_file(filename)
+
+            if buf_equals_file:
+                self.assertEqual(buf_value, file_value)
+
+            for value in (buf_value, file_value):
+                self.assertIn(value, expected_value)
 
     def test_from_file_str_and_bytes(self):
         self.assertEqual('application/pdf',
@@ -73,9 +74,11 @@ class MagicTest(unittest.TestCase):
                 ('gzip compressed data, was "test", from Unix, last '
                  'modified: Sun Jun 29 01:32:52 2008',
                  'gzip compressed data, was "test", last modified'
-                 ': Sun Jun 29 01:32:52 2008, from Unix'),
+                 ': Sun Jun 29 01:32:52 2008, from Unix',
+                 'gzip compressed data, was "test", last modified'
+                 ': Sun Jun 29 01:32:52 2008, from Unix, original size 15'),
                 'text.txt': 'ASCII text',
-            })
+            }, buf_equals_file=False)
         finally:
             del os.environ['TZ']
 
