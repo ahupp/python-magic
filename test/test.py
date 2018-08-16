@@ -9,7 +9,7 @@ import magic
 
 
 class MagicTest(unittest.TestCase):
-    TESTDATA_DIR = os.path.join(os.path.dirname(__file__), 'testdata')
+    TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
 
     def assert_values(self, m, expected_values, buf_equals_file=True):
         for filename, expected_value in expected_values.items():
@@ -34,10 +34,12 @@ class MagicTest(unittest.TestCase):
                 self.assertIn(value, expected_value)
 
     def test_from_file_str_and_bytes(self):
+        filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
+
         self.assertEqual('application/pdf',
-                         magic.from_file("test/testdata/test.pdf", mime=True))
+                         magic.from_file(filename, mime=True))
         self.assertEqual('application/pdf',
-                         magic.from_file(b"test/testdata/test.pdf", mime=True))
+                         magic.from_file(filename.encode('utf-8'), mime=True))
 
     def test_from_buffer_str_and_bytes(self):
         m = magic.Magic(mime=True)
