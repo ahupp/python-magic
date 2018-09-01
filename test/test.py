@@ -125,13 +125,9 @@ class MagicTest(unittest.TestCase):
             magic.magic_buffer = old
 
     def test_getparam(self):
-        filename = os.path.join(self.TESTDATA_DIR, 'keep-going.jpg')
-
         m = magic.Magic(mime=True)
-        self.assertEqual(m.getparam(magic.MAGIC_PARAM_BYTES_MAX).value, 1048576)
-        m.setparam(magic.MAGIC_PARAM_BYTES_MAX, 1)
-        self.assertEqual(m.getparam(magic.MAGIC_PARAM_BYTES_MAX).value, 1)
-        self.assertEqual(m.from_file(filename), 'application/octet-stream')
+        m.setparam(magic.MAGIC_PARAM_INDIR_MAX, 1)
+        self.assertEqual(m.getparam(magic.MAGIC_PARAM_INDIR_MAX), 1)
 
 if __name__ == '__main__':
     unittest.main()

@@ -300,7 +300,7 @@ _magic_getparam.errcheck = errorcheck_negative_one
 def magic_getparam(cookie, param):
     val = c_size_t()
     _magic_getparam(cookie, param, byref(val))
-    return val
+    return val.value
 
 MAGIC_NONE = 0x000000 # No flags
 MAGIC_DEBUG = 0x000001 # Turn on debugging
