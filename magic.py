@@ -23,7 +23,7 @@ import ctypes
 import ctypes.util
 import threading
 
-from ctypes import c_char_p, c_int, c_size_t, c_void_p
+from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
 
 
 class MagicException(Exception):
@@ -98,6 +98,12 @@ class Magic:
             return "application/octet-stream"
         else:
             raise e
+
+    def setparam(self, param, val):
+        return magic_setparam(self.cookie, param, val)
+
+    def getparam(self, param):
+        return magic_getparam(self.cookie, param)
 
     def __del__(self):
         # no _thread_check here because there can be no other
@@ -277,7 +283,24 @@ magic_compile = libmagic.magic_compile
 magic_compile.restype = c_int
 magic_compile.argtypes = [magic_t, c_char_p]
 
+_magic_setparam = libmagic.magic_setparam
+_magic_setparam.restype = c_int
+_magic_setparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
+_magic_setparam.errcheck = errorcheck_negative_one
 
+def magic_setparam(cookie, param, val):
+    v = c_size_t(val)
+    return _magic_setparam(cookie, param, byref(v))
+
+_magic_getparam = libmagic.magic_getparam
+_magic_getparam.restype = c_int
+_magic_getparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
+_magic_getparam.errcheck = errorcheck_negative_one
+
+def magic_getparam(cookie, param):
+    val = c_size_t()
+    _magic_getparam(cookie, param, byref(val))
+    return val
 
 MAGIC_NONE = 0x000000 # No flags
 MAGIC_DEBUG = 0x000001 # Turn on debugging
@@ -301,3 +324,11 @@ MAGIC_NO_CHECK_ASCII = 0x020000 # Don't check for ascii files
 MAGIC_NO_CHECK_TROFF = 0x040000 # Don't check ascii/troff
 MAGIC_NO_CHECK_FORTRAN = 0x080000 # Don't check ascii/fortran
 MAGIC_NO_CHECK_TOKENS = 0x100000 # Don't check ascii/tokens
+
+MAGIC_PARAM_INDIR_MAX = 0 # Recursion limit for indirect magic
+MAGIC_PARAM_NAME_MAX = 1 # Use count limit for name/use magic
+MAGIC_PARAM_ELF_PHNUM_MAX = 2 # Max ELF notes processed
+MAGIC_PARAM_ELF_SHNUM_MAX = 3 # Max ELF program sections processed
+MAGIC_PARAM_ELF_NOTES_MAX = 4 # # Max ELF sections processed
+MAGIC_PARAM_REGEX_MAX = 5 # Length limit for regex searches
+MAGIC_PARAM_BYTES_MAX = 6 # Max number of bytes to read from file
