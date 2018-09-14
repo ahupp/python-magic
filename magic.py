@@ -39,7 +39,7 @@ class Magic:
     """
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False,
-                 keep_going=False, uncompress=False):
+                 mime_and_encoding=False, keep_going=False, uncompress=False):
         """
         Create a new libmagic wrapper.
 
@@ -53,6 +53,9 @@ class Magic:
         if mime:
             self.flags |= MAGIC_MIME
         if mime_encoding:
+            self.flags |= MAGIC_MIME_ENCODING
+        elif mime_and_encoding:
+            self.flags |= MAGIC_MIME
             self.flags |= MAGIC_MIME_ENCODING
         if keep_going:
             self.flags |= MAGIC_CONTINUE
