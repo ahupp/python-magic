@@ -14,7 +14,6 @@ Usage:
 'PDF document, version 1.2'
 >>>
 
-
 """
 
 import sys
@@ -35,11 +34,10 @@ class MagicException(Exception):
 class Magic:
     """
     Magic is a wrapper around the libmagic C library.
-
     """
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False,
-                 keep_going=False, uncompress=False):
+                 keep_going=False, uncompress=False, raw=False):
         """
         Create a new libmagic wrapper.
 
@@ -48,6 +46,7 @@ class Magic:
         magic_file - use a mime database other than the system default
         keep_going - don't stop at the first match, keep going
         uncompress - Try to look inside compressed files.
+        raw - Do not try to decode "non-printable" chars.
         """
         self.flags = MAGIC_NONE
         if mime:
@@ -56,9 +55,10 @@ class Magic:
             self.flags |= MAGIC_MIME_ENCODING
         if keep_going:
             self.flags |= MAGIC_CONTINUE
-
         if uncompress:
             self.flags |= MAGIC_COMPRESS
+        if raw:
+            self.flags |= MAGIC_RAW
 
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
@@ -190,12 +190,14 @@ if not libmagic or not libmagic._name:
 
 magic_t = ctypes.c_void_p
 
+
 def errorcheck_null(result, func, args):
     if result is None:
         err = magic_error(args[0])
         raise MagicException(err)
     else:
         return result
+
 
 def errorcheck_negative_one(result, func, args):
     if result is -1:
@@ -213,6 +215,7 @@ def maybe_decode(s):
     else:
         return s.decode('utf-8')
 
+
 def coerce_filename(filename):
     if filename is None:
         return None
@@ -229,6 +232,7 @@ def coerce_filename(filename):
         return filename.encode('utf-8', 'surrogateescape')
     else:
         return filename
+
 
 magic_open = libmagic.magic_open
 magic_open.restype = magic_t
@@ -251,6 +255,7 @@ _magic_file.restype = c_char_p
 _magic_file.argtypes = [magic_t, c_char_p]
 _magic_file.errcheck = errorcheck_null
 
+
 def magic_file(cookie, filename):
     return _magic_file(cookie, coerce_filename(filename))
 
@@ -258,6 +263,7 @@ _magic_buffer = libmagic.magic_buffer
 _magic_buffer.restype = c_char_p
 _magic_buffer.argtypes = [magic_t, c_void_p, c_size_t]
 _magic_buffer.errcheck = errorcheck_null
+
 
 def magic_buffer(cookie, buf):
     return _magic_buffer(cookie, buf, len(buf))
@@ -267,6 +273,7 @@ _magic_load = libmagic.magic_load
 _magic_load.restype = c_int
 _magic_load.argtypes = [magic_t, c_char_p]
 _magic_load.errcheck = errorcheck_negative_one
+
 
 def magic_load(cookie, filename):
     return _magic_load(cookie, coerce_filename(filename))
@@ -288,6 +295,7 @@ _magic_setparam.restype = c_int
 _magic_setparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
 _magic_setparam.errcheck = errorcheck_negative_one
 
+
 def magic_setparam(cookie, param, val):
     v = c_size_t(val)
     return _magic_setparam(cookie, param, byref(v))
@@ -297,10 +305,12 @@ _magic_getparam.restype = c_int
 _magic_getparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
 _magic_getparam.errcheck = errorcheck_negative_one
 
+
 def magic_getparam(cookie, param):
     val = c_size_t()
     _magic_getparam(cookie, param, byref(val))
     return val.value
+
 
 MAGIC_NONE = 0x000000 # No flags
 MAGIC_DEBUG = 0x000001 # Turn on debugging
