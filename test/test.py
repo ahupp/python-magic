@@ -84,6 +84,25 @@ class MagicTest(unittest.TestCase):
         finally:
             del os.environ['TZ']
 
+    def test_unicode_result_nonraw(self):
+        m = magic.Magic(raw=False)
+        src = os.path.join(MagicTest.TESTDATA_DIR, 'pgpunicode')
+        result = m.from_file(src)
+        # NOTE: This check is added as otherwise some magic files don't identify the test case as a PGP key.
+        if 'PGP' in result:
+            assert r"PGP\011Secret Sub-key -" == result
+        else:
+            raise unittest.SkipTest("Magic file doesn't return expected type.")
+
+    def test_unicode_result_raw(self):
+        m = magic.Magic(raw=True)
+        src = os.path.join(MagicTest.TESTDATA_DIR, 'pgpunicode')
+        result = m.from_file(src)
+        if 'PGP' in result:
+            assert b'PGP\tSecret Sub-key -' == result.encode('utf-8')
+        else:
+            raise unittest.SkipTest("Magic file doesn't return expected type.")
+
     def test_mime_encodings(self):
         m = magic.Magic(mime_encoding=True)
         self.assert_values(m, {
