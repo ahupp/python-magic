@@ -200,7 +200,7 @@ def errorcheck_null(result, func, args):
 
 
 def errorcheck_negative_one(result, func, args):
-    if result is -1:
+    if result == -1:
         err = magic_error(args[0])
         raise MagicException(err)
     else:
