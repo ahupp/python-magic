@@ -161,7 +161,7 @@ libmagic = None
 dll = ctypes.util.find_library('magic') \
     or ctypes.util.find_library('magic1') \
     or ctypes.util.find_library('cygmagic-1') \
-    or ctypes.util.find_library('libmagic-1') \ #for git clone https://github.com/threatstack/libmagic.git
+    or ctypes.util.find_library('libmagic-1') \
     or ctypes.util.find_library('msys-magic-1') #for MSYS2
 
 # necessary because find_library returns None if it doesn't find the library
