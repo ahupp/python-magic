@@ -59,6 +59,7 @@ class MagicTest(unittest.TestCase):
                 'test.pdf': 'application/pdf',
                 'test.gz': ('application/gzip', 'application/x-gzip'),
                 'text.txt': 'text/plain',
+                'msword.doc': 'application/msword',
                 b'\xce\xbb'.decode('utf-8'): 'text/plain',
                 b'\xce\xbb': 'text/plain',
             })
@@ -80,6 +81,14 @@ class MagicTest(unittest.TestCase):
                  'gzip compressed data, was "test", last modified'
                  ': Sun Jun 29 01:32:52 2008, from Unix, original size 15'),
                 'text.txt': 'ASCII text',
+                'msword.doc': 'Composite Document File V2 Document, '
+                    'Little Endian, Os: Windows, Version 6.1, '
+                    'Code page: 1200, Title: ×©×, Author: fers, '
+                    'Template: Normal, Last Saved By: fers, Revision Number: 6, '
+                    'Create Time/Date: Fri Jun 22 10:28:00 2007, '
+                    'Last Saved Time/Date: Thu May 16 14:22:23 2019, '
+                    'Number of Pages: 1, Number of Words: 10, Number of Characters: 44, '
+                    'Name of Creating Application: Microsoft O, Security: 0, Locale ID: 2052',
             }, buf_equals_file=False)
         finally:
             del os.environ['TZ']
