@@ -232,7 +232,6 @@ def maybe_decode(s):
         # try chardet, if available
         encoding = chardet.detect(s)['encoding']
         if encoding is not None:
-            print(encoding)
             return s.decode(encoding)
     raise  # give up
 
