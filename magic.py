@@ -18,11 +18,17 @@ Usage:
 
 import sys
 import glob
+import locale
 import ctypes
 import ctypes.util
 import threading
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
+
+try:
+    import chardet
+except ImportError:
+    chardet = None
 
 
 class MagicException(Exception):
@@ -214,8 +220,21 @@ def errorcheck_negative_one(result, func, args):
 def maybe_decode(s):
     if str == bytes:
         return s
-    else:
-        return s.decode('utf-8')
+    try:
+        return s.decode('utf-8')  # try 'utf-8'
+    except UnicodeDecodeError:
+        pass
+    try:
+        return s.decode(locale.getpreferredencoding())  # try system default encoding
+    except UnicodeDecodeError:
+        pass
+    if chardet is not None:
+        # try chardet, if available
+        encoding = chardet.detect(s)['encoding']
+        if encoding is not None:
+            print(encoding)
+            return s.decode(encoding)
+    raise  # give up
 
 
 def coerce_filename(filename):
