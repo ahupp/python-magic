@@ -14,7 +14,7 @@ functionality is exposed to the command line by the Unix command
 >>> import magic
 >>> magic.from_file("testdata/test.pdf")
 'PDF document, version 1.2'
->>> magic.from_buffer(open("testdata/test.pdf").read(1024))
+>>> magic.from_buffer(open("testdata/test.pdf").read(2048)) # use at least 2048 bytes here for safe detection of for example "xslx" files
 'PDF document, version 1.2'
 >>> magic.from_file("testdata/test.pdf", mime=True)
 'application/pdf'
