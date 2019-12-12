@@ -1,6 +1,5 @@
 #!/bin/sh
 
-set -e;
 
 # ensure we can use unicode filenames in the test
 export LC_ALL=en_US.UTF-8

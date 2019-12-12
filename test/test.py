@@ -150,7 +150,7 @@ class MagicTest(unittest.TestCase):
 
     def test_name_count(self):
         m = magic.Magic()
-        with open('testdata/python-3.7.2-python-magic-0.4.15.jpg', 'rb') as f:
+        with open(os.path.join(self.TESTDATA_DIR, 'name_use.jpg'), 'rb') as f:
             m.from_buffer(f.read())
 
 if __name__ == '__main__':
