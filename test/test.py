@@ -148,5 +148,10 @@ class MagicTest(unittest.TestCase):
         m.setparam(magic.MAGIC_PARAM_INDIR_MAX, 1)
         self.assertEqual(m.getparam(magic.MAGIC_PARAM_INDIR_MAX), 1)
 
+    def test_name_count(self):
+        m = magic.Magic()
+        with open('testdata/python-3.7.2-python-magic-0.4.15.jpg', 'rb') as f:
+            m.from_buffer(f.read())
+
 if __name__ == '__main__':
     unittest.main()

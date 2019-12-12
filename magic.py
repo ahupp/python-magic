@@ -65,6 +65,15 @@ class Magic:
 
         magic_load(self.cookie, magic_file)
 
+
+        # For https://github.com/ahupp/python-magic/issues/190
+        # libmagic has fixed internal limits that some files exceed, causing 
+        # an error.  We can avoid this (at least for the sample file given) 
+        # by bumping the limit up.  It's not clear if this is a general solution
+        # or whether other internal limits should be increased, but given 
+        # the lack of other reports I'll assume this is rare.
+        self.setparam(MAGIC_PARAM_NAME_MAX, 64)
+
     def from_buffer(self, buf):
         """
         Identify the contents of `buf`
