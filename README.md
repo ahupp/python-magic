@@ -14,7 +14,8 @@ functionality is exposed to the command line by the Unix command
 >>> import magic
 >>> magic.from_file("testdata/test.pdf")
 'PDF document, version 1.2'
->>> magic.from_buffer(open("testdata/test.pdf").read(2048)) # use at least 2048 bytes here for safe detection of for example "xslx" files
+# recommend using at least the first 2048 bytes, as less can produce incorrect identification
+>>> magic.from_buffer(open("testdata/test.pdf").read(2048)) 
 'PDF document, version 1.2'
 >>> magic.from_file("testdata/test.pdf", mime=True)
 'application/pdf'
@@ -40,6 +41,10 @@ You can also combine the flag options:
 >>> f.from_file('testdata/test.gz')
 'text/plain'
 ```
+
+## Bug Reports
+
+python-magic is a thin layer over the libmagic C library.  Historically, most bugs that have been reported against python-magic are actually bugs in libmagic; libmagic bugs can be reported on their tracker here: https://bugs.astron.com/my_view_page.php.  If you're not sure where the bug lies feel free to file an issue on github and I can triage it.  
 
 ## Versioning
 
