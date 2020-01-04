@@ -1,8 +1,4 @@
 language: python
-
-# needed to use trusty
-sudo: required
-
 dist: xenial
 
 python:
