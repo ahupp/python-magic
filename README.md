@@ -2,7 +2,7 @@
 [![PyPI version](https://badge.fury.io/py/python-magic.svg)](https://badge.fury.io/py/python-magic)
 [![Build Status](https://travis-ci.org/ahupp/python-magic.svg?branch=master)](https://travis-ci.org/ahupp/python-magic)
 
-python-magic is a python interface to the libmagic file type
+python-magic is a Python interface to the libmagic file type
 identification library.  libmagic identifies file types by checking
 their headers according to a predefined list of file types. This
 functionality is exposed to the command line by the Unix command
@@ -44,7 +44,7 @@ You can also combine the flag options:
 
 ## Bug Reports
 
-python-magic is a thin layer over the libmagic C library.  Historically, most bugs that have been reported against python-magic are actually bugs in libmagic; libmagic bugs can be reported on their tracker here: https://bugs.astron.com/my_view_page.php.  If you're not sure where the bug lies feel free to file an issue on github and I can triage it.  
+python-magic is a thin layer over the libmagic C library.  Historically, most bugs that have been reported against python-magic are actually bugs in libmagic; libmagic bugs can be reported on their tracker here: https://bugs.astron.com/my_view_page.php.  If you're not sure where the bug lies feel free to file an issue on GitHub and I can triage it.
 
 ## Versioning
 
@@ -52,21 +52,21 @@ Minor version bumps should be backwards compatible.  Major bumps are not.
 
 ## Name Conflict
 
-There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while.If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be reconciled.
+There are, sadly, two libraries which use the module name `magic`.  Both have been around for quite a while. If you are using this module and get an error using a method like `open`, your code is expecting the other one.  Hopefully one day these will be reconciled.
 
 ## Installation
 
-The current stable version of python-magic is available on pypi and
+The current stable version of python-magic is available on PyPI and
 can be installed by running `pip install python-magic`.
 
 Other sources:
 
-- pypi: http://pypi.python.org/pypi/python-magic/
-- github: https://github.com/ahupp/python-magic
+- PyPI: http://pypi.python.org/pypi/python-magic/
+- GitHub: https://github.com/ahupp/python-magic
 
 ### Windows
 
-You'll need DLLs for libmagic.  @julian-r has uploaded a version of this project that includes binaries to pypi:
+You'll need DLLs for libmagic.  @julian-r has uploaded a version of this project that includes binaries to PyPI:
 https://pypi.python.org/pypi/python-magic-bin/0.4.14
 
 Other sources of the libraries in the past have been [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) .  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass its location to `Magic(magic_file=...)`.  
@@ -101,16 +101,17 @@ ground.  It originally used SWIG for the C library bindings, but
 switched to ctypes once that was part of the python standard library.
 
 You can contact me via my [website](http://hupp.org/adam) or
-[github](http://github.com/ahupp).
+[GitHub](http://github.com/ahupp).
 
 ## Contributors
 
-Thanks to these folks on github who submitted features and bugfixes.
+Thanks to these folks on github who submitted features and bug fixes.
 
 -   Amit Sethi
 -   [bigben87](https://github.com/bigben87)
 -   [fallgesetz](https://github.com/fallgesetz)
 -   [FlaPer87](https://github.com/FlaPer87)
+-   [Hugo van Kemenade](https://github.com/hugovk)
 -   [lukenowak](https://github.com/lukenowak)
 -   NicolasDelaby
 -   sacha@ssl.co.uk
@@ -122,5 +123,5 @@ Thanks to these folks on github who submitted features and bugfixes.
 python-magic is distributed under the MIT license.  See the included
 LICENSE file for details.
 
-I am providing code in the repository to you under an open source license. Because this is my personal repository, the license you receive to my code is from me and not my employer (Facebook)
+I am providing code in the repository to you under an open source license. Because this is my personal repository, the license you receive to my code is from me and not my employer (Facebook).
 
