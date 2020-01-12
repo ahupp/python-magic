@@ -78,7 +78,11 @@ class MagicTest(unittest.TestCase):
                  'gzip compressed data, was "test", last modified'
                  ': Sun Jun 29 01:32:52 2008, from Unix',
                  'gzip compressed data, was "test", last modified'
-                 ': Sun Jun 29 01:32:52 2008, from Unix, original size 15'),
+                 ': Sun Jun 29 01:32:52 2008, from Unix, original size 15',
+                 'gzip compressed data, was "test", '
+                 'last modified: Sun Jun 29 01:32:52 2008, '
+                 'from Unix, original size modulo 2^32 15'
+                ),
                 'text.txt': 'ASCII text',
             }, buf_equals_file=False)
         finally:
