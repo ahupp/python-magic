@@ -1,0 +1,10 @@
+To run the tests across a selection of Ubuntu LTS versions:
+
+docker build -t "python_magic/xenial:latest" -f test/Dockerfile_xenial .
+docker build -t "python_magic/bionic:latest" -f test/Dockerfile_bionic .
+docker build -t "python_magic/focal:latest" -f test/Dockerfile_focal .
+
+docker run python_magic/xenial:latest
+docker run python_magic/bionic:latest
+docker run python_magic/focal:latest
+

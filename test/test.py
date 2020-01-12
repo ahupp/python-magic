@@ -6,11 +6,14 @@ import os.path
 import unittest
 
 import magic
-
+import sys
 
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
 
+    def test_fs_encoding(self):
+        self.assertEqual('utf-8', sys.getfilesystemencoding().lower())
+    
     def assert_values(self, m, expected_values, buf_equals_file=True):
         for filename, expected_value in expected_values.items():
             try:
