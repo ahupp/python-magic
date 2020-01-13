@@ -8,3 +8,5 @@ __pycache__/
 python_magic.egg-info
 pip-selfcheck.json
 pyvenv.cfg
+*.pyc
+*~
