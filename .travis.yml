@@ -11,7 +11,7 @@ python:
 
 install:
   - pip install coverage
-  - python setup.py install
+  - pip install .
 
 script:
   - coverage run setup.py test
