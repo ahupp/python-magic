@@ -1,13 +1,12 @@
 language: python
-
-# needed to use trusty
-sudo: required
-
 dist: xenial
+cache: pip
 
 python:
   - "2.7"
   - "3.6"
+  - "3.7"
+  - "3.8"
 
 install:
   - pip install coverage
