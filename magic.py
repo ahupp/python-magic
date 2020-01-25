@@ -322,6 +322,12 @@ def magic_getparam(cookie, param):
     _magic_getparam(cookie, param, byref(val))
     return val.value
 
+magic_version = libmagic.magic_version
+magic_version.restype = c_int
+magic_version.argtypes = []
+
+def version():
+    return magic_version()
 
 MAGIC_NONE = 0x000000 # No flags
 MAGIC_DEBUG = 0x000001 # Turn on debugging

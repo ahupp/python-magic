@@ -11,6 +11,9 @@ import sys
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
 
+    def test_version(self):
+        self.assertTrue(magic.version() > 0)
+
     def test_fs_encoding(self):
         self.assertEqual('utf-8', sys.getfilesystemencoding().lower())
     
