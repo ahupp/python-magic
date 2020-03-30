@@ -64,6 +64,7 @@ class MagicTest(unittest.TestCase):
                 'magic._pyc_': 'application/octet-stream',
                 'test.pdf': 'application/pdf',
                 'test.gz': ('application/gzip', 'application/x-gzip'),
+                'test.snappy.parquet': 'application/octet-stream',
                 'text.txt': 'text/plain',
                 b'\xce\xbb'.decode('utf-8'): 'text/plain',
                 b'\xce\xbb': 'text/plain',
@@ -90,6 +91,7 @@ class MagicTest(unittest.TestCase):
                  'from Unix, original size modulo 2^32 15'
                 ),
                 'text.txt': 'ASCII text',
+                'test.snappy.parquet': 'Apache Parquet'
             }, buf_equals_file=False)
         finally:
             del os.environ['TZ']
