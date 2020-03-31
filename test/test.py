@@ -16,7 +16,7 @@ class MagicTest(unittest.TestCase):
 
     def test_fs_encoding(self):
         self.assertEqual('utf-8', sys.getfilesystemencoding().lower())
-    
+
     def assert_values(self, m, expected_values, buf_equals_file=True):
         for filename, expected_value in expected_values.items():
             try:
@@ -91,7 +91,7 @@ class MagicTest(unittest.TestCase):
                  'from Unix, original size modulo 2^32 15'
                 ),
                 'text.txt': 'ASCII text',
-                'test.snappy.parquet': 'Apache Parquet'
+                'test.snappy.parquet': ('Apache Parquet', 'Par archive data'),
             }, buf_equals_file=False)
         finally:
             del os.environ['TZ']
