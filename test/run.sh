@@ -6,7 +6,7 @@ export LC_ALL=en_US.UTF-8
 THISDIR=`dirname $0`
 export PYTHONPATH=${THISDIR}/..
 
-PYTHONS="python2.7 python3.5 python3.6 python3.7"
+PYTHONS="python2.7 python3.5 python3.6 python3.7 python3.8 python"
 
 for pyver in $PYTHONS; do
     if which $pyver > /dev/null; then
