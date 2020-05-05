@@ -23,7 +23,6 @@ setup(name='python-magic',
       long_description_content_type='text/markdown',
       keywords="mime magic file",
       license="MIT",
-      test_suite='test',
       python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
       classifiers=[
           'Intended Audience :: Developers',
