@@ -98,6 +98,20 @@ tracker here: https://bugs.astron.com/my_view_page.php.  If you're not
 sure where the bug lies feel free to file an issue on GitHub and I can
 triage it.
 
+## Running the tests
+
+To run the tests across 3 recent Ubuntu LTS releases (depends on Docker):
+
+  $ ./test_docker.sh
+
+To run tests locally across all available python versions:
+
+  $ ./test/run.py
+
+To run against a specific python version:
+
+  $ LC_ALL=en_US.UTF-8 python3 test/test.py
+
 ## Versioning
 
 Minor version bumps should be backwards compatible.  Major bumps are not.
