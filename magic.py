@@ -50,7 +50,7 @@ class Magic:
         """
         self.flags = MAGIC_NONE
         if mime:
-            self.flags |= MAGIC_MIME
+            self.flags |= MAGIC_MIME_TYPE
         if mime_encoding:
             self.flags |= MAGIC_MIME_ENCODING
         if keep_going:
@@ -67,10 +67,10 @@ class Magic:
 
 
         # For https://github.com/ahupp/python-magic/issues/190
-        # libmagic has fixed internal limits that some files exceed, causing 
-        # an error.  We can avoid this (at least for the sample file given) 
+        # libmagic has fixed internal limits that some files exceed, causing
+        # an error.  We can avoid this (at least for the sample file given)
         # by bumping the limit up.  It's not clear if this is a general solution
-        # or whether other internal limits should be increased, but given 
+        # or whether other internal limits should be increased, but given
         # the lack of other reports I'll assume this is rare.
         self.setparam(MAGIC_PARAM_NAME_MAX, 64)
 
@@ -103,7 +103,7 @@ class Magic:
         # libmagic 5.09 has a bug where it might fail to identify the
         # mimetype of a file and returns null from magic_file (and
         # likely _buffer), but also does not return an error message.
-        if e.message is None and (self.flags & MAGIC_MIME):
+        if e.message is None and (self.flags & MAGIC_MIME_TYPE):
             return "application/octet-stream"
         else:
             raise e
@@ -334,8 +334,12 @@ MAGIC_DEBUG = 0x000001 # Turn on debugging
 MAGIC_SYMLINK = 0x000002 # Follow symlinks
 MAGIC_COMPRESS = 0x000004 # Check inside compressed files
 MAGIC_DEVICES = 0x000008 # Look at the contents of devices
-MAGIC_MIME = 0x000010 # Return a mime string
+MAGIC_MIME_TYPE = 0x000010 # Return a mime string
 MAGIC_MIME_ENCODING = 0x000400 # Return the MIME encoding
+# TODO:  should be
+# MAGIC_MIME = MAGIC_MIME_TYPE | MAGIC_MIME_ENCODING
+MAGIC_MIME = 0x000010 # Return a mime string
+
 MAGIC_CONTINUE = 0x000020 # Return all matches
 MAGIC_CHECK = 0x000040 # Print warnings to stderr
 MAGIC_PRESERVE_ATIME = 0x000080 # Restore access time on exit
