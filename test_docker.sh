@@ -3,6 +3,8 @@
 # Test with various versions of ubuntu.  This more or less re-creates the
 # Travis CI test environment
 
+set -e 
+
 function TestInContainer {
     local name="$1"
     local TAG="python_magic/${name}:latest"

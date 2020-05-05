@@ -5,4 +5,4 @@ RUN apt-get -y install python3
 RUN apt-get -y install locales
 RUN locale-gen en_US.UTF-8
 COPY . /python-magic
-CMD cd /python-magic/test && ./run.sh
+CMD cd /python-magic/test && python3 ./run.py
