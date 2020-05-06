@@ -72,7 +72,8 @@ class Magic:
         # by bumping the limit up.  It's not clear if this is a general solution
         # or whether other internal limits should be increased, but given
         # the lack of other reports I'll assume this is rare.
-        self.setparam(MAGIC_PARAM_NAME_MAX, 64)
+        if _has_param:
+            self.setparam(MAGIC_PARAM_NAME_MAX, 64)
 
     def from_buffer(self, buf):
         """
@@ -301,32 +302,42 @@ magic_compile = libmagic.magic_compile
 magic_compile.restype = c_int
 magic_compile.argtypes = [magic_t, c_char_p]
 
-_magic_setparam = libmagic.magic_setparam
-_magic_setparam.restype = c_int
-_magic_setparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
-_magic_setparam.errcheck = errorcheck_negative_one
+_has_param = False
+if hasattr(libmagic, 'magic_setparam') and hasattr(libmagic, 'magic_getparam'):
+    _has_param = True
+    _magic_setparam = libmagic.magic_setparam
+    _magic_setparam.restype = c_int
+    _magic_setparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
+    _magic_setparam.errcheck = errorcheck_negative_one
 
+    _magic_getparam = libmagic.magic_getparam
+    _magic_getparam.restype = c_int
+    _magic_getparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
+    _magic_getparam.errcheck = errorcheck_negative_one
 
 def magic_setparam(cookie, param, val):
+    if not _has_param:
+        raise NotImplementedError("magic_setparam not implemented")
     v = c_size_t(val)
     return _magic_setparam(cookie, param, byref(v))
 
-_magic_getparam = libmagic.magic_getparam
-_magic_getparam.restype = c_int
-_magic_getparam.argtypes = [magic_t, c_int, POINTER(c_size_t)]
-_magic_getparam.errcheck = errorcheck_negative_one
-
-
 def magic_getparam(cookie, param):
+    if not _has_param:
+        raise NotImplementedError("magic_getparam not implemented")
     val = c_size_t()
     _magic_getparam(cookie, param, byref(val))
     return val.value
 
-magic_version = libmagic.magic_version
-magic_version.restype = c_int
-magic_version.argtypes = []
+_has_version = False
+if hasattr(libmagic, "magic_version"):
+    _has_version = True
+    magic_version = libmagic.magic_version
+    magic_version.restype = c_int
+    magic_version.argtypes = []
 
 def version():
+    if not _has_version:
+        raise NotImplementedError("magic_version not implemented")
     return magic_version()
 
 MAGIC_NONE = 0x000000 # No flags

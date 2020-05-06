@@ -18,7 +18,10 @@ class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
 
     def test_version(self):
-        self.assertTrue(magic.version() > 0)
+        try:
+            self.assertTrue(magic.version() > 0)
+        except NotImplementedError:
+            pass
 
     def test_fs_encoding(self):
         self.assertEqual('utf-8', sys.getfilesystemencoding().lower())
@@ -145,9 +148,15 @@ class MagicTest(unittest.TestCase):
         m = magic.Magic(mime=True)
         self.assertEqual(m.from_file(filename), 'image/jpeg')
 
-        m = magic.Magic(mime=True, keep_going=True)
-        self.assertEqual(m.from_file(filename),
-                         'image/jpeg\\012- application/octet-stream')
+        try:
+            # this will throw if you have an "old" version of the library
+            # I'm otherwise not sure how to query if keep_going is supported
+            magic.version()
+            m = magic.Magic(mime=True, keep_going=True)
+            self.assertEqual(m.from_file(filename),
+                             'image/jpeg\\012- application/octet-stream')
+        except NotImplementedError:
+            pass
 
     def test_rethrow(self):
         old = magic.magic_buffer
@@ -163,8 +172,11 @@ class MagicTest(unittest.TestCase):
 
     def test_getparam(self):
         m = magic.Magic(mime=True)
-        m.setparam(magic.MAGIC_PARAM_INDIR_MAX, 1)
-        self.assertEqual(m.getparam(magic.MAGIC_PARAM_INDIR_MAX), 1)
+        try:
+            m.setparam(magic.MAGIC_PARAM_INDIR_MAX, 1)
+            self.assertEqual(m.getparam(magic.MAGIC_PARAM_INDIR_MAX), 1)
+        except NotImplementedError:
+            pass
 
     def test_name_count(self):
         m = magic.Magic()
