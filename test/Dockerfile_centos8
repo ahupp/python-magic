@@ -1,0 +1,5 @@
+FROM centos:8
+RUN yum -y update
+RUN yum -y install file-libs python3 python2 which
+COPY . /python-magic
+CMD cd /python-magic/test && python3 ./run.py

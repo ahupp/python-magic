@@ -15,4 +15,7 @@ function TestInContainer {
 TestInContainer "xenial"
 TestInContainer "bionic"
 TestInContainer "focal"
+TestInContainer "centos7"
+TestInContainer "centos8"
+
 
