@@ -59,9 +59,9 @@ class MagicTest(unittest.TestCase):
     def test_from_buffer_str_and_bytes(self):
         m = magic.Magic(mime=True)
         s = '#!/usr/bin/env python\nprint("foo")'
-        self.assertEqual("text/x-python", m.from_buffer(s))
+        self.assertEqual("text/x-script.python", m.from_buffer(s))
         b = b'#!/usr/bin/env python\nprint("foo")'
-        self.assertEqual("text/x-python", m.from_buffer(b))
+        self.assertEqual("text/x-script.python", m.from_buffer(b))
 
     def test_mime_types(self):
         dest = os.path.join(MagicTest.TESTDATA_DIR,
@@ -70,7 +70,7 @@ class MagicTest(unittest.TestCase):
         try:
             m = magic.Magic(mime=True)
             self.assert_values(m, {
-                'magic._pyc_': 'application/octet-stream',
+                'magic._pyc_': ('application/octet-stream', 'text/x-bytecode.python'),
                 'test.pdf': 'application/pdf',
                 'test.gz': ('application/gzip', 'application/x-gzip'),
                 'test.snappy.parquet': 'application/octet-stream',
@@ -97,7 +97,9 @@ class MagicTest(unittest.TestCase):
                  ': Sun Jun 29 01:32:52 2008, from Unix, original size 15',
                  'gzip compressed data, was "test", '
                  'last modified: Sun Jun 29 01:32:52 2008, '
-                 'from Unix, original size modulo 2^32 15'
+                 'from Unix, original size modulo 2^32 15',
+                 'gzip compressed data, was "test", last modified'
+                 ': Sun Jun 29 01:32:52 2008, from Unix, truncated'
                 ),
                 'text.txt': 'ASCII text',
                 'test.snappy.parquet': ('Apache Parquet', 'Par archive data'),
