@@ -75,7 +75,12 @@ class Magic:
         # or whether other internal limits should be increased, but given
         # the lack of other reports I'll assume this is rare.
         if _has_param:
-            self.setparam(MAGIC_PARAM_NAME_MAX, 64)
+            try:
+                self.setparam(MAGIC_PARAM_NAME_MAX, 64)
+            except MagicException as e:
+                # some versions of libmagic fail this call,
+                # so rather than fail hard just use default behavior
+                pass
 
     def from_buffer(self, buf):
         """
