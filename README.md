@@ -61,13 +61,9 @@ that must be installed as well:
 
 ### Windows
 
-You'll need DLLs for libmagic.  @julian-r has uploaded a version of this project that includes binaries to PyPI:
-https://pypi.python.org/pypi/python-magic-bin/0.4.14
+You'll need DLLs for libmagic.  @julian-r maintains a pypi package with the DLLs, you can fetch it with:
 
-Other sources of the libraries in the past have been [File for Windows](http://gnuwin32.sourceforge.net/packages/file.htm) .  You will need to copy the file `magic` out of `[binary-zip]\share\misc`, and pass its location to `Magic(magic_file=...)`.  
-
-If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries which can be found here: https://github.com/pidydx/libmagicwin64. Newer version can be found here: https://github.com/nscaife/file-windows.
-
+  $ pip install python-magic-bin
 
 ### OSX
 
@@ -83,7 +79,8 @@ If you are using a 64-bit build of python, you'll need 64-bit libmagic binaries 
 
 - 'WindowsError: [Error 193] %1 is not a valid Win32 application':
   Attempting to run the 32-bit libmagic DLL in a 64-bit build of
-  python will fail with this error.  Here are 64-bit builds of libmagic for windows: https://github.com/pidydx/libmagicwin64
+  python will fail with this error.  Here are 64-bit builds of libmagic for windows: https://github.com/pidydx/libmagicwin64. 
+  Newer version can be found here: https://github.com/nscaife/file-windows.
 
 - 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing 
   Windows Python and Cygwin Python. Make sure your libmagic and python builds are consistent.
