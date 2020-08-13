@@ -48,6 +48,8 @@ class Magic:
         uncompress - Try to look inside compressed files.
         raw - Do not try to decode "non-printable" chars.
         """
+
+        self.cookie = None
         self.flags = MAGIC_NONE
         if mime:
             self.flags |= MAGIC_MIME_TYPE
