@@ -1,0 +1,5 @@
+FROM archlinux:20200505
+RUN yes | pacman -Syyu --overwrite '*'
+RUN yes | pacman -S python python2 file which
+COPY . /python-magic
+CMD cd /python-magic/test && python3 ./run.py

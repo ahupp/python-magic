@@ -3,7 +3,7 @@
 # Test with various versions of ubuntu.  This more or less re-creates the
 # Travis CI test environment
 
-set -e 
+set -e
 
 function TestInContainer {
     local name="$1"
@@ -17,5 +17,5 @@ TestInContainer "bionic"
 TestInContainer "focal"
 TestInContainer "centos7"
 TestInContainer "centos8"
-
+TestInContainer "archlinux"
 
