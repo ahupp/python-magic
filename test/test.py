@@ -58,10 +58,14 @@ class MagicTest(unittest.TestCase):
 
     def test_from_buffer_str_and_bytes(self):
         m = magic.Magic(mime=True)
-        s = '#!/usr/bin/env python\nprint("foo")'
-        self.assertEqual("text/x-script.python", m.from_buffer(s))
-        b = b'#!/usr/bin/env python\nprint("foo")'
-        self.assertEqual("text/x-script.python", m.from_buffer(b))
+
+        self.assertTrue(
+            m.from_buffer('#!/usr/bin/env python\nprint("foo")')
+            in ("text/x-python", "text/x-script.python"))
+        self.assertTrue(
+            m.from_buffer(b'#!/usr/bin/env python\nprint("foo")')
+            in ("text/x-python", "text/x-script.python"))
+
 
     def test_mime_types(self):
         dest = os.path.join(MagicTest.TESTDATA_DIR,
