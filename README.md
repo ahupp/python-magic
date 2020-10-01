@@ -15,7 +15,7 @@ functionality is exposed to the command line by the Unix command
 >>> magic.from_file("testdata/test.pdf")
 'PDF document, version 1.2'
 # recommend using at least the first 2048 bytes, as less can produce incorrect identification
->>> magic.from_buffer(open("testdata/test.pdf").read(2048)) 
+>>> magic.from_buffer(open("testdata/test.pdf", "rb").read(2048)) 
 'PDF document, version 1.2'
 >>> magic.from_file("testdata/test.pdf", mime=True)
 'application/pdf'
