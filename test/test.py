@@ -3,16 +3,23 @@ import os
 os.environ['TZ'] = 'GMT'
 
 if os.environ.get('LC_ALL','') != 'en_US.UTF-8':
-    # this ensure we're in a utf-8 default filesystem encoding which is
-    # necessary for some tests
+    ''' This ensures we're in a utf-8 default filesystem encoding which is
+     necessary for some tests.'''
     raise Exception("must run `export LC_ALL=en_US.UTF-8` before running test suite")
 
 import shutil
+#The shutil module offers a number of high-level operations on files and collections of files.
 import os.path
+#The platform module provides detailed checks for the system's identity.
 import unittest
+#The unittest module provides a rich set of tools for constructing and running tests.
 
 import magic
+# Python-magic is a Python interface to the libmagic file type identification library.
 import sys
+#This module provides access to some variables used or maintained by the interpreter and to functions that interact strongly with the interpreter.
+import datetime
+#General calendar related functions.
 
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
@@ -191,3 +198,4 @@ class MagicTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    
