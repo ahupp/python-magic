@@ -111,6 +111,13 @@ class MagicTest(unittest.TestCase):
         finally:
             del os.environ['TZ']
 
+    def test_extension(self):
+        m = magic.Magic(extension=True)
+        self.assert_values(m, {
+            'test.gz': 'gz/tgz/tpz/zabw/svgz',
+            'name_use.jpg': 'jpeg/jpg/jpe/jfif',
+        })
+
     def test_unicode_result_nonraw(self):
         m = magic.Magic(raw=False)
         src = os.path.join(MagicTest.TESTDATA_DIR, 'pgpunicode')
