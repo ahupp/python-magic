@@ -37,7 +37,7 @@ class Magic:
     """
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False,
-                 keep_going=False, uncompress=False, raw=False):
+                 keep_going=False, uncompress=False, raw=False, extension=False):
         """
         Create a new libmagic wrapper.
 
@@ -47,6 +47,7 @@ class Magic:
         keep_going - don't stop at the first match, keep going
         uncompress - Try to look inside compressed files.
         raw - Do not try to decode "non-printable" chars.
+        extension - Print a slash-separated list of valid extensions for the file type found.
         """
 
         self.cookie = None
@@ -61,6 +62,8 @@ class Magic:
             self.flags |= MAGIC_COMPRESS
         if raw:
             self.flags |= MAGIC_RAW
+        if extension:
+            self.flags |= MAGIC_EXTENSION
 
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
@@ -357,6 +360,7 @@ MAGIC_MIME_ENCODING = 0x000400 # Return the MIME encoding
 # TODO:  should be
 # MAGIC_MIME = MAGIC_MIME_TYPE | MAGIC_MIME_ENCODING
 MAGIC_MIME = 0x000010 # Return a mime string
+MAGIC_EXTENSION = 0x1000000 # Return a /-separated list of extensions
 
 MAGIC_CONTINUE = 0x000020 # Return all matches
 MAGIC_CHECK = 0x000040 # Print warnings to stderr
