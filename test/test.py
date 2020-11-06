@@ -112,11 +112,16 @@ class MagicTest(unittest.TestCase):
             del os.environ['TZ']
 
     def test_extension(self):
-        m = magic.Magic(extension=True)
-        self.assert_values(m, {
-            'test.gz': 'gz/tgz/tpz/zabw/svgz',
-            'name_use.jpg': 'jpeg/jpg/jpe/jfif',
-        })
+        try:
+            m = magic.Magic(extension=True)
+            self.assert_values(m, {
+                # some versions return '' for the extensions of a gz file,
+                # including w/ the command line.  Who knows...
+                'test.gz': ('gz/tgz/tpz/zabw/svgz', '', '???'),
+                'name_use.jpg': 'jpeg/jpg/jpe/jfif',
+            })
+        except NotImplementedError:
+            self.skipTest('MAGIC_EXTENSION not supported in this version')
 
     def test_unicode_result_nonraw(self):
         m = magic.Magic(raw=False)

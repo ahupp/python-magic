@@ -70,6 +70,10 @@ class Magic:
 
         magic_load(self.cookie, magic_file)
 
+        # MAGIC_EXTENSION was added in 523 or 524, so bail if
+        # it doesn't appear to be available
+        if extension and (not _has_version or version() < 524):
+            raise NotImplementedError('MAGIC_EXTENSION is not supported in this version of libmagic')
 
         # For https://github.com/ahupp/python-magic/issues/190
         # libmagic has fixed internal limits that some files exceed, causing
