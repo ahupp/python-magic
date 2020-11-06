@@ -239,7 +239,8 @@ def maybe_decode(s):
     if str == bytes:
         return s
     else:
-        return s.decode('utf-8')
+        # backslashreplace here because sometimes
+        return s.decode('utf-8', 'backslashreplace')
 
 
 def coerce_filename(filename):
