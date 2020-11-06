@@ -239,7 +239,8 @@ def maybe_decode(s):
     if str == bytes:
         return s
     else:
-        # backslashreplace here because sometimes
+        # backslashreplace here because sometimes libmagic will return metadata in the charset
+        # of the file, which is unknown to us (e.g the title of a Word doc)
         return s.decode('utf-8', 'backslashreplace')
 
 
