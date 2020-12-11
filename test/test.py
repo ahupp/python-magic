@@ -56,6 +56,13 @@ class MagicTest(unittest.TestCase):
         self.assertEqual('application/pdf',
                          magic.from_file(filename.encode('utf-8'), mime=True))
 
+    def test_from_descriptor_str_and_bytes(self):
+        with open(os.path.join(self.TESTDATA_DIR, "test.pdf")) as f:
+            self.assertEqual('application/pdf',
+                             magic.from_descriptor(f.fileno(), mime=True))
+            self.assertEqual('application/pdf',
+                             magic.from_descriptor(f.fileno(), mime=True))
+
     def test_from_buffer_str_and_bytes(self):
         m = magic.Magic(mime=True)
 

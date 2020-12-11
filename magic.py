@@ -114,6 +114,13 @@ class Magic:
             except MagicException as e:
                 return self._handle509Bug(e)
 
+    def from_descriptor(self, fd):
+        with self.lock:
+            try:
+                return maybe_decode(magic_descriptor(self.cookie, fd))
+            except MagicException as e:
+                return self._handle509Bug(e)
+
     def _handle509Bug(self, e):
         # libmagic 5.09 has a bug where it might fail to identify the
         # mimetype of a file and returns null from magic_file (and
@@ -178,6 +185,20 @@ def from_buffer(buffer, mime=False):
     """
     m = _get_magic_type(mime)
     return m.from_buffer(buffer)
+
+
+def from_descriptor(fd, mime=False):
+    """
+    Accepts a file descriptor and returns the detected filetype.  Return
+    value is the mimetype if mime=True, otherwise a human readable
+    name.
+
+    >>> f = open("testdata/test.pdf")
+    >>> magic.from_descriptor(f.fileno())
+    'PDF document, version 1.2'
+    """
+    m = _get_magic_type(mime)
+    return m.from_descriptor(fd)
 
 
 libmagic = None
@@ -287,6 +308,7 @@ _magic_file.errcheck = errorcheck_null
 def magic_file(cookie, filename):
     return _magic_file(cookie, coerce_filename(filename))
 
+
 _magic_buffer = libmagic.magic_buffer
 _magic_buffer.restype = c_char_p
 _magic_buffer.argtypes = [magic_t, c_void_p, c_size_t]
@@ -297,6 +319,16 @@ def magic_buffer(cookie, buf):
     return _magic_buffer(cookie, buf, len(buf))
 
 
+_magic_descriptor = libmagic.magic_descriptor
+_magic_descriptor.restype = c_char_p
+_magic_descriptor.argtypes = [magic_t, c_int]
+_magic_descriptor.errcheck = errorcheck_null
+
+
+def magic_descriptor(cookie, fd):
+    return _magic_descriptor(cookie, fd)
+
+
 _magic_load = libmagic.magic_load
 _magic_load.restype = c_int
 _magic_load.argtypes = [magic_t, c_char_p]
@@ -305,6 +337,7 @@ _magic_load.errcheck = errorcheck_negative_one
 
 def magic_load(cookie, filename):
     return _magic_load(cookie, coerce_filename(filename))
+
 
 magic_setflags = libmagic.magic_setflags
 magic_setflags.restype = c_int
