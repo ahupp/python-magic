@@ -1,8 +1,9 @@
 import os
+
 # for output which reports a local time
 os.environ['TZ'] = 'GMT'
 
-if os.environ.get('LC_ALL','') != 'en_US.UTF-8':
+if os.environ.get('LC_ALL', '') != 'en_US.UTF-8':
     # this ensure we're in a utf-8 default filesystem encoding which is
     # necessary for some tests
     raise Exception("must run `export LC_ALL=en_US.UTF-8` before running test suite")
@@ -13,6 +14,7 @@ import unittest
 
 import magic
 import sys
+
 
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
@@ -57,7 +59,8 @@ class MagicTest(unittest.TestCase):
                          magic.from_file(filename.encode('utf-8'), mime=True))
 
     def test_from_descriptor_str_and_bytes(self):
-        with open(os.path.join(self.TESTDATA_DIR, "test.pdf")) as f:
+        filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
+        with open(filename) as f:
             self.assertEqual('application/pdf',
                              magic.from_descriptor(f.fileno(), mime=True))
             self.assertEqual('application/pdf',
@@ -73,11 +76,10 @@ class MagicTest(unittest.TestCase):
             m.from_buffer(b'#!/usr/bin/env python\nprint("foo")')
             in ("text/x-python", "text/x-script.python"))
 
-
-
     def test_open_file(self):
         m = magic.Magic(mime=True)
-        with open(os.path.join(self.TESTDATA_DIR, "test.pdf")) as f:
+        filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
+        with open(filename) as f:
             self.assertEqual("application/pdf", m.from_open_file(f))
 
     def test_mime_types(self):
@@ -106,18 +108,18 @@ class MagicTest(unittest.TestCase):
                 'magic._pyc_': 'python 2.4 byte-compiled',
                 'test.pdf': 'PDF document, version 1.2',
                 'test.gz':
-                ('gzip compressed data, was "test", from Unix, last '
-                 'modified: Sun Jun 29 01:32:52 2008',
-                 'gzip compressed data, was "test", last modified'
-                 ': Sun Jun 29 01:32:52 2008, from Unix',
-                 'gzip compressed data, was "test", last modified'
-                 ': Sun Jun 29 01:32:52 2008, from Unix, original size 15',
-                 'gzip compressed data, was "test", '
-                 'last modified: Sun Jun 29 01:32:52 2008, '
-                 'from Unix, original size modulo 2^32 15',
-                 'gzip compressed data, was "test", last modified'
-                 ': Sun Jun 29 01:32:52 2008, from Unix, truncated'
-                ),
+                    ('gzip compressed data, was "test", from Unix, last '
+                     'modified: Sun Jun 29 01:32:52 2008',
+                     'gzip compressed data, was "test", last modified'
+                     ': Sun Jun 29 01:32:52 2008, from Unix',
+                     'gzip compressed data, was "test", last modified'
+                     ': Sun Jun 29 01:32:52 2008, from Unix, original size 15',
+                     'gzip compressed data, was "test", '
+                     'last modified: Sun Jun 29 01:32:52 2008, '
+                     'from Unix, original size modulo 2^32 15',
+                     'gzip compressed data, was "test", last modified'
+                     ': Sun Jun 29 01:32:52 2008, from Unix, truncated'
+                     ),
                 'text.txt': 'ASCII text',
                 'test.snappy.parquet': ('Apache Parquet', 'Par archive data'),
             }, buf_equals_file=False)
@@ -194,6 +196,7 @@ class MagicTest(unittest.TestCase):
         try:
             def t(x, y):
                 raise magic.MagicException("passthrough")
+
             magic.magic_buffer = t
 
             with self.assertRaises(magic.MagicException):
@@ -213,6 +216,7 @@ class MagicTest(unittest.TestCase):
         m = magic.Magic()
         with open(os.path.join(self.TESTDATA_DIR, 'name_use.jpg'), 'rb') as f:
             m.from_buffer(f.read())
+
 
 if __name__ == '__main__':
     unittest.main()

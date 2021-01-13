@@ -1,4 +1,3 @@
-
 import subprocess
 import os.path
 import sys
@@ -10,12 +9,13 @@ new_env = {
     'PYTHONPATH': os.path.join(this_dir, ".."),
 }
 
+
 def has_py(version):
     ret = subprocess.run("which %s" % version, shell=True, stdout=subprocess.DEVNULL)
     return ret.returncode == 0
 
-def run_test(versions):
 
+def run_test(versions):
     found = False
     for i in versions:
         if not has_py(i):

@@ -34,5 +34,6 @@ class MagicTestCase(unittest.TestCase):
             result = magic.detect_from_content(fobj.read(4096))
         self.assert_result(result)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -19,6 +19,7 @@ def _init():
     """
     return ctypes.cdll.LoadLibrary(find_library('magic'))
 
+
 _libraries = {}
 _libraries['magic'] = _init()
 
@@ -55,6 +56,8 @@ FileMagic = namedtuple('FileMagic', ('mime_type', 'encoding', 'name'))
 
 class magic_set(Structure):
     pass
+
+
 magic_set._fields_ = []
 magic_t = POINTER(magic_set)
 
