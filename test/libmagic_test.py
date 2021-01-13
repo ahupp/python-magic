@@ -6,8 +6,7 @@ import magic
 
 
 class MagicTestCase(unittest.TestCase):
-
-    filename = 'test/testdata/test.pdf'
+    filename = 'testdata/test.pdf'
     expected_mime_type = 'application/pdf'
     expected_encoding = 'us-ascii'
     expected_name = 'PDF document, version 1.2'
