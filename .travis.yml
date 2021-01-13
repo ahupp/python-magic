@@ -9,12 +9,12 @@ python:
   - "3.8"
 
 install:
-  - pip install coverage
+  - pip install coverage coveralls codecov
   - pip install .
 
 script:
-  - LC_ALL=en_US.UTF-8 coverage run ./test/test.py
+  - LC_ALL=en_US.UTF-8 coverage run -m unittest test
 
 after_success:
-  - pip install coveralls && coveralls
-  - pip install codecov && codecov
+  - coveralls
+  - codecov
