@@ -15,6 +15,8 @@ import unittest
 import magic
 import sys
 
+# magic_descriptor is broken (?) in centos 7, so don't run those tests
+SKIP_FROM_DESCRIPTOR = bool(os.environ.get('SKIP_FROM_DESCRIPTOR'))
 
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
@@ -59,6 +61,9 @@ class MagicTest(unittest.TestCase):
                          magic.from_file(filename.encode('utf-8'), mime=True))
 
     def test_from_descriptor_str_and_bytes(self):
+        if SKIP_FROM_DESCRIPTOR:
+            self.skipTest("magic_descriptor is broken in this version of libmagic")
+
         filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
         with open(filename) as f:
             self.assertEqual('application/pdf',
@@ -67,6 +72,8 @@ class MagicTest(unittest.TestCase):
                              magic.from_descriptor(f.fileno(), mime=True))
 
     def test_from_buffer_str_and_bytes(self):
+        if SKIP_FROM_DESCRIPTOR:
+            self.skipTest("magic_descriptor is broken in this version of libmagic")
         m = magic.Magic(mime=True)
 
         self.assertTrue(
@@ -77,6 +84,9 @@ class MagicTest(unittest.TestCase):
             in ("text/x-python", "text/x-script.python"))
 
     def test_open_file(self):
+        if SKIP_FROM_DESCRIPTOR:
+            self.skipTest("magic_descriptor is broken in this version of libmagic")
+
         m = magic.Magic(mime=True)
         filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
         with open(filename) as f:

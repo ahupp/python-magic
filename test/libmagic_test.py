@@ -1,9 +1,11 @@
 # coding: utf-8
 
 import unittest
-
+import os
 import magic
 
+# magic_descriptor is broken (?) in centos 7, so don't run those tests
+SKIP_FROM_DESCRIPTOR = bool(os.environ.get('SKIP_FROM_DESCRIPTOR'))
 
 class MagicTestCase(unittest.TestCase):
     filename = 'testdata/test.pdf'
@@ -21,6 +23,11 @@ class MagicTestCase(unittest.TestCase):
         self.assert_result(result)
 
     def test_detect_from_fobj(self):
+
+        if SKIP_FROM_DESCRIPTOR:
+            self.skipTest("magic_descriptor is broken in this version of libmagic")
+
+
         with open(self.filename) as fobj:
             result = magic.detect_from_fobj(fobj)
         self.assert_result(result)

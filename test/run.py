@@ -4,10 +4,11 @@ import sys
 
 this_dir = os.path.dirname(sys.argv[0])
 
-new_env = {
+new_env = dict(os.environ)
+new_env.update({
     'LC_ALL': 'en_US.UTF-8',
     'PYTHONPATH': os.path.join(this_dir, ".."),
-}
+})
 
 
 def has_py(version):
