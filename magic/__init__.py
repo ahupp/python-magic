@@ -111,7 +111,8 @@ class Magic:
     def from_open_file(self, open_file):
         with self.lock:
             try:
-                return maybe_decode(magic_descriptor(self.cookie, open_file.fileno()))
+                fd = open_file.fileno()
+                return maybe_decode(magic_descriptor(self.cookie, fd))
             except MagicException as e:
                 return self._handle509Bug(e)
 
