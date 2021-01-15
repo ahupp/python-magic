@@ -108,14 +108,6 @@ class Magic:
             except MagicException as e:
                 return self._handle509Bug(e)
 
-    def from_open_file(self, open_file):
-        with self.lock:
-            try:
-                fd = open_file.fileno()
-                return maybe_decode(magic_descriptor(self.cookie, fd))
-            except MagicException as e:
-                return self._handle509Bug(e)
-
     def from_file(self, filename):
         # raise FileNotFoundException or IOError if the file does not exist
         with _real_open(filename):

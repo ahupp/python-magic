@@ -83,15 +83,6 @@ class MagicTest(unittest.TestCase):
             m.from_buffer(b'#!/usr/bin/env python\nprint("foo")')
             in ("text/x-python", "text/x-script.python"))
 
-    def test_open_file(self):
-        if SKIP_FROM_DESCRIPTOR:
-            self.skipTest("magic_descriptor is broken in this version of libmagic")
-
-        m = magic.Magic(mime=True)
-        filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
-        with open(filename) as f:
-            self.assertEqual("application/pdf", m.from_open_file(f))
-
     def test_mime_types(self):
         dest = os.path.join(MagicTest.TESTDATA_DIR,
                             b'\xce\xbb'.decode('utf-8'))
