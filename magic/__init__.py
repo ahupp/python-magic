@@ -446,7 +446,7 @@ MAGIC_PARAM_BYTES_MAX = 6  # Max number of bytes to read from file
 # libmagic.  This is a common source of confusion for users.  To
 # resolve, We ship a copy of that module, and expose it's functions
 # wrapped in deprecation warnings.
-def add_compat(to_module):
+def _add_compat(to_module):
     import warnings, re
     from magic import compat
 
@@ -486,4 +486,4 @@ def add_compat(to_module):
                 to_module[name] = value
 
 
-add_compat(globals())
+_add_compat(globals())
