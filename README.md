@@ -57,13 +57,17 @@ that must be installed as well:
 
 ### Debian/Ubuntu
 
-  $ sudo apt-get install libmagic1
+```
+sudo apt-get install libmagic1
+```
 
 ### Windows
 
 You'll need DLLs for libmagic.  @julian-r maintains a pypi package with the DLLs, you can fetch it with:
 
-  $ pip install python-magic-bin
+```
+pip install python-magic-bin
+```
 
 ### OSX
 
@@ -99,15 +103,21 @@ triage it.
 
 To run the tests across 3 recent Ubuntu LTS releases (depends on Docker):
 
-  $ ./test_docker.sh
+```
+./test_docker.sh
+```
 
 To run tests locally across all available python versions:
 
-  $ ./test/run.py
+```
+./test/run.py
+```
 
 To run against a specific python version:
 
-  $ LC_ALL=en_US.UTF-8 python3 test/test.py
+```
+LC_ALL=en_US.UTF-8 python3 test/test.py
+```
 
 ## Versioning
 
