@@ -29,4 +29,6 @@ def run_test(versions):
     if not found:
         sys.exit("No versions found: " + str(versions))
 
+run_test(["python2", "python2.7"])
 run_test(["python3.5", "python3.6", "python3.7", "python3.8", "python3.9"])
+
