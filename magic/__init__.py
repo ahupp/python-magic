@@ -282,8 +282,15 @@ def maybe_decode(s):
 def coerce_filename(filename):
     if filename is None:
         return None
-
-    if isinstance(filename, str):
+    # ctypes will implicitly convert unicode strings to bytes with
+    # .encode('ascii').  If you use the filesystem encoding
+    # then you'll get inconsistent behavior (crashes) depending on the user's
+    # LANG environment variable
+    is_unicode = (sys.version_info[0] <= 2 and
+                 isinstance(filename, unicode)) or \
+                 (sys.version_info[0] >= 3 and
+                  isinstance(filename, str))
+    if is_unicode:
         return filename.encode('utf-8', 'surrogateescape')
     else:
         return filename
