@@ -1,3 +1,25 @@
+Changes in 0.4.19
+
+- merge in a compatability layer for the upstream libmagic python binding.
+  Since both this package and that one are called 'magic', this compat layer
+  removes a very common source of runtime errors.  Use of that libmagic API will
+  produce a deprecation warning.
+
+- support python 3.9 in tests and pypi metadata
+
+- add support for magic_descriptor functions, which take a file descriptor
+  rather than a filename.
+
+- sometimes the returned description includes snippets of the file, e.g a title
+  for MS Word docs.  Since this is in an unknown encoding, we would throw a
+  unicode decode error trying to decode.  Now, it decodes with
+  'backslashreplace' to handle this more gracefully.  The undecodable characters
+  are replaced with hex escapes.
+
+- add support for MAGIC_EXTENSION, to return possible file extensions.
+
+- add mypy typing stubs file, for type checking
+
 Changes in 0.4.18
 
 - Make bindings for magic_[set|get]param optional, and throw NotImplementedError
