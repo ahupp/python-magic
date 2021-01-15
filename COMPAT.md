@@ -11,6 +11,7 @@ The mapping between the libmagic and python-magic functions is:
 
     detect_from_filename => from_file
     detect_from_content => from_buffer
-    detect_from_fobj => from_descriptor(f.fileno())')
+    detect_from_fobj => from_descriptor(f.fileno())
     open => Magic()
+
 
