@@ -450,25 +450,23 @@ def _add_compat(to_module):
     import warnings, re
     from magic import compat
 
-    def deprecation_wrapper(compat, fn, alternate):
+    def deprecation_wrapper(fn):
         def _(*args, **kwargs):
             warnings.warn(
-                "Using compatability mode with libmagic's python binding",
-                DeprecationWarning)
+                "Using compatability mode with libmagic's python binding. "
+                "See https://github.com/ahupp/python-magic/blob/master/COMPAT.md for details.",
+                PendingDeprecationWarning)
 
-            return compat[fn](*args, **kwargs)
+            return fn(*args, **kwargs)
 
         return _
 
-    fn = [('detect_from_filename', 'magic.from_file'),
-          ('detect_from_content', 'magic.from_buffer'),
-          ('detect_from_fobj', 'magic.Magic.from_open_file'),
-          ('open', 'magic.Magic')]
-    for (fname, alternate) in fn:
-        # for now, disable the deprecation warning until theres clarity on
-        # what the merged module should look like
-        to_module[fname] = compat.__dict__.get(fname)
-        # to_module[fname] = deprecation_wrapper(compat.__dict__, fname, alternate)
+    fn = ['detect_from_filename',
+          'detect_from_content',
+          'detect_from_fobj',
+          'open']
+    for fname in fn:
+        to_module[fname] = deprecation_wrapper(compat.__dict__[fname])
 
     # copy constants over, ensuring there's no conflicts
     is_const_re = re.compile("^[A-Z_]+$")

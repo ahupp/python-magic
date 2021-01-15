@@ -15,7 +15,7 @@ functionality is exposed to the command line by the Unix command
 >>> magic.from_file("testdata/test.pdf")
 'PDF document, version 1.2'
 # recommend using at least the first 2048 bytes, as less can produce incorrect identification
->>> magic.from_buffer(open("testdata/test.pdf", "rb").read(2048)) 
+>>> magic.from_buffer(open("testdata/test.pdf", "rb").read(2048))
 'PDF document, version 1.2'
 >>> magic.from_file("testdata/test.pdf", mime=True)
 'application/pdf'
@@ -83,10 +83,10 @@ pip install python-magic-bin
 
 - 'WindowsError: [Error 193] %1 is not a valid Win32 application':
   Attempting to run the 32-bit libmagic DLL in a 64-bit build of
-  python will fail with this error.  Here are 64-bit builds of libmagic for windows: https://github.com/pidydx/libmagicwin64. 
+  python will fail with this error.  Here are 64-bit builds of libmagic for windows: https://github.com/pidydx/libmagicwin64.
   Newer version can be found here: https://github.com/nscaife/file-windows.
 
-- 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing 
+- 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing
   Windows Python and Cygwin Python. Make sure your libmagic and python builds are consistent.
 
 
@@ -101,7 +101,7 @@ triage it.
 
 ## Running the tests
 
-To run the tests across 3 recent Ubuntu LTS releases (depends on Docker):
+To run the tests across a variety of linux distributions (depends on Docker):
 
 ```
 ./test_docker.sh
@@ -118,6 +118,10 @@ To run against a specific python version:
 ```
 LC_ALL=en_US.UTF-8 python3 test/test.py
 ```
+
+## libmagic and python-magic
+
+See [COMPAT.md](COMPAT.md) for a guide to libmagic / python-magic compatability.
 
 ## Versioning
 
