@@ -136,21 +136,6 @@ switched to ctypes once that was part of the python standard library.
 You can contact me via my [website](http://hupp.org/adam) or
 [GitHub](http://github.com/ahupp).
 
-## Contributors
-
-Thanks to these folks on github who submitted features and bug fixes.
-
--   Amit Sethi
--   [bigben87](https://github.com/bigben87)
--   [fallgesetz](https://github.com/fallgesetz)
--   [FlaPer87](https://github.com/FlaPer87)
--   [Hugo van Kemenade](https://github.com/hugovk)
--   [lukenowak](https://github.com/lukenowak)
--   NicolasDelaby
--   sacha@ssl.co.uk
--   SimpleSeb
--   [tehmaze](https://github.com/tehmaze)
-
 ## License
 
 python-magic is distributed under the MIT license.  See the included
