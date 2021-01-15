@@ -18,7 +18,7 @@ setup(
     author='Adam Hupp',
     author_email='adam@hupp.org',
     url="http://github.com/ahupp/python-magic",
-    version='0.4.18',
+    version='0.4.19',
     py_modules=['magic'],
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
