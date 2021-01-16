@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+import setuptools
 import io
 import os
 
@@ -12,16 +12,16 @@ def read(file_name):
                  encoding='utf-8') as f:
         return f.read()
 
-setup(
+setuptools.setup(
     name='python-magic',
     description='File type identification using libmagic',
     author='Adam Hupp',
     author_email='adam@hupp.org',
     url="http://github.com/ahupp/python-magic",
-    version='0.4.19',
-    py_modules=['magic'],
+    version='0.4.20',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
+    packages=setuptools.find_packages(),
     keywords="mime magic file",
     license="MIT",
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',

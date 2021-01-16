@@ -1,4 +1,4 @@
-Changes in 0.4.19
+Changes to 0.4.20
 
 - merge in a compatability layer for the upstream libmagic python binding.
   Since both this package and that one are called 'magic', this compat layer
