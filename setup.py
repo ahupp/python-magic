@@ -21,7 +21,7 @@ setuptools.setup(
     version='0.4.20',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
-    packages=setuptools.find_packages(),
+    packages=['magic'],
     keywords="mime magic file",
     license="MIT",
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
