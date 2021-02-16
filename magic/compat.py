@@ -12,16 +12,10 @@ from ctypes import *
 from ctypes.util import find_library
 
 
-def _init():
-    """
-    Loads the shared library through ctypes and returns a library
-    L{ctypes.CDLL} instance
-    """
-    return ctypes.cdll.LoadLibrary(find_library('magic'))
-
+from . import loader
 
 _libraries = {}
-_libraries['magic'] = _init()
+_libraries['magic'] = loader.load_lib()
 
 # Flag constants for open and setflags
 MAGIC_NONE = NONE = 0
