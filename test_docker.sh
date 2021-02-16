@@ -18,4 +18,4 @@ TestInContainer "focal"
 TestInContainer "centos7"
 TestInContainer "centos8"
 TestInContainer "archlinux"
-
+TestInContainer "alpine"
