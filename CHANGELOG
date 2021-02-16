@@ -1,3 +1,8 @@
+Changes to 0.4.21
+
+ - Unify dll loader between the standard and compat library, fixing load
+ failures on some previously supported platforms.
+
 Changes to 0.4.20
 
 - merge in a compatability layer for the upstream libmagic python binding.
