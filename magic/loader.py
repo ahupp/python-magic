@@ -1,5 +1,6 @@
 import ctypes
 import sys
+import glob
 
 def load_lib():
   libmagic = None

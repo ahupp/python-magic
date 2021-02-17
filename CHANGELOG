@@ -1,4 +1,4 @@
-Changes to 0.4.21
+Changes to 0.4.21, 0.4.22
 
  - Unify dll loader between the standard and compat library, fixing load
  failures on some previously supported platforms.
