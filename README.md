@@ -119,9 +119,9 @@ To run against a specific python version:
 LC_ALL=en_US.UTF-8 python3 test/test.py
 ```
 
-## libmagic and python-magic
+## libmagic python API compatability
 
-See [COMPAT.md](COMPAT.md) for a guide to libmagic / python-magic compatability.
+The python bindings shipped with libmagic use a module name that conflicts with this package.  To work around this, python-magic includes a compatability layer for the libmagic API.  See [COMPAT.md](COMPAT.md) for a guide to libmagic / python-magic compatability.
 
 ## Versioning
 
