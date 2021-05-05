@@ -1,6 +1,7 @@
 import ctypes
-import sys
 import glob
+import os
+import sys
 
 def load_lib():
   libmagic = None
@@ -23,7 +24,10 @@ def load_lib():
                                   glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),  # flake8:noqa
                         'win32': windows_dlls,
                         'cygwin': windows_dlls,
-                        'linux': ['libmagic.so.1'],
+                        'linux': [
+                          'libmagic.so.1',
+                          os.path.expanduser('~/.nix-profile/lib/libmagic.so')
+                        ],
                         # fallback for some Linuxes (e.g. Alpine) where library search does not work # flake8:noqa
                         }
       platform = 'linux' if sys.platform.startswith('linux') else sys.platform
