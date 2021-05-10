@@ -5,7 +5,7 @@ Changes to 0.4.21, 0.4.22
 
 Changes to 0.4.20
 
-- merge in a compatability layer for the upstream libmagic python binding.
+- merge in a compatibility layer for the upstream libmagic python binding.
   Since both this package and that one are called 'magic', this compat layer
   removes a very common source of runtime errors.  Use of that libmagic API will
   produce a deprecation warning.

@@ -420,7 +420,7 @@ def _add_compat(to_module):
     def deprecation_wrapper(fn):
         def _(*args, **kwargs):
             warnings.warn(
-                "Using compatability mode with libmagic's python binding. "
+                "Using compatibility mode with libmagic's python binding. "
                 "See https://github.com/ahupp/python-magic/blob/master/COMPAT.md for details.",
                 PendingDeprecationWarning)
 
