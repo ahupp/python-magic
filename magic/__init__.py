@@ -150,7 +150,7 @@ class Magic:
         # incorrect fix for a threading problem, however I'm leaving
         # it in because it's harmless and I'm slightly afraid to
         # remove it.
-        if self.cookie and magic_close:
+        if hasattr(self, 'cookie') and self.cookie and magic_close:
             magic_close(self.cookie)
             self.cookie = None
 
