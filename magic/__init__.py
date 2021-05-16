@@ -53,8 +53,6 @@ class Magic:
         raw - Do not try to decode "non-printable" chars.
         extension - Print a slash-separated list of valid extensions for the file type found.
         """
-
-        self.cookie = None
         self.flags = MAGIC_NONE
         if mime:
             self.flags |= MAGIC_MIME_TYPE
