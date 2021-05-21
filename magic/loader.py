@@ -18,7 +18,8 @@ def load_lib():
   if not libmagic or not libmagic._name:
       windows_dlls = ['magic1.dll', 'cygmagic-1.dll', 'libmagic-1.dll', 'msys-magic-1.dll']
       platform_to_lib = {'darwin': ['/opt/local/lib/libmagic.dylib',
-                                    '/usr/local/lib/libmagic.dylib'] +
+                                    '/usr/local/lib/libmagic.dylib',
+                                    '/opt/homebrew/lib/libmagic.dylib'] +
                                   # Assumes there will only be one version installed
                                   glob.glob('/usr/local/Cellar/libmagic/*/lib/libmagic.dylib'),  # flake8:noqa
                         'win32': windows_dlls,
