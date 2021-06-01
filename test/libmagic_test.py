@@ -11,12 +11,12 @@ class MagicTestCase(unittest.TestCase):
     filename = 'testdata/test.pdf'
     expected_mime_type = 'application/pdf'
     expected_encoding = 'us-ascii'
-    expected_name = 'PDF document, version 1.2'
+    expected_name = ('PDF document, version 1.2', 'PDF document, version 1.2, 2 pages')
 
     def assert_result(self, result):
         self.assertEqual(result.mime_type, self.expected_mime_type)
         self.assertEqual(result.encoding, self.expected_encoding)
-        self.assertEqual(result.name, self.expected_name)
+        self.assertIn(result.name, self.expected_name)
 
     def test_detect_from_filename(self):
         result = magic.detect_from_filename(self.filename)

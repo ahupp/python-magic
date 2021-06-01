@@ -1,4 +1,4 @@
-FROM archlinux:20200505
+FROM archlinux:latest
 RUN yes | pacman -Syyu --overwrite '*'
 RUN yes | pacman -S python python2 file which
 COPY . /python-magic
