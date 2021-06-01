@@ -1,3 +1,10 @@
+Changes to 0.4.23
+
+ - Include a `py.typed` sentinal to enable type checking
+ - Improve fix for attribute error during destruction
+ - Cleanup library loading logic
+ - Add new homebrew library dir for OSX
+
 Changes to 0.4.21, 0.4.22
 
  - Unify dll loader between the standard and compat library, fixing load
