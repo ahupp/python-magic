@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM python:3.8-alpine3.12
 RUN apk add python3 python2 libmagic
 COPY . /python-magic
 CMD cd /python-magic/test && python3 ./run.py

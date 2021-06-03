@@ -5,17 +5,8 @@
 
 set -e
 
-function TestInContainer {
-    local name="$1"
-    local TAG="python_magic/${name}:latest"
-    docker build -t $TAG -f "test/Dockerfile_${name}" .
-    docker run "python_magic/${name}:latest"
-}
+NAME=`basename $1`
+TAG="python_magic/${NAME}:latest"
+docker build -t $TAG -f $1 .
+docker run $TAG
 
-TestInContainer "xenial"
-TestInContainer "bionic"
-TestInContainer "focal"
-TestInContainer "centos7"
-TestInContainer "centos8"
-TestInContainer "archlinux"
-TestInContainer "alpine"

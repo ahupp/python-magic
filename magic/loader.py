@@ -29,6 +29,11 @@ def _lib_candidates():
       yield './%s.dll' % (i,)
       yield find_library(i)
 
+  elif sys.platform == 'linux':
+    # This is necessary because alpine is bad
+    yield 'libmagic.so.1'
+
+
 def load_lib():
 
   for lib in _lib_candidates():
