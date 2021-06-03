@@ -1,3 +1,6 @@
+Changes to 0.4.24:
+ - Fix regression in library loading on some Alpine docker images.
+
 Changes to 0.4.23
 
  - Include a `py.typed` sentinal to enable type checking
