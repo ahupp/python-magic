@@ -22,11 +22,12 @@ def _lib_candidates():
   elif sys.platform in ('win32', 'cygwin'):
 
     prefixes = ['libmagic', 'magic1', 'cygmagic-1', 'libmagic-1', 'msys-magic-1']
-
+    loader_path = os.path.dirname(__file__)
     for i in prefixes:
       # find_library searches in %PATH% but not the current directory,
       # so look for both
-      yield './%s.dll' % (i,)
+      yield '.\%s.dll' % (i,)
+      yield '%s\libmagic\%s.dll' % (loader_path, i)
       yield find_library(i)
 
   elif sys.platform == 'linux':
