@@ -245,7 +245,12 @@ none_magic.load()
 
 
 def _create_filemagic(mime_detected, type_detected):
-    mime_type, mime_encoding = mime_detected.split('; ')
+    splat = mime_detected.split('; ')
+    mime_type = splat[0]
+    if len(splat) == 2:
+        mime_encoding = splat[1]
+    else:
+        mime_encoding = ''
 
     return FileMagic(name=type_detected, mime_type=mime_type,
                      encoding=mime_encoding.replace('charset=', ''))

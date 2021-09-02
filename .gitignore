@@ -10,3 +10,4 @@ pip-selfcheck.json
 pyvenv.cfg
 *.pyc
 *~
+dist/
