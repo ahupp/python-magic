@@ -23,6 +23,8 @@ import ctypes.util
 import threading
 import logging
 
+from os import PathLike
+
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
 
 # avoid shadowing the real open with the version from compat.py
@@ -107,6 +109,10 @@ class Magic:
                 return self._handle509Bug(e)
 
     def from_file(self, filename):
+
+        if isinstance(filename, PathLike):
+            filename = str(filename)
+
         # raise FileNotFoundException or IOError if the file does not exist
         with _real_open(filename):
             pass
@@ -174,6 +180,8 @@ def from_file(filename, mime=False):
     >>> magic.from_file("testdata/test.pdf", mime=True)
     'application/pdf'
     """
+    if isinstance(filename, PathLike):
+        filename = str(filename)
     m = _get_magic_type(mime)
     return m.from_file(filename)
 
