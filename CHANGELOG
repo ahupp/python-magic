@@ -1,3 +1,6 @@
+Changes to 0.4.25:
+  - Support os.PathLike values in Magic.from_file and magic.from_file
+
 Changes to 0.4.24:
  - Fix regression in library loading on some Alpine docker images.
 

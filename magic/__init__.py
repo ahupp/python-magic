@@ -100,6 +100,7 @@ class Magic:
                 # if we're on python3, convert buf to bytes
                 # otherwise this string is passed as wchar*
                 # which is not what libmagic expects
+                # NEXTBREAK: only take bytes
                 if type(buf) == str and str != bytes:
                     buf = buf.encode('utf-8', errors='replace')
                 return maybe_decode(magic_buffer(self.cookie, buf))
@@ -229,6 +230,7 @@ def errorcheck_negative_one(result, func, args):
 # return str on python3.  Don't want to unconditionally
 # decode because that results in unicode on python2
 def maybe_decode(s):
+    # NEXTBREAK: remove
     if str == bytes:
         return s
     else:
@@ -237,13 +239,28 @@ def maybe_decode(s):
         return s.decode('utf-8', 'backslashreplace')
 
 
+try:
+    from os import PathLike
+    def unpath(filename):
+        if isinstance(filename, PathLike):
+            return filename.__fspath__()
+        else:
+            return filename
+except ImportError:
+    def unpath(filename):
+        return filename
+
 def coerce_filename(filename):
     if filename is None:
         return None
+
+    filename = unpath(filename)
+
     # ctypes will implicitly convert unicode strings to bytes with
     # .encode('ascii').  If you use the filesystem encoding
     # then you'll get inconsistent behavior (crashes) depending on the user's
     # LANG environment variable
+    # NEXTBREAK: remove
     is_unicode = (sys.version_info[0] <= 2 and
                  isinstance(filename, unicode)) or \
                  (sys.version_info[0] >= 3 and

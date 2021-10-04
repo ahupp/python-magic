@@ -219,6 +219,14 @@ class MagicTest(unittest.TestCase):
         with open(os.path.join(self.TESTDATA_DIR, 'name_use.jpg'), 'rb') as f:
             m.from_buffer(f.read())
 
+    def test_pathlike(self):
+        if sys.version_info < (3, 6):
+            return
+        from pathlib import Path
+        path  = Path(self.TESTDATA_DIR, "test.pdf")
+        m = magic.Magic(mime=True)
+        self.assertEqual('application/pdf', m.from_file(path))
+
 
 if __name__ == '__main__':
     unittest.main()

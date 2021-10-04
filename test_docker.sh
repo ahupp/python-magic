@@ -5,8 +5,14 @@
 
 set -e
 
-NAME=`basename $1`
-TAG="python_magic/${NAME}:latest"
-docker build -t $TAG -f $1 .
-docker run $TAG
+DEFAULT_TARGETS="xenial bionic focal centos7 centos8 archlinux alpine"
 
+TARGETS=${1:-${DEFAULT_TARGETS}}
+
+HERE=`dirname $0`
+
+for i in $TARGETS; do
+    TAG="python_magic/${i}:latest"
+    docker build -t $TAG -f ${HERE}/test/docker/$i .
+    docker run $TAG
+done
