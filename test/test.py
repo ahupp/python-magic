@@ -90,7 +90,7 @@ class MagicTest(unittest.TestCase):
         try:
             m = magic.Magic(mime=True)
             self.assert_values(m, {
-                'magic._pyc_': ('application/octet-stream', 'text/x-bytecode.python'),
+                'magic._pyc_': ('application/octet-stream', 'text/x-bytecode.python', 'application/x-bytecode.python'),
                 'test.pdf': 'application/pdf',
                 'test.gz': ('application/gzip', 'application/x-gzip'),
                 'test.snappy.parquet': 'application/octet-stream',
