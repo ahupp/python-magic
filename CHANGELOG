@@ -1,5 +1,8 @@
 Changes to 0.4.25:
   - Support os.PathLike values in Magic.from_file and magic.from_file
+  - Handle some versions of libmagic that return mime string without charset
+  - Fix tests for file 5.41
+  - Include typing stub in package
 
 Changes to 0.4.24:
  - Fix regression in library loading on some Alpine docker images.
