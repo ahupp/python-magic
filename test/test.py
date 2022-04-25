@@ -19,7 +19,7 @@ import sys
 SKIP_FROM_DESCRIPTOR = bool(os.environ.get('SKIP_FROM_DESCRIPTOR'))
 
 class MagicTest(unittest.TestCase):
-    TESTDATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'testdata')
+    TESTDATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'testdata'))
 
     def test_version(self):
         try:
