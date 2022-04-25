@@ -3,12 +3,16 @@
 import unittest
 import os
 import magic
+import os.path
 
 # magic_descriptor is broken (?) in centos 7, so don't run those tests
 SKIP_FROM_DESCRIPTOR = bool(os.environ.get('SKIP_FROM_DESCRIPTOR'))
 
+TESTDATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'testdata'))
+
+
 class MagicTestCase(unittest.TestCase):
-    filename = 'testdata/test.pdf'
+    filename = os.path.join(TESTDATA_DIR, 'test.pdf')
     expected_mime_type = 'application/pdf'
     expected_encoding = 'us-ascii'
     expected_name = ('PDF document, version 1.2', 'PDF document, version 1.2, 2 pages')
