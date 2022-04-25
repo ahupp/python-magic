@@ -1,4 +1,7 @@
 FROM python:3.8-alpine3.12
 RUN apk add python3 python2 libmagic
-COPY . /python-magic
-CMD cd /python-magic/test && python3 ./run.py
+WORKDIR /python-magic
+COPY . .
+RUN python3 -m pip install tox
+CMD python3 -m tox
+

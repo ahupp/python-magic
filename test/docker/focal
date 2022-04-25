@@ -1,8 +1,9 @@
 FROM ubuntu:focal
+WORKDIR /python-magic
+COPY . .
 RUN apt-get update
-RUN apt-get -y install python2
-RUN apt-get -y install python3
-RUN apt-get -y install locales
+RUN apt-get -y install python python3 locales python3-pip libmagic1
 RUN locale-gen en_US.UTF-8
-COPY . /python-magic
-CMD cd /python-magic/test && python3 ./run.py
+RUN python3 -m pip install tox
+CMD python3 -m tox
+

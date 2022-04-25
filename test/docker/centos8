@@ -4,6 +4,8 @@ RUN yum -y install file-libs python3 python2 which glibc-locale-source
 RUN yum reinstall glibc-common -y && \
   localedef -i en_US -f UTF-8 en_US.UTF-8 && \
   echo "LANG=en_US.UTF-8" > /etc/locale.conf
-ENV LANG en_US.UTF-8
-COPY . /python-magic
-CMD cd /python-magic/test && python3 ./run.py
+WORKDIR /python-magic
+COPY . .
+RUN python3 -m pip install tox
+CMD python3 -m tox
+
