@@ -1,10 +1,6 @@
-To run the tests across a selection of Ubuntu LTS versions:
+There are a few ways to run the python-magic tests
 
-docker build -t "python_magic/xenial:latest" -f test/Dockerfile_xenial .
-docker build -t "python_magic/bionic:latest" -f test/Dockerfile_bionic .
-docker build -t "python_magic/focal:latest" -f test/Dockerfile_focal .
-
-docker run python_magic/xenial:latest
-docker run python_magic/bionic:latest
-docker run python_magic/focal:latest
+ 1. `pytest` will run the test suite against your default version of python
+ 2. `./test/run_all_versions.py` will run the tests against all installed versions of python.
+ 3. `./test/run_all_docker_test.sh` will run against a variety of different Linux distributions, using docker.
 
