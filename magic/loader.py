@@ -14,6 +14,7 @@ def _lib_candidates():
       '/opt/local/lib',
       '/usr/local/lib',
       '/opt/homebrew/lib',
+      os.path.expanduser('~') + '/.brew/lib'
     ] + glob.glob('/usr/local/Cellar/libmagic/*/lib')
 
     for i in paths:
