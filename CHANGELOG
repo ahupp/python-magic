@@ -1,3 +1,7 @@
+Changes to 0.4.26:
+  - Use tox for all multi-version testing
+  - Fix use of pytest, use it via tox
+
 Changes to 0.4.25:
   - Support os.PathLike values in Magic.from_file and magic.from_file
   - Handle some versions of libmagic that return mime string without charset
