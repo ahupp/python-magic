@@ -8,6 +8,7 @@ their headers according to a predefined list of file types. This
 functionality is exposed to the command line by the Unix command
 `file`.
 
+`libmagic`是一个C语言库，它读取文件头部并跟预设的清单做对比，进而识别出文件类型，而`python-magic`是`libmagic`在Python的接口。这个库是为了在Unix命令行使用。
 ## Usage
 
 ```python
