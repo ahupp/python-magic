@@ -21,7 +21,7 @@ def _lib_candidates():
 
   elif sys.platform in ('win32', 'cygwin'):
 
-    prefixes = ['libmagic', 'magic1', 'cygmagic-1', 'libmagic-1', 'msys-magic-1']
+    prefixes = ['libmagic', 'magic1', 'magic-1', 'cygmagic-1', 'libmagic-1', 'msys-magic-1']
 
     for i in prefixes:
       # find_library searches in %PATH% but not the current directory,
