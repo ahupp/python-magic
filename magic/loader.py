@@ -1,5 +1,6 @@
 from ctypes.util import find_library
 import ctypes
+import logging
 import sys
 import glob
 import os.path
@@ -40,10 +41,12 @@ def load_lib():
     # find_library returns None when lib not found
     if lib is None:
       continue
-    try:
-      return ctypes.CDLL(lib)
-    except OSError:
-      pass
+    if os.path.exists(lib):
+      try:
+        return ctypes.CDLL(lib)
+      except OSError as err:
+        logging.warning(err)
+        pass
   else:
     # It is better to raise an ImportError since we are importing magic module
     raise ImportError('failed to find libmagic.  Check your installation')
