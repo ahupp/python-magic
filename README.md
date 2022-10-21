@@ -116,7 +116,7 @@ To run tests locally across all available python versions:
 To run against a specific python version:
 
 ```
-LC_ALL=en_US.UTF-8 python3 test/test.py
+LC_ALL=en_US.UTF-8 python3 test/python_magic_test.py
 ```
 
 ## libmagic python API compatibility
