@@ -101,22 +101,23 @@ triage it.
 
 ## Running the tests
 
-To run the tests across a variety of linux distributions (depends on Docker):
-
-```
-./test_docker.sh
-```
+We use the `tox` test runner which can be installed with `python -m pip install tox`.
 
 To run tests locally across all available python versions:
 
 ```
-./test/run.py
+python -m tox
 ```
 
-To run against a specific python version:
+Or to run just against a single version:
 
 ```
-LC_ALL=en_US.UTF-8 python3 test/python_magic_test.py
+python -m tox py
+```
+To run the tests across a variety of linux distributions (depends on Docker):
+
+```
+./test/run_all_docker_test.sh
 ```
 
 ## libmagic python API compatibility
