@@ -3,6 +3,7 @@ import ctypes
 import sys
 import glob
 import os.path
+import subprocess
 
 def _lib_candidates():
 
@@ -13,8 +14,16 @@ def _lib_candidates():
     paths = [
       '/opt/local/lib',
       '/usr/local/lib',
-      '/opt/homebrew/lib',
-    ] + glob.glob('/usr/local/Cellar/libmagic/*/lib')
+      '/opt/homebrew/lib'
+    ]
+
+    try:
+      local_brew_path = subprocess.check_output(['brew', '--prefix']).decode('UTF-8')
+      paths.append(f'{local_brew_path.strip()}/lib')
+    except:
+      pass
+
+    paths += glob.glob('/usr/local/Cellar/libmagic/*/lib')
 
     for i in paths:
       yield os.path.join(i, 'libmagic.dylib')
