@@ -1,9 +1,8 @@
 FROM centos:7
 RUN yum -y update
 RUN yum -y install file-devel python3 python2 which
+ENV SKIP_FROM_DESCRIPTOR=1
+
 WORKDIR /python-magic
 COPY . .
 RUN python3 -m pip install tox
-ENV SKIP_FROM_DESCRIPTOR=1 
-CMD python3 -m tox
-

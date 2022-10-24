@@ -3,5 +3,3 @@ RUN apk add python3 python2 libmagic
 WORKDIR /python-magic
 COPY . .
 RUN python3 -m pip install tox
-CMD python3 -m tox
-

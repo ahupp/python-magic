@@ -6,8 +6,8 @@ set -x
 ROOT=$(dirname $0)/..
 cd $ROOT
 
-for f in test/docker/*; do 
+for f in test/docker/*; do
     H=$(docker build -q -f ${f} .)
-    docker run --rm $H
+    docker run --rm $H python3 -m tox
 done
 

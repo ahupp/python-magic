@@ -1,5 +1,6 @@
 FROM archlinux:latest
 RUN yes | pacman -Syyu --overwrite '*'
-RUN yes | pacman -S python python2 file which
-COPY . /python-magic
-CMD cd /python-magic/test && python3 ./run.py
+RUN yes | pacman -S python python-pip file which
+WORKDIR /python-magic
+COPY . .
+RUN python3 -m pip install tox
