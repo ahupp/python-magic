@@ -134,7 +134,7 @@ class MagicTest(unittest.TestCase):
             self.assert_values(m, {
                 # some versions return '' for the extensions of a gz file,
                 # including w/ the command line.  Who knows...
-                'test.gz': ('gz/tgz/tpz/zabw/svgz', '', '???'),
+                'test.gz': ('gz/tgz/tpz/zabw/svgz/adz/kmy/xcfgz', 'gz/tgz/tpz/zabw/svgz', '', '???'),
                 'name_use.jpg': 'jpeg/jpg/jpe/jfif',
             })
         except NotImplementedError:
@@ -226,7 +226,6 @@ class MagicTest(unittest.TestCase):
         path  = Path(self.TESTDATA_DIR, "test.pdf")
         m = magic.Magic(mime=True)
         self.assertEqual('application/pdf', m.from_file(path))
-
 
 if __name__ == '__main__':
     unittest.main()
