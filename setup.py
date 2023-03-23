@@ -18,7 +18,7 @@ setuptools.setup(
     author='Adam Hupp',
     author_email='adam@hupp.org',
     url="http://github.com/ahupp/python-magic",
-    version='0.4.27',
+    version='0.4.28',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
     packages=['magic'],
