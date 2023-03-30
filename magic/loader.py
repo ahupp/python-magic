@@ -19,8 +19,7 @@ def _lib_candidates():
 
     try:
       local_brew_path = subprocess.check_output(['brew', '--prefix']).decode('UTF-8')
-      local_brew_path = local_brew_path.strip()
-      paths.append(local_brew_path + '/lib')
+      paths.append(f'{local_brew_path.strip()}/lib')
     except:
       pass
 
