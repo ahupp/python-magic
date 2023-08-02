@@ -15,7 +15,7 @@ class MagicTestCase(unittest.TestCase):
     filename = os.path.join(TESTDATA_DIR, 'test.pdf')
     expected_mime_type = 'application/pdf'
     expected_encoding = 'us-ascii'
-    expected_name = ('PDF document, version 1.2', 'PDF document, version 1.2, 2 pages')
+    expected_name = ('PDF document, version 1.2', 'PDF document, version 1.2, 2 pages', 'PDF document, version 1.2, 2 page(s)')
 
     def assert_result(self, result):
         self.assertEqual(result.mime_type, self.expected_mime_type)

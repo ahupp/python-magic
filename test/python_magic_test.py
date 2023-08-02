@@ -108,7 +108,8 @@ class MagicTest(unittest.TestCase):
             self.assert_values(m, {
                 'magic._pyc_': 'python 2.4 byte-compiled',
                 'test.pdf': ('PDF document, version 1.2',
-                             'PDF document, version 1.2, 2 pages'),
+                             'PDF document, version 1.2, 2 pages',
+                             'PDF document, version 1.2, 2 page(s)'),
                 'test.gz':
                     ('gzip compressed data, was "test", from Unix, last '
                      'modified: Sun Jun 29 01:32:52 2008',
