@@ -17,6 +17,7 @@ Usage:
 """
 
 import sys
+import os
 import glob
 import ctypes
 import ctypes.util
@@ -24,9 +25,6 @@ import threading
 import logging
 
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
-
-# avoid shadowing the real open with the version from compat.py
-_real_open = open
 
 
 class MagicException(Exception):
@@ -109,8 +107,7 @@ class Magic:
 
     def from_file(self, filename):
         # raise FileNotFoundException or IOError if the file does not exist
-        with _real_open(filename):
-            pass
+        os.stat(filename, follow_symlinks=self.flags & MAGIC_SYMLINK)
 
         with self.lock:
             try:
