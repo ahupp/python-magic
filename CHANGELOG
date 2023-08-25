@@ -1,41 +1,51 @@
+Changes to 0.4.29:
+
+- support MAGIC_SYMLINK (via follow_symlink flag on Magic constructor)
+- correctly throw FileNotFoundException depending on flag
+
 Changes to 0.4.28:
-  - support "magic-1.dll" on Windows, which is produced by vcpkg
-  - add python 3.10 to tox config
-  - update test for upstream gzip extensions
+
+- support "magic-1.dll" on Windows, which is produced by vcpkg
+- add python 3.10 to tox config
+- update test for upstream gzip extensions
 
 Changes to 0.4.27:
-  - remove spurious pyproject.toml that breaks source builds
+
+- remove spurious pyproject.toml that breaks source builds
 
 Changes to 0.4.26:
-  - Use tox for all multi-version testing
-  - Fix use of pytest, use it via tox
+
+- Use tox for all multi-version testing
+- Fix use of pytest, use it via tox
 
 Changes to 0.4.25:
-  - Support os.PathLike values in Magic.from_file and magic.from_file
-  - Handle some versions of libmagic that return mime string without charset
-  - Fix tests for file 5.41
-  - Include typing stub in package
+
+- Support os.PathLike values in Magic.from_file and magic.from_file
+- Handle some versions of libmagic that return mime string without charset
+- Fix tests for file 5.41
+- Include typing stub in package
 
 Changes to 0.4.24:
- - Fix regression in library loading on some Alpine docker images.
+
+- Fix regression in library loading on some Alpine docker images.
 
 Changes to 0.4.23
 
- - Include a `py.typed` sentinal to enable type checking
- - Improve fix for attribute error during destruction
- - Cleanup library loading logic
- - Add new homebrew library dir for OSX
+- Include a `py.typed` sentinal to enable type checking
+- Improve fix for attribute error during destruction
+- Cleanup library loading logic
+- Add new homebrew library dir for OSX
 
 Changes to 0.4.21, 0.4.22
 
- - Unify dll loader between the standard and compat library, fixing load
- failures on some previously supported platforms.
+- Unify dll loader between the standard and compat library, fixing load
+  failures on some previously supported platforms.
 
 Changes to 0.4.20
 
 - merge in a compatibility layer for the upstream libmagic python binding.
   Since both this package and that one are called 'magic', this compat layer
-  removes a very common source of runtime errors.  Use of that libmagic API will
+  removes a very common source of runtime errors. Use of that libmagic API will
   produce a deprecation warning.
 
 - support python 3.9 in tests and pypi metadata
@@ -44,9 +54,9 @@ Changes to 0.4.20
   rather than a filename.
 
 - sometimes the returned description includes snippets of the file, e.g a title
-  for MS Word docs.  Since this is in an unknown encoding, we would throw a
-  unicode decode error trying to decode.  Now, it decodes with
-  'backslashreplace' to handle this more gracefully.  The undecodable characters
+  for MS Word docs. Since this is in an unknown encoding, we would throw a
+  unicode decode error trying to decode. Now, it decodes with
+  'backslashreplace' to handle this more gracefully. The undecodable characters
   are replaced with hex escapes.
 
 - add support for MAGIC_EXTENSION, to return possible file extensions.
@@ -55,18 +65,18 @@ Changes to 0.4.20
 
 Changes in 0.4.18
 
-- Make bindings for magic_[set|get]param optional, and throw NotImplementedError
-if they are used but not supported.  Only call setparam() in the constructor if
-it's supported. This prevents breakage on CentOS7 which uses an old version of
-libmagic.
+- Make bindings for magic\_[set|get]param optional, and throw NotImplementedError
+  if they are used but not supported. Only call setparam() in the constructor if
+  it's supported. This prevents breakage on CentOS7 which uses an old version of
+  libmagic.
 
 - Add tests for CentOS 7 & 8
 
 Changes in 0.4.16 and 0.4.17
 
 - add MAGIC_MIME_TYPE constant, use that in preference to MAGIC_MIME internally.
-This sets up for a breaking change in a future major version bump where
-MAGIC_MIME will change to mathch magic.h.
+  This sets up for a breaking change in a future major version bump where
+  MAGIC_MIME will change to mathch magic.h.
 - add magic.version() function to return library version
 - add setparam/getparam to control internal behavior
 - increase internal limits with setparam to prevent spurious error on some jpeg files
@@ -76,12 +86,12 @@ MAGIC_MIME will change to mathch magic.h.
 - include tests in source distribution
 
 - many test improvements:
--- tox runner support
--- remove deprecated test_suite field from setup.py
--- docker tests that cover all LTS ubuntu versions
--- add test for snapp file identification
+  -- tox runner support
+  -- remove deprecated test_suite field from setup.py
+  -- docker tests that cover all LTS ubuntu versions
+  -- add test for snapp file identification
 
 - doc improvements
--- document dependency install process for debian
--- various typos
--- document test running process
+  -- document dependency install process for debian
+  -- various typos
+  -- document test running process

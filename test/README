@@ -1,6 +1,4 @@
 There are a few ways to run the python-magic tests
 
- 1. `pytest` will run the test suite against your default version of python
- 2. `./test/run_all_versions.py` will run the tests against all installed versions of python.
- 3. `./test/run_all_docker_test.sh` will run against a variety of different Linux distributions, using docker.
-
+1.  `tox` will run the tests against all installed versions of python
+2.  `./test/run_all_docker_test.sh` will run against a variety of different Linux distributions, using docker.

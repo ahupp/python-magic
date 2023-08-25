@@ -39,7 +39,8 @@ class Magic:
     """
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False,
-                 keep_going=False, uncompress=False, raw=False, extension=False):
+                 keep_going=False, uncompress=False, raw=False, extension=False,
+                 follow_symlinks=False):
         """
         Create a new libmagic wrapper.
 
@@ -64,6 +65,9 @@ class Magic:
             self.flags |= MAGIC_RAW
         if extension:
             self.flags |= MAGIC_EXTENSION
+
+        if follow_symlinks:
+            self.flags |= MAGIC_SYMLINK
 
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
