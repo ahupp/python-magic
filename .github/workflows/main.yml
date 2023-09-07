@@ -1,0 +1,134 @@
+name: GH
+
+permissions:
+  contents: write
+
+on:
+  pull_request:
+  push:
+    branches: master
+  release:
+    types: [released, prereleased]
+  workflow_dispatch:  # allows running workflow manually from the Actions tab
+
+jobs:
+
+  build-sdist:
+    runs-on: ubuntu-latest
+
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: 1
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - run: sudo apt-get install -y libmagic1
+
+    - name: Build source distribution
+      run: |
+        pip install -U setuptools wheel pip
+        python setup.py sdist
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist/*.tar.*
+
+
+  build-wheels-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.set-matrix.outputs.include }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - run: pip install cibuildwheel==2.15.0
+      - id: set-matrix
+        env:
+          CIBW_PROJECT_REQUIRES_PYTHON: '==3.8.*'
+        run: |
+          MATRIX_INCLUDE=$(
+            {
+              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64,i686 | grep cp | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64,arm64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-11"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 | grep cp |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
+            } | jq -sc
+          )
+          echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
+
+
+  build-wheels:
+    needs: build-wheels-matrix
+    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.only }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.build-wheels-matrix.outputs.include) }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up QEMU
+      if: runner.os == 'Linux'
+      uses: docker/setup-qemu-action@v2
+
+    - uses: pypa/cibuildwheel@v2.15.0
+      timeout-minutes: 10
+      with:
+        only: ${{ matrix.only }}
+      env:
+        CIBW_BUILD_VERBOSITY: 1
+        CIBW_BEFORE_BUILD: 'bash -c "make install_libmagic"'
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: wheelhouse/*.whl
+
+
+  publish:
+    needs: [build-sdist, build-wheels]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.x
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+    - run: ls -ltra dist/
+
+    - run: pip install -U twine python-magic --find-links ./dist
+
+    - name: Smoketest
+      run: python -c "import magic; magic.Magic()"
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        files: dist/*
+
+    - name: Upload to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        twine upload dist/*
