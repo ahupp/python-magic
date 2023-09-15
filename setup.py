@@ -17,7 +17,7 @@ def read(file_name):
         return f.read()
 
 def get_cmdclass():
-    """Build a forward compatible ABI3 wheel when `setup.py bdist_wheel` is called."""
+    """Build a platform-specific wheel when `setup.py bdist_wheel` is called."""
     if sys.version_info[0] == 2:
         return {}
 
@@ -26,7 +26,7 @@ def get_cmdclass():
     except ImportError:
         return {}
 
-    class bdist_wheel_abi3(bdist_wheel):
+    class bdist_wheel_platform_specific(bdist_wheel):
         def get_tag(self):
             python, abi, _ = super().get_tag()
             # get the platform tag based on libmagic included in this wheel
@@ -34,7 +34,7 @@ def get_cmdclass():
             _, _, plat = super().get_tag()
             return python, abi, plat
 
-    return {"bdist_wheel": bdist_wheel_abi3}
+    return {"bdist_wheel": bdist_wheel_platform_specific}
 
 cmdclass = get_cmdclass()
 

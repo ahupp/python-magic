@@ -1,8 +1,5 @@
 name: GH
 
-permissions:
-  contents: write
-
 on:
   pull_request:
   push:
@@ -67,9 +64,9 @@ jobs:
 
 
   build-wheels:
+    name: Build ${{ matrix.only }}
     needs: build-wheels-matrix
     runs-on: ${{ matrix.os }}
-    name: Build ${{ matrix.only }}
 
     strategy:
       fail-fast: false
@@ -100,9 +97,12 @@ jobs:
 
 
   publish:
-    needs: [build-sdist, build-wheels]
     if: github.event_name == 'release'
+    needs: [build-sdist, build-wheels]
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
     - uses: actions/setup-python@v4
