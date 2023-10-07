@@ -1,0 +1,7 @@
+[
+  {
+    "one": 2,
+    "three": null,
+    "four": [5, "six", false]
+  }
+]
