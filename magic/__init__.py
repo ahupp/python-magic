@@ -182,15 +182,22 @@ class Magic:
 
 
 _instances = {}
+_magic_file_default = None
 
 
 def _get_magic_type(kwargs):
+    _ = kwargs.setdefault("magic_file", _magic_file_default)
     # Dicts are not hashable but sorting and creating a tuple is a valid hash
     key = hash(tuple(sorted(kwargs.items())))
     i = _instances.get(key)
     if i is None:
         i = _instances[key] = Magic(**kwargs)
     return i
+
+
+def set_magic_file(magic_file: str):
+    global _magic_file_default
+    _magic_file_default = magic_file
 
 
 def from_file(filename, **kwargs):
