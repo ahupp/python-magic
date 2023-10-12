@@ -184,50 +184,49 @@ class Magic:
 _instances = {}
 
 
-def _get_magic_type(mime):
-    i = _instances.get(mime)
+def _get_magic_type(kwargs):
+    # Dicts are not hashable but sorting and creating a tuple is a valid hash
+    key = hash(tuple(sorted(kwargs.items())))
+    i = _instances.get(key)
     if i is None:
-        i = _instances[mime] = Magic(mime=mime)
+        i = _instances[key] = Magic(**kwargs)
     return i
 
 
-def from_file(filename, mime=False):
+def from_file(filename, **kwargs):
     """"
-    Accepts a filename and returns the detected filetype.  Return
-    value is the mimetype if mime=True, otherwise a human readable
-    name.
+    Accepts a filename and returns the detected filetype.
+    Accepts all arguments to Magic as keyword arguments.
 
     >>> magic.from_file("testdata/test.pdf", mime=True)
     'application/pdf'
     """
-    m = _get_magic_type(mime)
+    m = _get_magic_type(kwargs)
     return m.from_file(filename)
 
 
-def from_buffer(buffer, mime=False):
+def from_buffer(buffer, **kwargs):
     """
-    Accepts a binary string and returns the detected filetype.  Return
-    value is the mimetype if mime=True, otherwise a human readable
-    name.
+    Accepts a binary string and returns the detected filetype.
+    Accepts all arguments to Magic as keyword arguments.
 
     >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
     'PDF document, version 1.2'
     """
-    m = _get_magic_type(mime)
+    m = _get_magic_type(kwargs)
     return m.from_buffer(buffer)
 
 
-def from_descriptor(fd, mime=False):
+def from_descriptor(fd, **kwargs):
     """
-    Accepts a file descriptor and returns the detected filetype.  Return
-    value is the mimetype if mime=True, otherwise a human readable
-    name.
+    Accepts a file descriptor and returns the detected filetype.
+    Accepts all arguments to Magic as keyword arguments.
 
     >>> f = open("testdata/test.pdf")
     >>> magic.from_descriptor(f.fileno())
     'PDF document, version 1.2'
     """
-    m = _get_magic_type(mime)
+    m = _get_magic_type(kwargs)
     return m.from_descriptor(fd)
 
 from . import loader
