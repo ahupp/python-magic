@@ -51,7 +51,7 @@ jobs:
       - run: pip install cibuildwheel==2.16.2  # sync version with pypa/cibuildwheel below
       - id: set-matrix
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: '==3.8.*'
+          CIBW_PROJECT_REQUIRES_PYTHON: '==3.10.*'
         run: |
           MATRIX_INCLUDE=$(
             {
@@ -88,7 +88,6 @@ jobs:
         only: ${{ matrix.only }}
       env:
         CIBW_BUILD_VERBOSITY: 1
-        MACOSX_DEPLOYMENT_TARGET: 11.0  # oldest available github runner ("macos-11" above)
         CIBW_BEFORE_BUILD: bash -c "make install_libmagic"
         CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypisom\x00\x00\x02\x00isomiso2mp41\x00') == 'video/mp4'"
 
