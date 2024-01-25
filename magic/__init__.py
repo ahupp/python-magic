@@ -40,7 +40,10 @@ class Magic:
 
     def __init__(self, mime=False, magic_file=None, mime_encoding=False,
                  keep_going=False, uncompress=False, raw=False, extension=False,
-                 follow_symlinks=False):
+                 follow_symlinks=False, check_tar=True, check_soft=True,
+                 check_apptype=True, check_elf=True, check_text=True,
+                 check_cdf=True, check_csv=True, check_encoding=True,
+                 check_json=True, check_simh=True):
         """
         Create a new libmagic wrapper.
 
@@ -68,6 +71,27 @@ class Magic:
 
         if follow_symlinks:
             self.flags |= MAGIC_SYMLINK
+
+        if not check_tar:
+            self.flags |= MAGIC_NO_CHECK_TAR
+        if not check_soft:
+            self.flags |= MAGIC_NO_CHECK_SOFT
+        if not check_apptype:
+            self.flags |= MAGIC_NO_CHECK_APPTYPE
+        if not check_elf:
+            self.flags |= MAGIC_NO_CHECK_ELF
+        if not check_text:
+            self.flags |= MAGIC_NO_CHECK_TEXT
+        if not check_cdf:
+            self.flags |= MAGIC_NO_CHECK_CDF
+        if not check_csv:
+            self.flags |= MAGIC_NO_CHECK_CSV
+        if not check_encoding:
+            self.flags |= MAGIC_NO_CHECK_ENCODING
+        if not check_json:
+            self.flags |= MAGIC_NO_CHECK_JSON
+        if not check_simh:
+            self.flags |= MAGIC_NO_CHECK_SIMH
 
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
@@ -416,10 +440,16 @@ MAGIC_NO_CHECK_TAR = 0x002000  # Don't check for tar files
 MAGIC_NO_CHECK_SOFT = 0x004000  # Don't check magic entries
 MAGIC_NO_CHECK_APPTYPE = 0x008000  # Don't check application type
 MAGIC_NO_CHECK_ELF = 0x010000  # Don't check for elf details
-MAGIC_NO_CHECK_ASCII = 0x020000  # Don't check for ascii files
-MAGIC_NO_CHECK_TROFF = 0x040000  # Don't check ascii/troff
-MAGIC_NO_CHECK_FORTRAN = 0x080000  # Don't check ascii/fortran
-MAGIC_NO_CHECK_TOKENS = 0x100000  # Don't check ascii/tokens
+MAGIC_NO_CHECK_TEXT = 0x020000  # Don't check for ascii files
+MAGIC_NO_CHECK_ASCII = 0x020000  # Deprecated alias for MAGIC_NO_CHECK_TEXT
+MAGIC_NO_CHECK_TROFF = 0x040000  # Don't check ascii/troff (deprecated)
+MAGIC_NO_CHECK_FORTRAN = 0x080000  # Don't check ascii/fortran (deprecated)
+MAGIC_NO_CHECK_TOKENS = 0x100000  # Don't check ascii/tokens (deprecated)
+MAGIC_NO_CHECK_CDF = 0x0040000  # Don't check for CDF files
+MAGIC_NO_CHECK_CSV = 0x0080000  # Don't check for CSV files
+MAGIC_NO_CHECK_ENCODING = 0x0200000  # Don't check text encodings
+MAGIC_NO_CHECK_JSON = 0x0400000 # Don't check for JSON files
+MAGIC_NO_CHECK_SIMH = 0x0800000 # Don't check for SIMH tape files
 
 MAGIC_PARAM_INDIR_MAX = 0  # Recursion limit for indirect magic
 MAGIC_PARAM_NAME_MAX = 1  # Use count limit for name/use magic

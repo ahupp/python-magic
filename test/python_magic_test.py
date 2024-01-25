@@ -96,6 +96,10 @@ class MagicTest(unittest.TestCase):
             self.assert_values(
                 m,
                 {
+                    "elf-NetBSD-x86_64-echo": (
+                        "application/x-pie-executable",
+                        "application/x-sharedlib",
+                    ),
                     "magic._pyc_": (
                         "application/octet-stream",
                         "text/x-bytecode.python",
@@ -107,7 +111,9 @@ class MagicTest(unittest.TestCase):
                     "text.txt": "text/plain",
                     b"\xce\xbb".decode("utf-8"): "text/plain",
                     b"\xce\xbb": "text/plain",
+                    "test.json": "application/json",
                 },
+                buf_equals_file=False,
             )
         finally:
             os.unlink(dest)
@@ -119,6 +125,88 @@ class MagicTest(unittest.TestCase):
             self.assert_values(
                 m,
                 {
+                    "elf-NetBSD-x86_64-echo": (
+                        "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
+                        "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /libexec/ld.elf_so, for NetBSD 8.0, not stripped",
+                    ),
+                    "magic._pyc_": "python 2.4 byte-compiled",
+                    "test.pdf": (
+                        "PDF document, version 1.2",
+                        "PDF document, version 1.2, 2 pages",
+                        "PDF document, version 1.2, 2 page(s)",
+                    ),
+                    "test.gz": (
+                        'gzip compressed data, was "test", from Unix, last '
+                        "modified: Sun Jun 29 01:32:52 2008",
+                        'gzip compressed data, was "test", last modified'
+                        ": Sun Jun 29 01:32:52 2008, from Unix",
+                        'gzip compressed data, was "test", last modified'
+                        ": Sun Jun 29 01:32:52 2008, from Unix, original size 15",
+                        'gzip compressed data, was "test", '
+                        "last modified: Sun Jun 29 01:32:52 2008, "
+                        "from Unix, original size modulo 2^32 15",
+                        'gzip compressed data, was "test", last modified'
+                        ": Sun Jun 29 01:32:52 2008, from Unix, truncated",
+                    ),
+                    "text.txt": "ASCII text",
+                    "test.snappy.parquet": ("Apache Parquet", "Par archive data"),
+                    "test.json": "JSON text data",
+                },
+                buf_equals_file=False,
+            )
+        finally:
+            del os.environ["TZ"]
+
+    def test_descriptions_no_soft(self):
+        m = magic.Magic(check_soft=False)
+        self.assert_values(
+            m,
+            {
+                "elf-NetBSD-x86_64-echo": (
+                    "data",
+                    "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /libexec/ld.elf_so, for NetBSD 8.0, not stripped",
+                ),
+                "magic._pyc_": "data",
+                "test.pdf": "ASCII text",
+                "test.gz": "data",
+                "text.txt": "ASCII text",
+                "test.snappy.parquet": "data",
+                "test.json": "JSON text data",
+            },
+            buf_equals_file=False,
+        )
+
+    def test_descriptions_no_elf(self):
+        m = magic.Magic(check_elf=False)
+        self.assert_values(
+            m,
+            {
+                "elf-NetBSD-x86_64-echo": "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
+            },
+            buf_equals_file=True,
+        )
+
+    def test_descriptions_no_json(self):
+        m = magic.Magic(check_elf=False)
+        self.assert_values(
+            m,
+            {
+                "test.json": "data",
+            },
+            buf_equals_file=True,
+        )
+
+    def test_descriptions_no_json(self):
+        m = magic.Magic(check_json=False)
+        os.environ["TZ"] = "UTC"  # To get last modified date of test.gz in UTC
+        try:
+            self.assert_values(
+                m,
+                {
+                    "elf-NetBSD-x86_64-echo": (
+                        "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
+                        "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /libexec/ld.elf_so, for NetBSD 8.0, not stripped",
+                    ),
                     "magic._pyc_": "python 2.4 byte-compiled",
                     "test.pdf": (
                         "PDF document, version 1.2",
