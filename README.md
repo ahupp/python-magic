@@ -30,8 +30,7 @@ will fail throw if this is attempted.
 ```python
 >>> f = magic.Magic(uncompress=True)
 >>> f.from_file('testdata/test.gz')
-'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28
-21:32:52 2008, from Unix)'
+'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28 21:32:52 2008, from Unix)'
 ```
 
 You can also combine the flag options:
@@ -53,26 +52,40 @@ Other sources:
 - GitHub: https://github.com/ahupp/python-magic
 
 This module is a simple wrapper around the libmagic C library, and
-that must be installed as well:
+comes bundled in the wheels on PyPI. For systems not supported by the wheels, libmagic
+needs to be installed before installing this library:
 
-### Debian/Ubuntu
+### Linux
 
-```
-sudo apt-get install libmagic1
+The Linux wheels should run on most systems out of the box.
+
+Depending on your system and CPU architecture, there might be no compatible wheel uploaded. However, precompiled libmagic might still be available for your system:
+
+```sh
+# Debian/Ubuntu
+apt-get update && apt-get install -y libmagic1
+# Alpine
+apk add --update libmagic
+# RHEL
+yum install file-libs
 ```
 
 ### Windows
 
-You'll need DLLs for libmagic.  @julian-r maintains a pypi package with the DLLs, you can fetch it with:
+The DLLs that are bundled in the Windows wheels are compiled by @julian-r and hosted at https://github.com/julian-r/file-windows/releases.
 
-```
-pip install python-magic-bin
-```
+For ARM64 Windows, you'll need to compile libmagic from source.
 
 ### OSX
 
-- When using Homebrew: `brew install libmagic`
-- When using macports: `port install file`
+The Mac wheels are compiled on GitHub Actions using `macos-11` runners. For older Macs, you'll need to install libmagic from source:
+
+```sh
+# homebrew
+brew install libmagic
+# macports
+port install file
+```
 
 ### Troubleshooting
 
