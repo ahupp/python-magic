@@ -17,12 +17,12 @@ jobs:
       PIP_DISABLE_PIP_VERSION_CHECK: 1
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
@@ -33,7 +33,7 @@ jobs:
         pip install -U setuptools wheel pip
         python setup.py sdist
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: dist
         path: dist/*.tar.*
@@ -44,14 +44,14 @@ jobs:
     outputs:
       include: ${{ steps.set-matrix.outputs.include }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - run: pip install cibuildwheel==2.16.2  # sync version with pypa/cibuildwheel below
       - id: set-matrix
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: '==3.10.*'
+          CIBW_PROJECT_REQUIRES_PYTHON: '==3.11.*'
         run: |
           MATRIX_INCLUDE=$(
             {
@@ -74,13 +74,13 @@ jobs:
         include: ${{ fromJson(needs.build-wheels-matrix.outputs.include) }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Set up QEMU
       if: runner.os == 'Linux'
-      uses: docker/setup-qemu-action@v2
+      uses: docker/setup-qemu-action@v3
 
     - uses: pypa/cibuildwheel@v2.16.2  # sync version with pip install cibuildwheel above
       timeout-minutes: 10
@@ -91,7 +91,7 @@ jobs:
         CIBW_BEFORE_BUILD: bash -c "make install_libmagic"
         CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypisom\x00\x00\x02\x00isomiso2mp41\x00') == 'video/mp4'"
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: dist
         path: wheelhouse/*.whl
@@ -107,11 +107,11 @@ jobs:
       id-token: write  # pypa/gh-action-pypi-publish
 
     steps:
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: 3.x
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: dist
         path: dist/
