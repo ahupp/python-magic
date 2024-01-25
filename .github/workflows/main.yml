@@ -93,7 +93,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: dist
+        name: dist-${{ matrix.only }}
         path: wheelhouse/*.whl
 
 
@@ -113,8 +113,9 @@ jobs:
 
     - uses: actions/download-artifact@v4
       with:
-        name: dist
         path: dist/
+        pattern: dist-*
+        merge-multiple: true
 
     - run: ls -ltra dist/
 
