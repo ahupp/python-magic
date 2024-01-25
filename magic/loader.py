@@ -1,7 +1,7 @@
 from ctypes.util import find_library
 import ctypes
 import glob
-import os.path
+import os
 import subprocess
 import sys
 

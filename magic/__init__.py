@@ -354,12 +354,11 @@ _magic_load.errcheck = errorcheck_negative_one
 
 
 def magic_load(cookie, filename):
-    try:
-        return _magic_load(cookie, coerce_filename(filename))
-    except MagicException:
+    mime_db = os.path.join(os.path.dirname(__file__), 'magic.mgc')
+    if os.path.exists(mime_db):
         # wheels package the mime database in this directory
-        filename = os.path.join(os.path.dirname(__file__), 'magic.mgc')
-        return _magic_load(cookie, coerce_filename(filename))
+        return _magic_load(cookie, coerce_filename(mime_db))
+    return _magic_load(cookie, coerce_filename(filename))
 
 
 magic_setflags = libmagic.magic_setflags
