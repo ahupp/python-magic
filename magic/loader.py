@@ -12,7 +12,7 @@ def _lib_candidates():
 
         paths = [
             here,
-            os.path.abspath("."),
+            os.path.abspath('.'),
             '/opt/local/lib',
             '/usr/local/lib',
             '/opt/homebrew/lib',
@@ -29,18 +29,23 @@ def _lib_candidates():
             # find_library searches in %PATH% but not the current directory,
             # so look for both
             yield os.path.join(here, '%s.dll' % i)
-            yield os.path.join(os.path.abspath("."), '%s.dll' % i)
+            yield os.path.join(os.path.abspath('.'), '%s.dll' % i)
             yield find_library(i)
 
     elif sys.platform == 'linux':
-        # on some linux systems (musl/alpine), find_library('magic') returns None
-        yield subprocess.check_output(
-            "( ldconfig -p | grep 'libmagic.so.1' | grep -o '/.*' ) || echo '/usr/lib/libmagic.so.1'",
-            shell=True,
-            universal_newlines=True,
-        ).strip()
-        yield os.path.join(here, 'libmagic.so.1')
-        yield os.path.join(os.path.abspath("."), 'libmagic.so.1')
+
+        prefixes = ['libmagic.so.1', 'libmagic.so']
+
+        for i in prefixes:
+            yield os.path.join(here, i)
+            yield os.path.join(os.path.abspath('.'), i)
+            # on some linux systems (musl/alpine), find_library('magic') returns None
+            # first try ldconfig with backup string in case of error
+            yield subprocess.check_output(
+                "( ldconfig -p | grep '{0}' | grep -o '/.*' ) || echo '/usr/lib/{0}'".format(i),
+                shell=True,
+                universal_newlines=True,
+            ).strip()
 
     yield find_library('magic')
 
@@ -53,9 +58,7 @@ def load_lib():
             continue
         try:
             return ctypes.CDLL(lib)
-        except OSError as exc:
+        except OSError:  # file not found
             pass
-    else:
-        # It is better to raise an ImportError since we are importing magic module
-        raise ImportError('failed to find libmagic. Check your installation')
+    raise ImportError('failed to find libmagic. Check your installation')
 

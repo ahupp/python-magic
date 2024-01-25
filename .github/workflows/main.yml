@@ -48,7 +48,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - run: pip install cibuildwheel==2.15.0
+      - run: pip install cibuildwheel==2.16.2  # sync version with pypa/cibuildwheel below
       - id: set-matrix
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: '==3.8.*'
@@ -82,13 +82,15 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v2
 
-    - uses: pypa/cibuildwheel@v2.15.0
+    - uses: pypa/cibuildwheel@v2.16.2  # sync version with pip install cibuildwheel above
       timeout-minutes: 10
       with:
         only: ${{ matrix.only }}
       env:
         CIBW_BUILD_VERBOSITY: 1
-        CIBW_BEFORE_BUILD: 'bash -c "make install_libmagic"'
+        MACOSX_DEPLOYMENT_TARGET: 11.0  # oldest available github runner ("macos-11" above)
+        CIBW_BEFORE_BUILD: bash -c "make install_libmagic"
+        CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypisom\x00\x00\x02\x00isomiso2mp41\x00') == 'video/mp4'"
 
     - uses: actions/upload-artifact@v3
       with:
