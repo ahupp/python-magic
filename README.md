@@ -52,8 +52,11 @@ Other sources:
 - GitHub: https://github.com/ahupp/python-magic
 
 This module is a simple wrapper around the libmagic C library, and
-comes bundled in the wheels on PyPI. For systems not supported by the wheels, libmagic
-needs to be installed before installing this library:
+comes bundled in the wheels on PyPI.
+If you want to use your own (custom) libmagic installation,
+circumvent the wheels by running `pip install python-magic --no-binary python-magic`.
+For systems not supported by the wheels, libmagic
+needs to be installed before installing python-magic:
 
 ### Linux
 
