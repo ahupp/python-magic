@@ -96,6 +96,12 @@ class Magic:
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
 
+        if magic_file is None and not os.environ.get("MAGIC"):
+            # wheels package the mime database in this directory
+            # prefer it when no magic file is specified by the user
+            mime_db = os.path.join(os.path.dirname(__file__), 'magic.mgc')
+            if os.path.exists(mime_db):
+                magic_file = mime_db
         magic_load(self.cookie, magic_file)
 
         # MAGIC_EXTENSION was added in 523 or 524, so bail if
@@ -354,10 +360,6 @@ _magic_load.errcheck = errorcheck_negative_one
 
 
 def magic_load(cookie, filename):
-    mime_db = os.path.join(os.path.dirname(__file__), 'magic.mgc')
-    if os.path.exists(mime_db):
-        # wheels package the mime database in this directory
-        return _magic_load(cookie, coerce_filename(mime_db))
     return _magic_load(cookie, coerce_filename(filename))
 
 
