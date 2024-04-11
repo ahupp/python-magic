@@ -89,6 +89,18 @@ jobs:
         only: ${{ matrix.only }}
       env:
         CIBW_BUILD_VERBOSITY: 1
+        CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+        CIBW_MANYLINUX_PYPY_X86_64_IMAGE: manylinux_2_28
+        CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
+        CIBW_MANYLINUX_PPC64LE_IMAGE: manylinux_2_28
+        CIBW_MANYLINUX_S390X_IMAGE: manylinux_2_28
+        CIBW_MANYLINUX_PYPY_AARCH64_IMAGE: manylinux_2_28
+        CIBW_MANYLINUX_PYPY_I686_IMAGE: manylinux_2_28
+        CIBW_MUSLLINUX_X86_64_IMAGE: musllinux_1_2
+        CIBW_MUSLLINUX_I686_IMAGE: musllinux_1_2
+        CIBW_MUSLLINUX_AARCH64_IMAGE: musllinux_1_2
+        CIBW_MUSLLINUX_PPC64LE_IMAGE: musllinux_1_2
+        CIBW_MUSLLINUX_S390X_IMAGE: musllinux_1_2
         CIBW_BEFORE_BUILD: bash -c "make install_libmagic"
         CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypisom\x00\x00\x02\x00isomiso2mp41\x00') == 'video/mp4'"
 
