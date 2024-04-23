@@ -55,7 +55,7 @@ jobs:
         run: |
           MATRIX_INCLUDE=$(
             {
-              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64,i686 | grep cp | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
+              cibuildwheel --print-build-identifiers --platform linux --arch all | grep cp | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
               && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-13"}' \
               && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-14"}' \
               && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 | grep cp |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
@@ -89,20 +89,8 @@ jobs:
         only: ${{ matrix.only }}
       env:
         CIBW_BUILD_VERBOSITY: 1
-        CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
-        CIBW_MANYLINUX_PYPY_X86_64_IMAGE: manylinux_2_28
-        CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
-        CIBW_MANYLINUX_PPC64LE_IMAGE: manylinux_2_28
-        CIBW_MANYLINUX_S390X_IMAGE: manylinux_2_28
-        CIBW_MANYLINUX_PYPY_AARCH64_IMAGE: manylinux_2_28
-        CIBW_MANYLINUX_PYPY_I686_IMAGE: manylinux_2_28
-        CIBW_MUSLLINUX_X86_64_IMAGE: musllinux_1_2
-        CIBW_MUSLLINUX_I686_IMAGE: musllinux_1_2
-        CIBW_MUSLLINUX_AARCH64_IMAGE: musllinux_1_2
-        CIBW_MUSLLINUX_PPC64LE_IMAGE: musllinux_1_2
-        CIBW_MUSLLINUX_S390X_IMAGE: musllinux_1_2
-        CIBW_BEFORE_BUILD: bash -c "make install_libmagic"
-        CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypisom\x00\x00\x02\x00isomiso2mp41\x00') == 'video/mp4'"
+        CIBW_BEFORE_BUILD: bash "add_libmagic.sh"
+        CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypiso5\x00\x00\x00\x01isomiso5hlsf\x00\x00') == 'video/mp4'"
 
     - uses: actions/upload-artifact@v4
       with:

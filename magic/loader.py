@@ -39,6 +39,7 @@ def _lib_candidates():
         for i in prefixes:
             yield os.path.join(here, i)
             yield os.path.join(os.path.abspath('.'), i)
+            yield os.path.join('/usr/local/lib', i)
             # on some linux systems (musl/alpine), find_library('magic') returns None
             # first try ldconfig with backup string in case of error
             yield subprocess.check_output(
