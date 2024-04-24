@@ -11,8 +11,11 @@ def _lib_candidates():
     if sys.platform == 'darwin':
 
         paths = [
+            # libmagic bundled in the wheel
             here,
+            # libmagic in the current working directory
             os.path.abspath('.'),
+            # libmagic in other common sources like homebrew
             '/opt/local/lib',
             '/usr/local/lib',
             '/opt/homebrew/lib',
@@ -26,10 +29,11 @@ def _lib_candidates():
         prefixes = ['libmagic', 'magic1', 'magic-1', 'cygmagic-1', 'libmagic-1', 'msys-magic-1']
 
         for i in prefixes:
-            # find_library searches in %PATH% but not the current directory,
-            # so look for both
+            # libmagic bundled in the wheel
             yield os.path.join(here, '%s.dll' % i)
+            # libmagic in the current working directory
             yield os.path.join(os.path.abspath('.'), '%s.dll' % i)
+            # find_library searches in %PATH% but not the current directory
             yield find_library(i)
 
     elif sys.platform == 'linux':
@@ -37,17 +41,22 @@ def _lib_candidates():
         prefixes = ['libmagic.so.1', 'libmagic.so']
 
         for i in prefixes:
+            # libmagic bundled in the wheel
             yield os.path.join(here, i)
+            # libmagic in the current working directory
             yield os.path.join(os.path.abspath('.'), i)
+            # libmagic install from source default destination path
             yield os.path.join('/usr/local/lib', i)
             # on some linux systems (musl/alpine), find_library('magic') returns None
-            # first try ldconfig with backup string in case of error
+            # first try finding libmagic using ldconfig
+            # otherwise fall back to /usr/lib/
             yield subprocess.check_output(
                 "( ldconfig -p | grep '{0}' | grep -o '/.*' ) || echo '/usr/lib/{0}'".format(i),
                 shell=True,
                 universal_newlines=True,
             ).strip()
 
+    # fallback
     yield find_library('magic')
 
 
