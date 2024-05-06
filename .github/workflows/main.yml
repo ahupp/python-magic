@@ -51,14 +51,17 @@ jobs:
       - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
       - id: set-matrix
         env:
+          # only mention one (trivial) python version, as py2.py3 wheels only need to be build once per arch
           CIBW_PROJECT_REQUIRES_PYTHON: '==3.12.*'
+          # skip PyPy wheels for now, and skip i686 wheels because pytest is failing
+          CIBW_SKIP: pp* *i686
         run: |
           MATRIX_INCLUDE=$(
             {
-              cibuildwheel --print-build-identifiers --platform linux --arch all | grep cp | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-13"}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-14"}' \
-              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 | grep cp |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
+              cibuildwheel --print-build-identifiers --platform linux --arch all | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 |  jq -nRc '{"only": inputs, "os": "macos-13"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 |  jq -nRc '{"only": inputs, "os": "macos-14"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
             } | jq -sc
           )
           echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
