@@ -90,7 +90,9 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         # add compiled libmagic to the build directory (to include in the wheel)
-        CIBW_BEFORE_BUILD: bash "add_libmagic.sh"
+        CIBW_BEFORE_BUILD: ${{ ( startsWith( matrix.os, 'macos' ) && 'sudo -E bash add_libmagic.sh' ) || 'bash add_libmagic.sh' }}
+        # build macos wheels with maximum backwards compatibility (gcc -mmacosx-version-min flag)
+        MACOSX_DEPLOYMENT_TARGET: ${{ ( endsWith( matrix.only, 'arm64' ) && '11.0' ) || '10.9' }}
         # simple smoke test run on each wheel: this is an HLS MP4 video, only recognised in recent versions of libmagic
         CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypiso5\x00\x00\x00\x01isomiso5hlsf\x00\x00') == 'video/mp4'"
 
