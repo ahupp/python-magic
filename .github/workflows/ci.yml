@@ -10,7 +10,7 @@ jobs:
         include:
           - os: macos-latest
             python-version: '3.13'
-          # - os: windows-latest  # TODO: Fix the Windows test that runs in an infinite loop.
+          # - os: windows-latest  # TODO: Fix the Windows test that runs in an infinite loop
           #   python-version: '3.13'
     runs-on: ${{ matrix.os }}
     steps:
