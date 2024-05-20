@@ -12,7 +12,8 @@ def _lib_candidates_linux():
 
     This is necessary because alpine is bad
     """
-    yield "libmagic.so.1"
+    for path in ("libmagic.so", "libmagic.so.1"):
+        yield find_library(path)
 
 
 def _lib_candidates_macos():
@@ -61,17 +62,14 @@ def _lib_candidates():
 
 
 def load_lib():
+    lib_candidates = tuple(lib for lib in _lib_candidates() if lib)
     for lib in _lib_candidates():
         # find_library returns None when lib not found
-        if lib is None:
-            continue
-        if not os.path.exists(lib):
-            continue
-
         try:
             return ctypes.CDLL(lib)
         except OSError:
-            logger.warning("Failed to load: " + lib, exc_info=True)
+            pass
 
     # It is better to raise an ImportError since we are importing magic module
-    raise ImportError("python-magic: failed to find libmagic.  Check your installation")
+    fmt = "python-magic: failed to find libmagic in {}.  Check your installation"
+    raise ImportError(fmt.format(", ".join(lib_candidates)))
