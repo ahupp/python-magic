@@ -30,7 +30,7 @@ jobs:
 
     - name: Build source distribution
       run: |
-        pip install -U setuptools wheel pip
+        pip install --upgrade setuptools wheel pip
         python setup.py sdist
 
     - uses: actions/upload-artifact@v4
@@ -127,7 +127,7 @@ jobs:
 
     - run: ls -ltra dist/
 
-    - run: pip install -U python-magic --find-links ./dist
+    - run: pip install --upgrade python-magic --find-links ./dist
 
     - name: Smoketest
       run: python -c "import magic; magic.Magic()"
