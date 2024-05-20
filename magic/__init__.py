@@ -424,9 +424,9 @@ def what(file: os.PathLike | str | None, h: bytes | None) -> str:
     """
     if not h:
         return from_file(file, False).split()[0].lower()
-    
+
     if isinstance(h, str):
-        bytes.fromhex(h) 
+        bytes.fromhex(h)
     ext = from_buffer(h).split()[0].lower()
     return imghdr_exts.get(ext, ext)
 
