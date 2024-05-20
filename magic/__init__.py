@@ -15,6 +15,7 @@ Usage:
 >>>
 
 """
+from __future__ import annotations
 
 import sys
 import os
@@ -396,6 +397,39 @@ def magic_getparam(cookie, param):
     val = c_size_t()
     _magic_getparam(cookie, param, byref(val))
     return val.value
+
+
+# Convert magic extensions to imghdr extensions
+imghdr_exts = {"ascii": None, "data": None, "iso-8859": None, "openexr": "exr", "riff": "webp", "sgi": "rgb", "sun": "rast"}  # , "jpeg": "jpg", "jpg": "jpeg", "openexr": "exr", "sgi": "rgb", "sun": "rast", "riff": "webp", "tif": "tiff"}
+
+
+def what(file: os.PathLike | str | None, h: bytes | None) -> str:
+    """A drop-in replacement for `imghdr.what()` which was removed from the standard
+    library in Python 3.13.
+    Usage:
+    ```python
+    # Replace...
+    from imghdr import what
+    # with...
+    from magic import what
+    # ---
+    # Or replace...
+    import imghdr
+    ext = imghdr.what(...)
+    # with...
+    import magic
+    ext = magic.what(...)
+    ```
+    imghdr documentation: https://docs.python.org/3.12/library/imghdr.html
+    imghdr source code: https://github.com/python/cpython/blob/3.12/Lib/imghdr.py
+    """
+    if not h:
+        return from_file(file).split()[0].lower()
+
+    if isinstance(h, str):
+        h = bytes.fromhex(h)
+    ext = from_buffer(h).split()[0].lower()
+    return imghdr_exts.get(ext, ext)
 
 
 _has_version = False
