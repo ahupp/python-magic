@@ -31,7 +31,7 @@ Changes to 0.4.24:
 
 Changes to 0.4.23
 
-- Include a `py.typed` sentinal to enable type checking
+- Include a `py.typed` sentinel to enable type checking
 - Improve fix for attribute error during destruction
 - Cleanup library loading logic
 - Add new homebrew library dir for OSX
@@ -76,7 +76,7 @@ Changes in 0.4.16 and 0.4.17
 
 - add MAGIC_MIME_TYPE constant, use that in preference to MAGIC_MIME internally.
   This sets up for a breaking change in a future major version bump where
-  MAGIC_MIME will change to mathch magic.h.
+  MAGIC_MIME will change to match magic.h.
 - add magic.version() function to return library version
 - add setparam/getparam to control internal behavior
 - increase internal limits with setparam to prevent spurious error on some jpeg files
