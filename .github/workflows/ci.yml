@@ -22,6 +22,8 @@ jobs:
       - run: pip install --upgrade pip
       - run: pip install --upgrade pytest
       - run: pip install --editable .
+      - if: runner.os == 'Linux'
+        run: sudo apt-get install -y libmagic1
       - if: runner.os == 'macOS'
         run: brew install libmagic
       - if: runner.os == 'Windows'
