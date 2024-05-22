@@ -1,4 +1,4 @@
-name: GH
+name: wheels
 
 on:
   pull_request:

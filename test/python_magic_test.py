@@ -5,8 +5,6 @@ import sys
 import tempfile
 import unittest
 
-import pytest
-
 # for output which reports a local time
 os.environ["TZ"] = "GMT"
 
@@ -120,8 +118,6 @@ class MagicTest(unittest.TestCase):
         finally:
             os.unlink(dest)
 
-    # TODO: Fix this failing test on Ubuntu
-    @pytest.mark.skipif(sys.platform == "linux", reason="'JSON data' not found")
     def test_descriptions(self):
         m = magic.Magic()
         os.environ["TZ"] = "UTC"  # To get last modified date of test.gz in UTC
@@ -161,8 +157,6 @@ class MagicTest(unittest.TestCase):
         finally:
             del os.environ["TZ"]
 
-    # TODO: Fix this failing test on Ubuntu
-    @pytest.mark.skipif(sys.platform == "linux", reason="'JSON data' not found")
     def test_descriptions_no_soft(self):
         m = magic.Magic(check_soft=False)
         self.assert_values(
