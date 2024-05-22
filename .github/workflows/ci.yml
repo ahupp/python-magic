@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
-      - run: ${{ ( startsWith( matrix.os, 'macos' ) && 'sudo -E bash add_libmagic.sh' ) || 'bash add_libmagic.sh' }}
+      - run: sudo -E bash add_libmagic.sh
       - run: pip install --upgrade pip
       - run: pip install --upgrade pytest
       - run: pip install --editable .
