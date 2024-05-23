@@ -38,6 +38,7 @@ install_precompiled() {
         yum install file-libs
     else
         # windows (no install, just download into current working directory)
+        # could also consider install using `pacman`: https://packages.msys2.org/base/mingw-w64-file
         python <<EOF
 import platform, sysconfig, io, zipfile, urllib.request
 assert platform.system() == "Windows"
