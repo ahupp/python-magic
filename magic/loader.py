@@ -3,7 +3,9 @@ import ctypes
 import sys
 import glob
 import os.path
+import logging
 
+logger = logging.getLogger(__name__)
 
 def _lib_candidates_linux():
     """Yield possible libmagic library names on Linux.
@@ -61,11 +63,15 @@ def _lib_candidates():
 def load_lib():
     for lib in _lib_candidates():
         # find_library returns None when lib not found
-        if lib:
-            try:
-                return ctypes.CDLL(lib)
-            except OSError:
-                pass
+        if lib is None:
+            continue
+        if not os.path.exists(lib):
+            continue
+
+        try:
+            return ctypes.CDLL(lib)
+        except OSError:
+            logger.warning("Failed to load: " + lib, exc_info=True)
 
     # It is better to raise an ImportError since we are importing magic module
     raise ImportError("python-magic: failed to find libmagic.  Check your installation")
