@@ -12,7 +12,8 @@ def _lib_candidates_linux():
 
     This is necessary because alpine is bad
     """
-    yield "libmagic.so.1"
+    for filename in ("libmagic.so", "libmagic.so.1"):
+        yield find_library(filename)
 
 
 def _lib_candidates_macos():
