@@ -11,20 +11,20 @@ here = os.path.dirname(__file__)
 
 def _lib_candidates_linux():
     """Yield possible libmagic library names on Linux."""
-    prefixes = ('libmagic.so.1', 'libmagic.so')
+    fnames = ('libmagic.so.1', 'libmagic.so')
 
-    for i in prefixes:
+    for fname in fnames:
         # libmagic bundled in the wheel
-        yield os.path.join(here, i)
+        yield os.path.join(here, fname)
         # libmagic in the current working directory
-        yield os.path.join(os.path.abspath('.'), i)
+        yield os.path.join(os.path.abspath('.'), fname)
         # libmagic install from source default destination path
-        yield os.path.join('/usr/local/lib', i)
+        yield os.path.join('/usr/local/lib', fname)
         # on some linux systems (musl/alpine), find_library('magic') returns None
         # first try finding libmagic using ldconfig
         # otherwise fall back to /usr/lib/
         yield subprocess.check_output(
-            "( ldconfig -p | grep '{0}' | grep -o '/.*' ) || echo '/usr/lib/{0}'".format(i),
+            "( ldconfig -p | grep '{0}' | grep -o '/.*' ) || echo '/usr/lib/{0}'".format(fname),
             shell=True,
             universal_newlines=True,
         ).strip()
@@ -43,13 +43,13 @@ def _lib_candidates_macos():
         '/opt/homebrew/lib',
     ] + glob.glob('/usr/local/Cellar/libmagic/*/lib')
 
-    for i in paths:
-        yield os.path.join(i, 'libmagic.dylib')
+    for path in paths:
+        yield os.path.join(path, 'libmagic.dylib')
 
 
 def _lib_candidates_windows():
     """Yield possible libmagic library names on Windows."""
-    prefixes = (
+    fnames = (
         "libmagic",
         "magic1",
         "magic-1",
@@ -58,13 +58,13 @@ def _lib_candidates_windows():
         "msys-magic-1",
     )
 
-    for i in prefixes:
+    for fname in fnames:
         # libmagic bundled in the wheel
-        yield os.path.join(here, '%s.dll' % i)
+        yield os.path.join(here, '%s.dll' % fname)
         # libmagic in the current working directory
-        yield os.path.join(os.path.abspath('.'), '%s.dll' % i)
+        yield os.path.join(os.path.abspath('.'), '%s.dll' % fname)
         # find_library searches in %PATH% but not the current directory
-        yield find_library(i)
+        yield find_library(fname)
 
 
 def _lib_candidates():
