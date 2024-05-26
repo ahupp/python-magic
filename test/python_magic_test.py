@@ -191,7 +191,7 @@ class MagicTest(unittest.TestCase):
         self.assert_values(
             m,
             {
-                "test.json": "data",
+                "test.json": "JSON text data",
             },
             buf_equals_file=True,
         )
