@@ -49,6 +49,7 @@ def _lib_candidates():
         "darwin": _lib_candidates_macos,
         "linux": _lib_candidates_linux,
         "win32": _lib_candidates_windows,
+        "sunos5": _lib_candidates_linux, 
     }.get(sys.platform)
     if func is None:
         raise ImportError("python-magic: Unsupported platform: " + sys.platform)
