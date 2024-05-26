@@ -92,6 +92,10 @@ brew install libmagic
 port install file
 ```
 
+### SmartOS:
+- Install libmagic for source https://github.com/threatstack/libmagic/
+- Depending on your ./configure --prefix settings set your LD_LIBRARY_PATH to <prefix>/lib
+
 ### Troubleshooting
 
 - 'MagicException: could not find any magic files!': some

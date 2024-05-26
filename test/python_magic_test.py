@@ -196,7 +196,8 @@ class MagicTest(unittest.TestCase):
             buf_equals_file=True,
         )
 
-    def test_descriptions_no_json(self):
+    def test_descriptions_no_json_unchanged(self):
+        # verify non-json results are unchanged
         m = magic.Magic(check_json=False)
         os.environ["TZ"] = "UTC"  # To get last modified date of test.gz in UTC
         try:
