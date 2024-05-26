@@ -49,7 +49,9 @@ def _lib_candidates():
         "darwin": _lib_candidates_macos,
         "linux": _lib_candidates_linux,
         "win32": _lib_candidates_windows,
-    }[sys.platform]
+    }.get(sys.platform)
+    if func is None:
+        raise ImportError("python-magic: Unsupported platform: " + sys.platform)
     # When we drop legacy Python, we can just `yield from func()`
     for path in func():
         yield path
@@ -65,4 +67,4 @@ def load_lib():
                 pass
 
     # It is better to raise an ImportError since we are importing magic module
-    raise ImportError("failed to find libmagic.  Check your installation")
+    raise ImportError("python-magic: failed to find libmagic.  Check your installation")
