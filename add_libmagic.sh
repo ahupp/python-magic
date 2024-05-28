@@ -6,19 +6,17 @@ install_source() {
     # install from source
     # https://www.darwinsys.com/file/
     # https://github.com/file/file/blob/FILE5_45/INSTALL#L51
-    version="file-5.45"
-    (
-        tmpfile="$(mktemp)" &&
-        curl -sSLo "${tmpfile}" "https://astron.com/pub/file/${version}.tar.gz" &&
-        tar xvf "${tmpfile}" &&
-        cd "${version}" &&
-        ./configure &&
-        make &&
-        make install &&
-        make installcheck &&
-        cd .. &&
-        rm -r "${version}"
-    ) || (cd .. && rm -r "${version}" && false)
+    version="file-5.45" &&
+    tmpfile="$(mktemp)" &&
+    curl -sSLo "${tmpfile}" "https://astron.com/pub/file/${version}.tar.gz" &&
+    tar xvf "${tmpfile}" &&
+    cd "${version}" &&
+    ./configure &&
+    make &&
+    make install &&
+    make installcheck &&
+    cd .. &&
+    rm -r "${version}"
 }
 
 install_precompiled() {
@@ -34,8 +32,8 @@ install_precompiled() {
         apt-get install -y libmagic1
     elif [ -n "$(which apk)" ]; then
         apk add --update libmagic
-    elif [ -n "$(which yum)" ]; then
-        yum install file-libs
+    elif [ -n "$(which dnf)" ]; then
+        dnf --setopt install_weak_deps=false -y install file-libs
     else
         # windows (no install, just download into current working directory)
         # could also consider install using `pacman`: https://packages.msys2.org/base/mingw-w64-file
