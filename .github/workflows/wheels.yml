@@ -68,7 +68,7 @@ jobs:
 
 
   build-wheels:
-    name: Build ${{ matrix.only }}
+    name: build ${{ matrix.only }}
     needs: build-wheels-matrix
     runs-on: ${{ matrix.os }}
 
