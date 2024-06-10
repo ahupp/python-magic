@@ -62,18 +62,12 @@ that must be installed as well:
 sudo apt-get install libmagic1
 ```
 
-### Windows
-
-You'll need DLLs for libmagic.  @julian-r maintains a pypi package with the DLLs, you can fetch it with:
-
-```
-pip install python-magic-bin
-```
-
 ### OSX
 
 - When using Homebrew: `brew install libmagic`
 - When using macports: `port install file`
+
+If python-magic fails to load the library it may be in a non-standard location, in which case you can set the environment variable `DYLD_LIBRARY_PATH` to point to it.
 
 ### SmartOS:
 - Install libmagic for source https://github.com/threatstack/libmagic/
