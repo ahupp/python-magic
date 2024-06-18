@@ -72,7 +72,7 @@ apk add --update libmagic
 # RHEL
 yum install file-libs
 ```
-
+ 
 ### Windows
 
 The DLLs that are bundled in the Windows wheels are compiled by @julian-r
@@ -91,6 +91,8 @@ brew install libmagic
 # macports
 port install file
 ```
+
+If python-magic fails to load the library it may be in a non-standard location, in which case you can set the environment variable `DYLD_LIBRARY_PATH` to point to it.
 
 ### SmartOS:
 - Install libmagic for source https://github.com/threatstack/libmagic/
