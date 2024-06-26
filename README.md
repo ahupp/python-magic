@@ -70,7 +70,7 @@ apt-get update && apt-get install -y libmagic1
 # Alpine
 apk add --update libmagic
 # RHEL
-yum install file-libs
+dnf install file-libs
 ```
  
 ### Windows
