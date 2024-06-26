@@ -19,13 +19,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
+      - name: Copy libmagic into magic dir
+        run: ${{ ( startsWith( matrix.os, 'windows' ) && 'bash add_libmagic.sh' ) || 'sudo -E bash add_libmagic.sh' }}
       - run: pip install --upgrade pip
       - run: pip install --upgrade pytest
       - run: pip install --editable .
-      - if: runner.os == 'macOS'
-        run: brew install libmagic
-      - if: runner.os == 'Windows'
-        run: pip install python-magic-bin
       - run: LC_ALL=en_US.UTF-8 pytest
         shell: bash
         timeout-minutes: 15  # Limit Windows infinite loop.

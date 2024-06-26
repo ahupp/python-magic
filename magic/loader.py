@@ -2,33 +2,54 @@ from ctypes.util import find_library
 import ctypes
 import sys
 import glob
-import os.path
+import os
 import logging
+import subprocess
 
 logger = logging.getLogger(__name__)
+here = os.path.dirname(__file__)
 
 def _lib_candidates_linux():
-    """Yield possible libmagic library names on Linux.
+    """Yield possible libmagic library names on Linux."""
+    fnames = ('libmagic.so.1', 'libmagic.so')
 
-    This is necessary because alpine is bad
-    """
-    yield "libmagic.so.1"
+    for fname in fnames:
+        # libmagic bundled in the wheel
+        yield os.path.join(here, fname)
+        # libmagic in the current working directory
+        yield os.path.join(os.path.abspath('.'), fname)
+        # libmagic install from source default destination path
+        yield os.path.join('/usr/local/lib', fname)
+        # on some linux systems (musl/alpine), find_library('magic') returns None
+        # first try finding libmagic using ldconfig
+        # otherwise fall back to /usr/lib/
+        yield subprocess.check_output(
+            "( ldconfig -p | grep '{0}' | grep -o '/.*' ) || echo '/usr/lib/{0}'".format(fname),
+            shell=True,
+            universal_newlines=True,
+        ).strip()
 
 
 def _lib_candidates_macos():
     """Yield possible libmagic library names on macOS."""
     paths = [
-        "/opt/homebrew/lib",
-        "/opt/local/lib",
-        "/usr/local/lib",
-    ] + glob.glob("/usr/local/Cellar/libmagic/*/lib")
+        # libmagic bundled in the wheel
+        here,
+        # libmagic in the current working directory
+        os.path.abspath('.'),
+        # libmagic in other common sources like homebrew
+        '/opt/local/lib',
+        '/usr/local/lib',
+        '/opt/homebrew/lib',
+    ] + glob.glob('/usr/local/Cellar/libmagic/*/lib')
+
     for path in paths:
-        yield os.path.join(path, "libmagic.dylib")
+        yield os.path.join(path, 'libmagic.dylib')
 
 
 def _lib_candidates_windows():
     """Yield possible libmagic library names on Windows."""
-    prefixes = (
+    fnames = (
         "libmagic",
         "magic1",
         "magic-1",
@@ -36,16 +57,17 @@ def _lib_candidates_windows():
         "libmagic-1",
         "msys-magic-1",
     )
-    for prefix in prefixes:
-        # find_library searches in %PATH% but not the current directory,
-        # so look for both
-        yield "./%s.dll" % (prefix,)
-        yield find_library(prefix)
+
+    for fname in fnames:
+        # libmagic bundled in the wheel
+        yield os.path.join(here, '%s.dll' % fname)
+        # libmagic in the current working directory
+        yield os.path.join(os.path.abspath('.'), '%s.dll' % fname)
+        # find_library searches in %PATH% but not the current directory
+        yield find_library(fname)
 
 
 def _lib_candidates():
-    yield find_library("magic")
-
     func = {
         "cygwin": _lib_candidates_windows,
         "darwin": _lib_candidates_macos,
@@ -58,6 +80,9 @@ def _lib_candidates():
     # When we drop legacy Python, we can just `yield from func()`
     for path in func():
         yield path
+
+    # fallback
+    yield find_library('magic')
 
 
 def load_lib():
@@ -74,4 +99,4 @@ def load_lib():
             logger.warning("Failed to load: " + lib, exc_info=True)
 
     # It is better to raise an ImportError since we are importing magic module
-    raise ImportError("python-magic: failed to find libmagic.  Check your installation")
+    raise ImportError("python-magic: failed to find libmagic. Check your installation")
