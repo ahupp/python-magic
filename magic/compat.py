@@ -4,13 +4,11 @@
 Python bindings for libmagic
 '''
 
-import ctypes
-
+import threading
 from collections import namedtuple
 
 from ctypes import *
 from ctypes.util import find_library
-
 
 from . import loader
 
@@ -45,13 +43,19 @@ MAGIC_NO_CHECK_ENCODING = NO_CHECK_ENCODING = 2097152
 
 MAGIC_NO_CHECK_BUILTIN = NO_CHECK_BUILTIN = 4173824
 
+MAGIC_PARAM_INDIR_MAX = PARAM_INDIR_MAX = 0
+MAGIC_PARAM_NAME_MAX = PARAM_NAME_MAX = 1
+MAGIC_PARAM_ELF_PHNUM_MAX = PARAM_ELF_PHNUM_MAX = 2
+MAGIC_PARAM_ELF_SHNUM_MAX = PARAM_ELF_SHNUM_MAX = 3
+MAGIC_PARAM_ELF_NOTES_MAX = PARAM_ELF_NOTES_MAX = 4
+MAGIC_PARAM_REGEX_MAX = PARAM_REGEX_MAX = 5
+MAGIC_PARAM_BYTES_MAX = PARAM_BYTES_MAX = 6
+
 FileMagic = namedtuple('FileMagic', ('mime_type', 'encoding', 'name'))
 
 
 class magic_set(Structure):
     pass
-
-
 magic_set._fields_ = []
 magic_t = POINTER(magic_set)
 
@@ -102,6 +106,14 @@ _list.argtypes = [magic_t, c_char_p]
 _errno = _libraries['magic'].magic_errno
 _errno.restype = c_int
 _errno.argtypes = [magic_t]
+
+_getparam = _libraries['magic'].magic_getparam
+_getparam.restype = c_int
+_getparam.argtypes = [magic_t, c_int, c_void_p]
+
+_setparam = _libraries['magic'].magic_setparam
+_setparam.restype = c_int
+_setparam.argtypes = [magic_t, c_int, c_void_p]
 
 
 class Magic(object):
@@ -228,29 +240,81 @@ class Magic(object):
         """
         return _errno(self._magic_t)
 
+    def getparam(self, param):
+        """
+        Returns the param value if successful and -1 if the parameter
+        was unknown.
+        """
+        v = c_int()
+        i = _getparam(self._magic_t, param, byref(v))
+        if i == -1:
+            return -1
+        return v.value
+
+    def setparam(self, param, value):
+        """
+        Returns 0 if successful and -1 if the parameter was unknown.
+        """
+        v = c_int(value)
+        return _setparam(self._magic_t, param, byref(v))
+
 
 def open(flags):
     """
     Returns a magic object on success and None on failure.
     Flags argument as for setflags.
     """
-    return Magic(_open(flags))
+    magic_t = _open(flags)
+    if magic_t is None:
+        return None
+    return Magic(magic_t)
 
 
 # Objects used by `detect_from_` functions
-mime_magic = Magic(_open(MAGIC_MIME))
-mime_magic.load()
-none_magic = Magic(_open(MAGIC_NONE))
-none_magic.load()
+class error(Exception):
+    pass
 
+class MagicDetect(object):
+    def __init__(self):
+        self.mime_magic = open(MAGIC_MIME)
+        if self.mime_magic is None:
+            raise error
+        if self.mime_magic.load() == -1:
+            self.mime_magic.close()
+            self.mime_magic = None
+            raise error
+        self.none_magic = open(MAGIC_NONE)
+        if self.none_magic is None:
+            self.mime_magic.close()
+            self.mime_magic = None
+            raise error
+        if self.none_magic.load() == -1:
+            self.none_magic.close()
+            self.none_magic = None
+            self.mime_magic.close()
+            self.mime_magic = None
+            raise error
+
+    def __del__(self):
+        if self.mime_magic is not None:
+            self.mime_magic.close()
+        if self.none_magic is not None:
+            self.none_magic.close()
+
+threadlocal = threading.local()
+
+def _detect_make():
+    v = getattr(threadlocal, "magic_instance", None)
+    if v is None:
+        v = MagicDetect()
+        setattr(threadlocal, "magic_instance", v)
+    return v
 
 def _create_filemagic(mime_detected, type_detected):
-    splat = mime_detected.split('; ')
-    mime_type = splat[0]
-    if len(splat) == 2:
-        mime_encoding = splat[1]
-    else:
-        mime_encoding = ''
+    try:
+        mime_type, mime_encoding = mime_detected.split('; ')
+    except ValueError:
+        raise ValueError(mime_detected)
 
     return FileMagic(name=type_detected, mime_type=mime_type,
                      encoding=mime_encoding.replace('charset=', ''))
@@ -261,9 +325,9 @@ def detect_from_filename(filename):
 
     Returns a `FileMagic` namedtuple.
     '''
-
-    return _create_filemagic(mime_magic.file(filename),
-                             none_magic.file(filename))
+    x = _detect_make()
+    return _create_filemagic(x.mime_magic.file(filename),
+                             x.none_magic.file(filename))
 
 
 def detect_from_fobj(fobj):
@@ -273,8 +337,9 @@ def detect_from_fobj(fobj):
     '''
 
     file_descriptor = fobj.fileno()
-    return _create_filemagic(mime_magic.descriptor(file_descriptor),
-                             none_magic.descriptor(file_descriptor))
+    x = _detect_make()
+    return _create_filemagic(x.mime_magic.descriptor(file_descriptor),
+                             x.none_magic.descriptor(file_descriptor))
 
 
 def detect_from_content(byte_content):
@@ -283,5 +348,6 @@ def detect_from_content(byte_content):
     Returns a `FileMagic` namedtuple.
     '''
 
-    return _create_filemagic(mime_magic.buffer(byte_content),
-                             none_magic.buffer(byte_content))
+    x = _detect_make()
+    return _create_filemagic(x.mime_magic.buffer(byte_content),
+                             x.none_magic.buffer(byte_content))

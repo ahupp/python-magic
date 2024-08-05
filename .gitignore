@@ -11,3 +11,4 @@ pyvenv.cfg
 *.pyc
 *~
 dist/
+.vscode/
