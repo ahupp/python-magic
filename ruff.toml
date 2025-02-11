@@ -1,0 +1,1 @@
+exclude = ["magic/compat.py"]
