@@ -11,7 +11,25 @@ class Magic:
     flags: int = ...
     cookie: Any = ...
     lock: threading.Lock = ...
-    def __init__(self, mime: bool = ..., magic_file: Optional[Any] = ..., mime_encoding: bool = ..., keep_going: bool = ..., uncompress: bool = ..., raw: bool = ..., extension: bool = ..., follow_symlinks: bool = ..., check_tar: bool = ..., check_soft: bool = ..., check_apptype: bool = ..., check_elf: bool = ..., check_text: bool = ..., check_encoding: bool = ..., check_json: bool = ..., check_simh: bool = ...) -> None: ...
+    def __init__(
+        self,
+        mime: bool = ...,
+        magic_file: Optional[Any] = ...,
+        mime_encoding: bool = ...,
+        keep_going: bool = ...,
+        uncompress: bool = ...,
+        raw: bool = ...,
+        extension: bool = ...,
+        follow_symlinks: bool = ...,
+        check_tar: bool = ...,
+        check_soft: bool = ...,
+        check_apptype: bool = ...,
+        check_elf: bool = ...,
+        check_text: bool = ...,
+        check_encoding: bool = ...,
+        check_json: bool = ...,
+        check_simh: bool = ...,
+    ) -> None: ...
     def from_buffer(self, buf: Union[bytes, str]) -> Text: ...
     def from_file(self, filename: Union[bytes, str, PathLike]) -> Text: ...
     def from_descriptor(self, fd: int, mime: bool = ...) -> Text: ...
