@@ -16,10 +16,8 @@ jobs:
     steps:
       - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libmagic-dev
-      - if: runner.os == 'macOS'
+      - if: runner.os == 'Linux' || runner.os == 'macOS' 
         run: brew install libmagic
-      - if: runner.os == 'Windows'
-        run: pip install python-magic-bin
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -27,6 +25,8 @@ jobs:
           allow-prereleases: true
       - run: pip install --upgrade pip
       - run: pip install --upgrade pytest
+      - if: runner.os == 'Windows'
+        run: pip install python-magic-bin
       - run: pip install --editable .
       - run: LC_ALL=en_US.UTF-8 pytest
         shell: bash
