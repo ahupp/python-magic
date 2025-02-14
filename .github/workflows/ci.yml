@@ -5,17 +5,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-22.04-arm']
+        os: ['ubuntu-latest']
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
         include:
           - os: macos-latest
+            python-version: '3.13'
+          - os: ubuntu-24-04-arm
             python-version: '3.13'
           # - os: windows-latest  # TODO: Fix the Windows test that runs in an infinite loop
           #   python-version: '3.13'
     runs-on: ${{ matrix.os }}
     steps:
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libmagic-dev libmagic1 python-libmagic
+        run: conda install -c conda-forge libmagic
+             # sudo apt-get update && sudo apt-get install -y libmagic-dev libmagic1
       - if: runner.os == 'macOS' 
         run: brew install libmagic
       - uses: actions/checkout@v4
