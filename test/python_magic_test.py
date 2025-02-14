@@ -184,7 +184,7 @@ class MagicTest(unittest.TestCase):
         shutil.copyfile(os.path.join(MagicTest.TESTDATA_DIR, "lambda"), dest)
         os.environ["TZ"] = "UTC"
         try:
-            for file_name, cases in CASES:
+            for file_name, cases in CASES.items():
                 filename = os.path.join(self.TESTDATA_DIR, file_name)
                 for flags, outputs in cases:
                     m = magic.Magic(**flags)
