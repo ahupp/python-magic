@@ -6,6 +6,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from typing import Optional
 
 # for output which reports a local time
 os.environ["TZ"] = "GMT"
@@ -22,7 +23,7 @@ class TestFile:
     file_name: str
     mime_results: list[str]
     text_results: list[str]
-    no_check_elf_results: list[str] | None
+    no_check_elf_results: Optional[list[str]]
     buf_equals_file: bool = True
 
 # magic_descriptor is broken (?) in centos 7, so don't run those tests
