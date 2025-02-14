@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libmagic1
+        run: sudo apt-get update && sudo apt-get install -y libmagic-dev libmagic1 python-libmagic
       - if: runner.os == 'macOS' 
         run: brew install libmagic
       - uses: actions/checkout@v4
