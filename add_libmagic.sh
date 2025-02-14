@@ -5,9 +5,9 @@ set -euxo pipefail
 install_source() {
     # install from source
     # https://www.darwinsys.com/file/
-    # https://github.com/file/file/blob/FILE5_45/INSTALL#L51
+    # https://github.com/file/file/blob/FILE5_46/INSTALL#L51
     (
-        version="file-5.45" &&
+        version="file-5.46" &&
         tmpfile="$(mktemp)" &&
         curl -sSLo "${tmpfile}" "https://astron.com/pub/file/${version}.tar.gz" &&
         tar xvf "${tmpfile}" &&
