@@ -1,18 +1,27 @@
-from ctypes.util import find_library
 import ctypes
-import sys
 import glob
-import os.path
 import logging
+import os.path
+import sys
+from ctypes.util import find_library
 
 logger = logging.getLogger(__name__)
+
 
 def _lib_candidates_linux():
     """Yield possible libmagic library names on Linux.
 
-    This is necessary because alpine is bad
+    This is necessary because alpine is bad.
+
+    Use `ldconfig -p | grep libmagic || true` to discover these.
     """
-    yield "libmagic.so.1"
+    yield from (
+        "libmagic.so",
+        "libmagic.so.1",
+        "/lib/x86_64-linux-gnu/libmagic.so.1",
+        "/lib/aarch64-linux-gnu/libmagic.so.1",
+        "/lib/aarch64-linux-gnu/libmagic.so",
+    )
 
 
 def _lib_candidates_macos():
@@ -22,6 +31,7 @@ def _lib_candidates_macos():
         "/opt/local/lib",
         "/usr/local/lib",
     ] + glob.glob("/usr/local/Cellar/libmagic/*/lib")
+    # Should probably use $HOMEBREW_CELLAR enviroment variable
     for path in paths:
         yield os.path.join(path, "libmagic.dylib")
 
@@ -39,7 +49,7 @@ def _lib_candidates_windows():
     for prefix in prefixes:
         # find_library searches in %PATH% but not the current directory,
         # so look for both
-        yield "./%s.dll" % (prefix,)
+        yield f"./{prefix}.dll"
         yield find_library(prefix)
 
 
