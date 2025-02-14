@@ -20,7 +20,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
       - name: Copy libmagic into magic dir
-        run: ${{ ( startsWith( matrix.os, 'windows' ) && 'bash add_libmagic.sh' ) || 'sudo -E bash add_libmagic.sh' }}
+        run: ${{ (runner.os == 'Windows' && 'bash add_libmagic.sh')  || 'sudo -E bash add_libmagic.sh' }}
       - run: pip install --upgrade pip
       - run: pip install --upgrade pytest
       - run: pip install --editable .
