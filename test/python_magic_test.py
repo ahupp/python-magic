@@ -129,7 +129,7 @@ CASES = {
     b"\xce\xbb": [
         (COMMON_MIME, ["text/plain"]),
     ],
-    "b\xce\xbb".decode("utf-8"): [
+    b"\xce\xbb".decode("utf-8"): [
         (COMMON_MIME, ["text/plain"]),
     ],
     "name_use.jpg": [
