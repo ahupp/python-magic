@@ -7,6 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def _lib_candidates_linux():
     """Yield possible libmagic library names on Linux.
 
@@ -51,7 +52,7 @@ def _lib_candidates():
         "darwin": _lib_candidates_macos,
         "linux": _lib_candidates_linux,
         "win32": _lib_candidates_windows,
-        "sunos5": _lib_candidates_linux, 
+        "sunos5": _lib_candidates_linux,
     }.get(sys.platform)
     if func is None:
         raise ImportError("python-magic: Unsupported platform: " + sys.platform)
@@ -61,17 +62,20 @@ def _lib_candidates():
 
 
 def load_lib():
+    exc = []
     for lib in _lib_candidates():
         # find_library returns None when lib not found
         if lib is None:
             continue
-        if not os.path.exists(lib):
-            continue
 
         try:
             return ctypes.CDLL(lib)
-        except OSError:
-            logger.warning("Failed to load: " + lib, exc_info=True)
+        except OSError as e:
+            exc.append(e)
+
+    msg = "\n".join([str(e) for e in exc])
 
     # It is better to raise an ImportError since we are importing magic module
-    raise ImportError("python-magic: failed to find libmagic.  Check your installation")
+    raise ImportError(
+        "python-magic: failed to find libmagic.  Check your installation: \n" + msg
+    )
