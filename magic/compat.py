@@ -4,6 +4,8 @@
 Python bindings for libmagic
 '''
 
+import ctypes
+import os
 import threading
 from collections import namedtuple
 
@@ -14,6 +16,13 @@ from . import loader
 
 _libraries = {}
 _libraries['magic'] = loader.load_lib()
+magic_file = None
+if not os.environ.get("MAGIC"):
+    # wheels package the mime database in this directory
+    # prefer it when no magic file is specified by the user
+    mime_db = os.path.join(os.path.dirname(__file__), 'magic.mgc')
+    if os.path.exists(mime_db):
+        magic_file = mime_db
 
 # Flag constants for open and setflags
 MAGIC_NONE = NONE = 0
@@ -190,7 +199,7 @@ class Magic(object):
         """
         return _setflags(self._magic_t, flags)
 
-    def load(self, filename=None):
+    def load(self, filename=magic_file):
         """
         Must be called to load entries in the colon separated list of database
         files passed as argument or the default database file if no argument
