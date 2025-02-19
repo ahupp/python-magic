@@ -18,6 +18,7 @@ if os.environ.get("LC_ALL", "") != "en_US.UTF-8":
 
 import magic
 
+
 @dataclass
 class TestFile:
     file_name: str
@@ -26,133 +27,152 @@ class TestFile:
     no_check_elf_results: Optional[List[str]]
     buf_equals_file: bool = True
 
+
 # magic_descriptor is broken (?) in centos 7, so don't run those tests
 SKIP_FROM_DESCRIPTOR = bool(os.environ.get("SKIP_FROM_DESCRIPTOR"))
 
 
-COMMON_PLAIN = [
-    {},
-    {"check_soft": True},
-    {"check_soft": False},
-    {"check_json": True},
-    {"check_json": False},
-]
-
+COMMON_PLAIN = [{}]
 NO_SOFT = [{"check_soft": False}]
-
-COMMON_MIME = [{"mime": True, **k} for k in COMMON_PLAIN]
+COMMON_MIME = [{"mime": True}]
 
 CASES = {
-    "magic._pyc_": [
-        (COMMON_MIME, [
-            "application/octet-stream",
-            "text/x-bytecode.python",
-            "application/x-bytecode.python",
-        ]),
-        (COMMON_PLAIN, ["python 2.4 byte-compiled", "data"]),
-        (NO_SOFT, ["python 2.4 byte-compiled", "data"]),
-    ],
-    "test.pdf": [
-        (COMMON_MIME, ["text/plain", "application/pdf"]),
-        (COMMON_PLAIN, [
-            "ASCII text",
-            "PDF document, version 1.2",
-            "PDF document, version 1.2, 2 pages",
-            "PDF document, version 1.2, 2 page(s)",
-        ]),
-        (NO_SOFT, ["ASCII text"]),
-    ],
-    "test.gz": [
-        (COMMON_MIME, ["application/octet-stream", "application/gzip", "application/x-gzip"]),
-        (COMMON_PLAIN, [
-            "data",
-            'gzip compressed data, was "test", from Unix, last modified: Sun Jun 29 01:32:52 2008',
-            'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix',
-            'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix, original size 15',
-            'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix, original size modulo 2^32 15',
-            'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix, truncated',
-        ]),
-        ([{"extension": True}], [
-            # some versions return '' for the extensions of a gz file,
-            # including w/ the command line.  Who knows...
-            "gz/tgz/tpz/zabw/svgz/adz/kmy/xcfgz",
-            "gz/tgz/tpz/zabw/svgz",
-            "",
-            "???",
-        ]),
+    b"magic._pyc_": [
+        (
+            COMMON_MIME,
+            [
+                "application/octet-stream",
+                "text/x-bytecode.python",
+                "application/x-bytecode.python",
+            ],
+        ),
+        (COMMON_PLAIN, ["python 2.4 byte-compiled"]),
         (NO_SOFT, ["data"]),
     ],
-    "test.snappy.parquet": [
+    b"test.pdf": [
+        (COMMON_MIME, ["application/pdf"]),
+        (
+            COMMON_PLAIN,
+            [
+                "PDF document, version 1.2",
+                "PDF document, version 1.2, 2 pages",
+                "PDF document, version 1.2, 2 page(s)",
+            ],
+        ),
+        (NO_SOFT, ["ASCII text"]),
+    ],
+    b"test.gz": [
+        (COMMON_MIME, ["application/gzip", "application/x-gzip"]),
+        (
+            COMMON_PLAIN,
+            [
+                'gzip compressed data, was "test", from Unix, last modified: Sun Jun 29 01:32:52 2008',
+                'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix',
+                'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix, original size 15',
+                'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix, original size modulo 2^32 15',
+                'gzip compressed data, was "test", last modified: Sun Jun 29 01:32:52 2008, from Unix, truncated',
+            ],
+        ),
+        (
+            [{"extension": True}],
+            [
+                # some versions return '' for the extensions of a gz file,
+                # including w/ the command line.  Who knows...
+                "gz/tgz/tpz/zabw/svgz/adz/kmy/xcfgz",
+                "gz/tgz/tpz/zabw/svgz",
+                "",
+                "???",
+            ],
+        ),
+        (NO_SOFT, ["data"]),
+    ],
+    b"test.snappy.parquet": [
         (COMMON_MIME, ["application/octet-stream"]),
         (COMMON_PLAIN, ["data", "Apache Parquet", "Par archive data"]),
         (NO_SOFT, ["data"]),
     ],
-    "test.json": [
-        # TODO: soft, no_json
-        (COMMON_MIME, ["text/plain", "application/json"]),
-        (COMMON_PLAIN, ["ASCII text", "JSON text data"]),
-        ([{"mime": True, "check_json": False}], [
-            "text/plain", "data",
-        ]),
-        (NO_SOFT, ["JSON text data"])
+    b"test.json": [
+        (COMMON_MIME, ["application/json"]),
+        (COMMON_PLAIN, ["JSON text data"]),
+        (
+            [{"mime": True, "check_json": False}],
+            [
+                "text/plain",
+            ],
+        ),
+        (NO_SOFT, ["JSON text data"]),
     ],
-    "elf-NetBSD-x86_64-echo": [
+    b"elf-NetBSD-x86_64-echo": [
         # TODO: soft, no elf
-        (COMMON_PLAIN, [
-            "data",
-            "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
-            "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /libexec/ld.elf_so, for NetBSD 8.0, not stripped",
-        ]),
-        (COMMON_MIME, [
-            "application/octet-stream",
-            "application/x-pie-executable",
-            "application/x-sharedlib",
-        ]),
-        ([{"check_elf": False}], [
-            "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
-        ]),
+        (
+            COMMON_PLAIN,
+            [
+                "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
+                "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /libexec/ld.elf_so, for NetBSD 8.0, not stripped",
+            ],
+        ),
+        (
+            COMMON_MIME,
+            [
+                "application/x-pie-executable",
+                "application/x-sharedlib",
+            ],
+        ),
+        (
+            [{"check_elf": False}],
+            [
+                "ELF 64-bit LSB shared object, x86-64, version 1 (SYSV)",
+            ],
+        ),
         # TODO: sometimes
         #  "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /libexec/ld.elf_so, for NetBSD 8.0, not stripped",
-
         (NO_SOFT, ["data"]),
     ],
-    "text.txt": [
+    b"text.txt": [
         (COMMON_MIME, ["text/plain"]),
         (COMMON_PLAIN, ["ASCII text"]),
-        ([{"mime_encoding": True}], [
-            "us-ascii",
-        ]),
+        (
+            [{"mime_encoding": True}],
+            [
+                "us-ascii",
+            ],
+        ),
         (NO_SOFT, ["ASCII text"]),
     ],
-    "text-iso8859-1.txt": [
-        ([{"mime_encoding": True}], [
-            "iso-8859-1",
-        ]),
+    b"text-iso8859-1.txt": [
+        (
+            [{"mime_encoding": True}],
+            [
+                "iso-8859-1",
+            ],
+        ),
     ],
-    b"\xce\xbb".decode("utf-8"): [
+    b"\xce\xbb": [
         (COMMON_MIME, ["text/plain"]),
     ],
-    "name_use.jpg": [
-        ([{"extension": True}], [
-            "jpeg/jpg/jpe/jfif"
-        ]),
+    b"name_use.jpg": [
+        ([{"extension": True}], ["jpeg/jpg/jpe/jfif"]),
     ],
-    "keep-going.jpg": [
-        (COMMON_MIME, [
-            "application/octet-stream",
-            "image/jpeg",
-        ]),
-        ([{"mime": True, "keep_going": True}], [
-            "image/jpeg\\012- application/octet-stream",
-        ])
+    b"keep-going.jpg": [
+        (COMMON_MIME, ["image/jpeg"]),
+        (
+            [{"mime": True, "keep_going": True}],
+            [
+                "image/jpeg\\012- application/octet-stream",
+            ],
+        ),
     ],
-    # "test.py": [
-    #     (COMMON_MIME, [
-    #         "text/x-python",
-    #         "text/x-script.python",
-    #     ])
-    # ]
+    b"../../magic/loader.py": [
+        (
+            COMMON_MIME,
+            [
+                "text/x-python",
+                "text/x-script.python",
+            ],
+        )
+    ],
 }
+
 
 class MagicTest(unittest.TestCase):
     TESTDATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "testdata"))
@@ -166,7 +186,6 @@ class MagicTest(unittest.TestCase):
     def test_fs_encoding(self):
         self.assertEqual("utf-8", sys.getfilesystemencoding().lower())
 
-
     def test_from_file_str_and_bytes(self):
         filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
 
@@ -174,7 +193,6 @@ class MagicTest(unittest.TestCase):
         self.assertEqual(
             "application/pdf", magic.from_file(filename.encode("utf-8"), mime=True)
         )
-
 
     def test_all_cases(self):
         # TODO:
@@ -185,18 +203,20 @@ class MagicTest(unittest.TestCase):
         shutil.copyfile(os.path.join(MagicTest.TESTDATA_DIR, "lambda"), dest)
         os.environ["TZ"] = "UTC"
         try:
-            for file_name, cases in CASES.items():
-                filename = os.path.join(self.TESTDATA_DIR, file_name)
-                for flags_list, outputs in cases:
-                    for flags in flags_list:
+            for filename, cases in CASES.items():
+                filename = os.path.join(self.TESTDATA_DIR.encode("utf-8"), filename)
+                print("test case ", filename, file=sys.stderr)
+                for flag_variants, outputs in cases:
+                    for flags in flag_variants:
+                        print("flags", flags, file=sys.stderr)
                         m = magic.Magic(**flags)
                         with open(filename) as f:
                             self.assertIn(m.from_descriptor(f.fileno()), outputs)
 
                         self.assertIn(m.from_file(filename), outputs)
 
-                        fname_bytes = filename.encode("utf-8")
-                        self.assertIn(m.from_file(fname_bytes), outputs)
+                        fname_str = filename.decode("utf-8")
+                        self.assertIn(m.from_file(fname_str), outputs)
 
                         with open(filename, "rb") as f:
                             buf_result = m.from_buffer(f.read(1024))
@@ -224,7 +244,6 @@ class MagicTest(unittest.TestCase):
         else:
             raise unittest.SkipTest("Magic file doesn't return expected type.")
 
-
     def test_errors(self):
         m = magic.Magic()
         self.assertRaises(IOError, m.from_file, "nonexistent")
@@ -234,7 +253,6 @@ class MagicTest(unittest.TestCase):
             self.assertRaises(magic.MagicException, magic.Magic)
         finally:
             del os.environ["MAGIC"]
-
 
     def test_rethrow(self):
         old = magic.magic_buffer
