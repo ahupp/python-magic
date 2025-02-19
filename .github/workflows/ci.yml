@@ -5,11 +5,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest']
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
+        os: ["ubuntu-latest"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         include:
           - os: macos-latest
-            python-version: '3.13'
+            python-version: "3.13"
           # - os: windows-latest  # TODO: Fix the Windows test that runs in an infinite loop
           #   python-version: '3.13'
     runs-on: ${{ matrix.os }}
@@ -28,4 +28,4 @@ jobs:
         run: pip install python-magic-bin
       - run: LC_ALL=en_US.UTF-8 pytest
         shell: bash
-        timeout-minutes: 15  # Limit Windows infinite loop.
+        timeout-minutes: 15 # Limit Windows infinite loop.
