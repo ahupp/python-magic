@@ -38,12 +38,27 @@ class Magic:
     Magic is a wrapper around the libmagic C library.
     """
 
-    def __init__(self, mime=False, magic_file=None, mime_encoding=False,
-                 keep_going=False, uncompress=False, raw=False, extension=False,
-                 follow_symlinks=False, check_tar=True, check_soft=True,
-                 check_apptype=True, check_elf=True, check_text=True,
-                 check_cdf=True, check_csv=True, check_encoding=True,
-                 check_json=True, check_simh=True):
+    def __init__(
+        self,
+        mime=False,
+        magic_file=None,
+        mime_encoding=False,
+        keep_going=False,
+        uncompress=False,
+        raw=False,
+        extension=False,
+        follow_symlinks=False,
+        check_tar=True,
+        check_soft=True,
+        check_apptype=True,
+        check_elf=True,
+        check_text=True,
+        check_cdf=True,
+        check_csv=True,
+        check_encoding=True,
+        check_json=True,
+        check_simh=True,
+    ):
         """
         Create a new libmagic wrapper.
 
@@ -101,7 +116,9 @@ class Magic:
         # MAGIC_EXTENSION was added in 523 or 524, so bail if
         # it doesn't appear to be available
         if extension and (not _has_version or version() < 524):
-            raise NotImplementedError('MAGIC_EXTENSION is not supported in this version of libmagic')
+            raise NotImplementedError(
+                "MAGIC_EXTENSION is not supported in this version of libmagic"
+            )
 
         # For https://github.com/ahupp/python-magic/issues/190
         # libmagic has fixed internal limits that some files exceed, causing
@@ -128,7 +145,7 @@ class Magic:
                 # which is not what libmagic expects
                 # NEXTBREAK: only take bytes
                 if type(buf) == str and str != bytes:
-                    buf = buf.encode('utf-8', errors='replace')
+                    buf = buf.encode("utf-8", errors="replace")
                 return maybe_decode(magic_buffer(self.cookie, buf))
             except MagicException as e:
                 return self._handle509Bug(e)
@@ -176,7 +193,7 @@ class Magic:
         # incorrect fix for a threading problem, however I'm leaving
         # it in because it's harmless and I'm slightly afraid to
         # remove it.
-        if hasattr(self, 'cookie') and self.cookie and magic_close:
+        if hasattr(self, "cookie") and self.cookie and magic_close:
             magic_close(self.cookie)
             self.cookie = None
 
@@ -192,7 +209,7 @@ def _get_magic_type(mime):
 
 
 def from_file(filename, mime=False):
-    """"
+    """
     Accepts a filename and returns the detected filetype.  Return
     value is the mimetype if mime=True, otherwise a human readable
     name.
@@ -230,7 +247,9 @@ def from_descriptor(fd, mime=False):
     m = _get_magic_type(mime)
     return m.from_descriptor(fd)
 
+
 from . import loader
+
 libmagic = loader.load_lib()
 
 magic_t = ctypes.c_void_p
@@ -261,19 +280,22 @@ def maybe_decode(s):
     else:
         # backslashreplace here because sometimes libmagic will return metadata in the charset
         # of the file, which is unknown to us (e.g the title of a Word doc)
-        return s.decode('utf-8', 'backslashreplace')
+        return s.decode("utf-8", "backslashreplace")
 
 
 try:
     from os import PathLike
+
     def unpath(filename):
         if isinstance(filename, PathLike):
             return filename.__fspath__()
         else:
             return filename
 except ImportError:
+
     def unpath(filename):
         return filename
+
 
 def coerce_filename(filename):
     if filename is None:
@@ -286,12 +308,11 @@ def coerce_filename(filename):
     # then you'll get inconsistent behavior (crashes) depending on the user's
     # LANG environment variable
     # NEXTBREAK: remove
-    is_unicode = (sys.version_info[0] <= 2 and
-                 isinstance(filename, unicode)) or \
-                 (sys.version_info[0] >= 3 and
-                  isinstance(filename, str))
+    is_unicode = (sys.version_info[0] <= 2 and isinstance(filename, unicode)) or (
+        sys.version_info[0] >= 3 and isinstance(filename, str)
+    )
     if is_unicode:
-        return filename.encode('utf-8', 'surrogateescape')
+        return filename.encode("utf-8", "surrogateescape")
     else:
         return filename
 
@@ -370,7 +391,7 @@ magic_compile.restype = c_int
 magic_compile.argtypes = [magic_t, c_char_p]
 
 _has_param = False
-if hasattr(libmagic, 'magic_setparam') and hasattr(libmagic, 'magic_getparam'):
+if hasattr(libmagic, "magic_setparam") and hasattr(libmagic, "magic_getparam"):
     _has_param = True
     _magic_setparam = libmagic.magic_setparam
     _magic_setparam.restype = c_int
@@ -443,8 +464,8 @@ MAGIC_NO_CHECK_TOKENS = 0x100000  # Don't check ascii/tokens (deprecated)
 MAGIC_NO_CHECK_CDF = 0x0040000  # Don't check for CDF files
 MAGIC_NO_CHECK_CSV = 0x0080000  # Don't check for CSV files
 MAGIC_NO_CHECK_ENCODING = 0x0200000  # Don't check text encodings
-MAGIC_NO_CHECK_JSON = 0x0400000 # Don't check for JSON files
-MAGIC_NO_CHECK_SIMH = 0x0800000 # Don't check for SIMH tape files
+MAGIC_NO_CHECK_JSON = 0x0400000  # Don't check for JSON files
+MAGIC_NO_CHECK_SIMH = 0x0800000  # Don't check for SIMH tape files
 
 MAGIC_PARAM_INDIR_MAX = 0  # Recursion limit for indirect magic
 MAGIC_PARAM_NAME_MAX = 1  # Use count limit for name/use magic
@@ -468,22 +489,20 @@ def _add_compat(to_module):
             warnings.warn(
                 "Using compatibility mode with libmagic's python binding. "
                 "See https://github.com/ahupp/python-magic/blob/master/COMPAT.md for details.",
-                PendingDeprecationWarning)
+                PendingDeprecationWarning,
+            )
 
             return fn(*args, **kwargs)
 
         return _
 
-    fn = ['detect_from_filename',
-          'detect_from_content',
-          'detect_from_fobj',
-          'open']
+    fn = ["detect_from_filename", "detect_from_content", "detect_from_fobj", "open"]
     for fname in fn:
         to_module[fname] = deprecation_wrapper(compat.__dict__[fname])
 
     # copy constants over, ensuring there's no conflicts
     is_const_re = re.compile("^[A-Z_]+$")
-    allowed_inconsistent = set(['MAGIC_MIME'])
+    allowed_inconsistent = set(["MAGIC_MIME"])
     for name, value in compat.__dict__.items():
         if is_const_re.match(name):
             if name in to_module:
