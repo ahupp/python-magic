@@ -8,7 +8,9 @@ import sys
 
 # python packages should not install succesfully if libraries are missing
 from magic.loader import load_lib
+
 load_lib()._name
+
 
 def read(file_name):
     """Read a text file and return the content as a string."""
@@ -16,6 +18,7 @@ def read(file_name):
         os.path.join(os.path.dirname(__file__), file_name), encoding="utf-8"
     ) as f:
         return f.read()
+
 
 def get_cmdclass():
     """Build a platform-specific wheel when `setup.py bdist_wheel` is called."""
@@ -36,6 +39,7 @@ def get_cmdclass():
             return python, abi, plat
 
     return {"bdist_wheel": bdist_wheel_platform_specific}
+
 
 cmdclass = get_cmdclass()
 
