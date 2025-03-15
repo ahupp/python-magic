@@ -3,12 +3,11 @@
 set -euxo pipefail
 
 install_source() {
-    # skip on Windows for now
-    python -c 'import platform; assert platform.system() != "Windows"' || exit 1
     # install from source
     # https://www.darwinsys.com/file/
     # https://github.com/file/file/blob/FILE5_46/INSTALL#L51
     (
+        python -c 'import platform; assert platform.system() != "Windows"' &&
         version="file-5.46" &&
         tmpfile="$(mktemp)" &&
         curl -sSLo "${tmpfile}" "https://astron.com/pub/file/${version}.tar.gz" &&
