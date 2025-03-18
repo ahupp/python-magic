@@ -8,8 +8,11 @@ on:
     types: [released, prereleased]
   workflow_dispatch:  # allows running workflow manually from the Actions tab
 
-jobs:
+concurrency:  # https://stackoverflow.com/questions/66335225#comment133398800_72408109
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+jobs:
   build-sdist:
     runs-on: ubuntu-latest
 
@@ -86,6 +89,41 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
+    # For Windows, grabbing latest file from MSYS2 is easier than building from source
+    # It's generally up to date ref https://packages.msys2.org/base/mingw-w64-file
+    - name: Setup MSYS2 and install file
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2.27.0
+      with:
+        msystem: ${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}
+        location: D:\
+        install: >-
+          ${{ endsWith(matrix.only, '32') && 'mingw-w64-i686-file' || 'mingw-w64-x86_64-file' }}
+
+    # The DLL dependency tree flattened out ref "Dependencies" https://packages.msys2.org/packages/mingw-w64-x86_64-file
+    - name: Copy Windows ddl and mgc
+      if: runner.os == 'Windows'
+      run: |
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/share/misc/magic.mgc" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libmagic-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libsystre-0.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libtre-5.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libasprintf-0.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libintl-8.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libatomic-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libgomp-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libquadmath-0.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libstdc++-6.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libcharset-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libiconv-2.dll" "magic"
+
+    # These are needed additionally in the win32 wheel ref https://packages.msys2.org/packages/mingw-w64-i686-file
+    - name: Copy additional 32-bit runtime DLLs
+      if: runner.os == 'Windows' && endsWith(matrix.only, '32')
+      run: |
+        cp "/msys64/mingw32/bin/libgcc_s_dw2-1.dll" "magic"
+        cp "/msys64/mingw32/bin/libwinpthread-1.dll" "magic"
+
     - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
       timeout-minutes: 10
       with:
@@ -93,7 +131,8 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         # add compiled libmagic to the build directory (to include in the wheel)
-        CIBW_BEFORE_BUILD: ${{ ( startsWith( matrix.os, 'macos' ) && 'sudo -E bash add_libmagic.sh' ) || 'bash add_libmagic.sh' }}
+        CIBW_BEFORE_BUILD_MACOS: sudo -E bash add_libmagic.sh
+        CIBW_BEFORE_BUILD_LINUX: bash add_libmagic.sh
         # build macos wheels with maximum backwards compatibility (gcc -mmacosx-version-min flag)
         MACOSX_DEPLOYMENT_TARGET: ${{ ( endsWith( matrix.only, 'arm64' ) && '11.0' ) || '10.9' }}
         # simple smoke test run on each wheel: this is an HLS MP4 video, only recognised in recent versions of libmagic

@@ -6,11 +6,6 @@ import io
 import os
 import sys
 
-# python packages should not install succesfully if libraries are missing
-from magic.loader import load_lib
-
-load_lib()._name
-
 
 def read(file_name):
     """Read a text file and return the content as a string."""
