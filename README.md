@@ -45,8 +45,11 @@ You can also combine the flag options:
 
 ## Installation
 
-The current stable version of python-magic is available on PyPI and
-can be installed by running `pip install python-magic`.
+The current stable version of Python-Magic is available on PyPI and
+can be installed by running:
+```
+pip install python-magic
+```
 
 Other sources:
 
