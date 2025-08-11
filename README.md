@@ -46,7 +46,10 @@ You can also combine the flag options:
 
 This module is a simple [CDLL](https://docs.python.org/3/library/ctypes.html) wrapper around the libmagic C library.
 The current stable version of python-magic is available on [PyPI](http://pypi.python.org/pypi/python-magic/)
-and can be installed by running `pip install python-magic`.
+and can be installed by running:
+```
+pip install python-magic
+```
 
 Compiled libmagic and the magic database come bundled in the wheels on PyPI.
 You can use your own `magic.mgc` database by setting the `MAGIC`
