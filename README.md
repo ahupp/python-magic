@@ -81,10 +81,9 @@ dnf install file-libs
  
 ### Windows
 
-The DLLs that are bundled in the Windows wheels are compiled by @julian-r
-and are hosted at https://github.com/julian-r/file-windows/releases.
+The DLLs that are bundled in the Windows wheels are built by MSYS2 ([mingw32](https://packages.msys2.org/packages/mingw-w64-i686-file) and [mingw64](https://packages.msys2.org/packages/mingw-w64-x86_64-file)).
 
-For ARM64 Windows, you'll need to compile libmagic from source.
+For ARM64 Windows, you'll need to compile libmagic from source or [install](https://packages.msys2.org/packages/mingw-w64-clang-aarch64-file) from MSYS2.
 
 ### OSX
 
