@@ -100,7 +100,7 @@ port install file
 If python-magic fails to load the library it may be in a non-standard location, in which case you can set the environment variable `DYLD_LIBRARY_PATH` to point to it.
 
 ### SmartOS:
-- Install libmagic for source https://github.com/threatstack/libmagic/
+- Install libmagic for source: https://github.com/file/file
 - Depending on your ./configure --prefix settings set your LD_LIBRARY_PATH to <prefix>/lib
 
 ### Troubleshooting
