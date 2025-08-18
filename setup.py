@@ -4,6 +4,7 @@
 import setuptools
 import io
 import os
+import sys
 
 
 def read(file_name):
@@ -13,6 +14,29 @@ def read(file_name):
     ) as f:
         return f.read()
 
+
+def get_cmdclass():
+    """Build a platform-specific wheel when `setup.py bdist_wheel` is called."""
+    if sys.version_info[0] == 2:
+        return {}
+
+    try:
+        from wheel.bdist_wheel import bdist_wheel
+    except ImportError:
+        return {}
+
+    class bdist_wheel_platform_specific(bdist_wheel):
+        def get_tag(self):
+            python, abi, _ = super().get_tag()
+            # get the platform tag based on libmagic included in this wheel
+            self.root_is_pure = False
+            _, _, plat = super().get_tag()
+            return python, abi, plat
+
+    return {"bdist_wheel": bdist_wheel_platform_specific}
+
+
+cmdclass = get_cmdclass()
 
 setuptools.setup(
     name="python-magic",
@@ -25,8 +49,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=["magic"],
     package_data={
-        "magic": ["py.typed", "*.pyi", "**/*.pyi"],
+        "magic": ["py.typed", "*.pyi", "*.dylib*", "*.dll", "*.so*", "magic.mgc"]
     },
+    cmdclass=cmdclass,
     keywords="mime magic file",
     license="MIT",
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",

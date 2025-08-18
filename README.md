@@ -3,11 +3,11 @@
 [![ci](https://github.com/ahupp/python-magic/actions/workflows/ci.yml/badge.svg)](https://github.com/ahupp/python-magic/actions/workflows/ci.yml)
 [![Join the chat at https://gitter.im/ahupp/python-magic](https://badges.gitter.im/ahupp/python-magic.svg)](https://gitter.im/ahupp/python-magic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-python-magic is a Python interface to the libmagic file type
-identification library.  libmagic identifies file types by checking
+[python-magic](https://github.com/ahupp/python-magic) is a Python interface to the libmagic file type
+identification library. libmagic identifies file types by checking
 their headers according to a predefined list of file types. This
 functionality is exposed to the command line by the Unix command
-`file`.
+[`file`](https://www.darwinsys.com/file/).
 
 ## Usage
 
@@ -31,8 +31,7 @@ will fail throw if this is attempted.
 ```python
 >>> f = magic.Magic(uncompress=True)
 >>> f.from_file('testdata/test.gz')
-'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28
-21:32:52 2008, from Unix)'
+'ASCII text (gzip compressed data, was "test", last modified: Sat Jun 28 21:32:52 2008, from Unix)'
 ```
 
 You can also combine the flag options:
@@ -45,30 +44,58 @@ You can also combine the flag options:
 
 ## Installation
 
-The current stable version of python-magic is available on PyPI and
-can be installed by running:
+This module is a [CDLL](https://docs.python.org/3/library/ctypes.html) wrapper around the libmagic C library.
+The current stable version of python-magic is available on [PyPI](http://pypi.python.org/pypi/python-magic/)
+and can be installed by running:
 ```
 pip install python-magic
 ```
 
-Other sources:
-
-- PyPI: http://pypi.python.org/pypi/python-magic/
-- GitHub: https://github.com/ahupp/python-magic
-
-This module is a simple wrapper around the libmagic C library, and
-that must be installed as well:
-
-### Debian/Ubuntu
-
+Compiled libmagic and the magic database come bundled in the wheels on PyPI.
+You can use your own `magic.mgc` database by setting the `MAGIC`
+environment variable, or by using `magic.Magic(magic_file='path/to/magic.mgc')`.
+If you want to compile your own libmagic, circumvent the wheels
+by explicitly installing from source:
 ```
-sudo apt-get install libmagic1
+pip install python-magic --no-binary python-magic
 ```
+
+For systems not supported by the wheels, pip installs from source,
+which requires libmagic to be installed separately:
+
+### Linux
+
+The Linux wheels should run on most systems out of the box.
+
+Depending on your system and CPU architecture, there might be no compatible wheel uploaded.
+However, precompiled libmagic might still be available for your system:
+
+```sh
+# Debian/Ubuntu
+apt-get update && apt-get install -y libmagic1
+# Alpine
+apk add --update libmagic
+# RHEL
+dnf install file-libs
+```
+ 
+### Windows
+
+The DLLs that are bundled in the Windows wheels are built by MSYS2 ([mingw32](https://packages.msys2.org/packages/mingw-w64-i686-file) and [mingw64](https://packages.msys2.org/packages/mingw-w64-x86_64-file)).
+
+For ARM64 Windows, you'll need to compile libmagic from source or [install](https://packages.msys2.org/packages/mingw-w64-clang-aarch64-file) from MSYS2.
 
 ### OSX
 
-- When using Homebrew: `brew install libmagic`
-- When using macports: `port install file`
+The Mac wheels are compiled with maximum backward compatibility.
+For older Macs, you'll need to install libmagic from source:
+
+```sh
+# homebrew
+brew install libmagic
+# macports
+port install file
+```
 
 If python-magic fails to load the library it may be in a non-standard location, in which case you can set the environment variable `DYLD_LIBRARY_PATH` to point to it.
 
@@ -81,7 +108,7 @@ If python-magic fails to load the library it may be in a non-standard location, 
 - 'MagicException: could not find any magic files!': some
   installations of libmagic do not correctly point to their magic
   database file.  Try specifying the path to the file explicitly in the
-  constructor: `magic.Magic(magic_file="path_to_magic_file")`.
+  constructor: `magic.Magic(magic_file='path/to/magic.mgc')`.
 
 - 'WindowsError: [Error 193] %1 is not a valid Win32 application':
   Attempting to run the 32-bit libmagic DLL in a 64-bit build of
@@ -90,7 +117,6 @@ If python-magic fails to load the library it may be in a non-standard location, 
 
 - 'WindowsError: exception: access violation writing 0x00000000 ' This may indicate you are mixing
   Windows Python and Cygwin Python. Make sure your libmagic and python builds are consistent.
-
 
 ## Bug Reports
 

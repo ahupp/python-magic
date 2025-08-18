@@ -5,10 +5,8 @@ import os.path
 import shutil
 import sys
 import tempfile
-from typing import List, Union
 import unittest
-
-import pytest
+from typing import List, Optional
 
 # for output which reports a local time
 os.environ["TZ"] = "GMT"
@@ -26,7 +24,7 @@ class TestFile:
     file_name: str
     mime_results: List[str]
     text_results: List[str]
-    no_check_elf_results: Union[List[str], None]
+    no_check_elf_results: Optional[List[str]]
     buf_equals_file: bool = True
 
 
@@ -90,7 +88,7 @@ CASES = {
     ],
     b"test.snappy.parquet": [
         (COMMON_MIME, ["application/octet-stream"]),
-        (COMMON_PLAIN, ["Apache Parquet", "Par archive data"]),
+        (COMMON_PLAIN, ["data", "Apache Parquet", "Par archive data"]),
         (NO_SOFT, ["data"]),
     ],
     b"test.json": [

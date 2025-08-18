@@ -1,0 +1,180 @@
+name: wheels
+
+on:
+  pull_request:
+  push:
+    branches: master
+  release:
+    types: [released, prereleased]
+  workflow_dispatch:  # allows running workflow manually from the Actions tab
+
+concurrency:  # https://stackoverflow.com/questions/66335225#comment133398800_72408109
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build-sdist:
+    runs-on: ubuntu-latest
+
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: 1
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - run: sudo apt-get install -y libmagic1
+
+    - name: Build source distribution
+      run: |
+        pip install --upgrade setuptools wheel pip build
+        python -m build --sdist
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/*.tar.*
+
+
+  build-wheels-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.set-matrix.outputs.include }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
+      - id: set-matrix
+        env:
+          # only mention one (trivial) python version, as py2.py3 wheels only need to be build once per arch
+          CIBW_PROJECT_REQUIRES_PYTHON: '==3.12.*'
+          # skip PyPy wheels for now, and skip i686 wheels because pytest is failing
+          CIBW_SKIP: pp* *i686
+        run: |
+          MATRIX_INCLUDE=$(
+            {
+              cibuildwheel --print-build-identifiers --platform linux --arch all | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 |  jq -nRc '{"only": inputs, "os": "macos-13"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 |  jq -nRc '{"only": inputs, "os": "macos-14"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
+            } | jq -sc
+          )
+          echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
+
+
+  build-wheels:
+    name: build ${{ matrix.only }}
+    needs: build-wheels-matrix
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.build-wheels-matrix.outputs.include) }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up QEMU
+      if: runner.os == 'Linux'
+      uses: docker/setup-qemu-action@v3
+
+    # For Windows, grabbing latest file from MSYS2 is easier than building from source
+    # It's generally up to date ref https://packages.msys2.org/base/mingw-w64-file
+    - name: Setup MSYS2 and install file
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2.27.0
+      with:
+        msystem: ${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}
+        location: D:\
+        install: >-
+          ${{ endsWith(matrix.only, '32') && 'mingw-w64-i686-file' || 'mingw-w64-x86_64-file' }}
+
+    # The DLL dependency tree flattened out ref "Dependencies" https://packages.msys2.org/packages/mingw-w64-x86_64-file
+    - name: Copy Windows ddl and mgc
+      if: runner.os == 'Windows'
+      run: |
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/share/misc/magic.mgc" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libmagic-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libsystre-0.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libtre-5.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libasprintf-0.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libintl-8.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libatomic-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libgomp-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libquadmath-0.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libstdc++-6.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libcharset-1.dll" "magic"
+        cp "/msys64/${{ endsWith(matrix.only, '32') && 'mingw32' || 'mingw64' }}/bin/libiconv-2.dll" "magic"
+
+    # These are needed additionally in the win32 wheel ref https://packages.msys2.org/packages/mingw-w64-i686-file
+    - name: Copy additional 32-bit runtime DLLs
+      if: runner.os == 'Windows' && endsWith(matrix.only, '32')
+      run: |
+        cp "/msys64/mingw32/bin/libgcc_s_dw2-1.dll" "magic"
+        cp "/msys64/mingw32/bin/libwinpthread-1.dll" "magic"
+
+    - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
+      timeout-minutes: 10
+      with:
+        only: ${{ matrix.only }}
+      env:
+        CIBW_BUILD_VERBOSITY: 1
+        # add compiled libmagic to the build directory (to include in the wheel)
+        CIBW_BEFORE_BUILD_MACOS: sudo -E bash add_libmagic.sh
+        CIBW_BEFORE_BUILD_LINUX: bash add_libmagic.sh
+        # build macos wheels with maximum backwards compatibility (gcc -mmacosx-version-min flag)
+        MACOSX_DEPLOYMENT_TARGET: ${{ ( endsWith( matrix.only, 'arm64' ) && '11.0' ) || '10.9' }}
+        # simple smoke test run on each wheel: this is an HLS MP4 video, only recognised in recent versions of libmagic
+        CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypiso5\x00\x00\x00\x01isomiso5hlsf\x00\x00') == 'video/mp4'"
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist-${{ matrix.only }}
+        path: wheelhouse/*.whl
+
+
+  publish:
+    if: github.event_name == 'release'
+    needs: [build-sdist, build-wheels]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # softprops/action-gh-release
+      id-token: write  # pypa/gh-action-pypi-publish
+
+    steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.x
+
+    - uses: actions/download-artifact@v4
+      with:
+        path: dist/
+        pattern: dist-*
+        merge-multiple: true
+
+    - run: ls -ltra dist/
+
+    - run: pip install --upgrade python-magic --find-links ./dist
+
+    - name: Smoketest
+      run: python -c "import magic; magic.Magic()"
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        files: dist/*
+
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.8.14
