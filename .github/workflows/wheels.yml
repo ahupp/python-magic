@@ -55,7 +55,7 @@ jobs:
       - id: set-matrix
         env:
           # only mention one (trivial) python version, as py2.py3 wheels only need to be build once per arch
-          CIBW_PROJECT_REQUIRES_PYTHON: '==3.13.*'
+          CIBW_PROJECT_REQUIRES_PYTHON: '==3.12.*'
           # skip PyPy wheels for now, and skip i686 wheels because pytest is failing
           CIBW_SKIP: pp* *i686
         run: |
