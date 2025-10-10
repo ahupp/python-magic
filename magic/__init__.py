@@ -24,6 +24,7 @@ import ctypes.util
 import threading
 import logging
 
+from locale import getpreferredencoding
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
 
 
@@ -318,7 +319,7 @@ def coerce_filename(filename):
         sys.version_info[0] >= 3 and isinstance(filename, str)
     )
     if is_unicode:
-        return filename.encode("utf-8", "surrogateescape")
+        return filename.encode(getpreferredencoding(), "surrogateescape")
     else:
         return filename
 
