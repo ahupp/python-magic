@@ -10,6 +10,12 @@ import unittest
 
 import pytest
 
+try:
+    from concurrent.futures import ThreadPoolExecutor
+    HAS_CONCURRENT_FUTURES = True
+except ImportError:  # python 2.7
+    HAS_CONCURRENT_FUTURES = False
+
 # for output which reports a local time
 os.environ["TZ"] = "GMT"
 
@@ -320,6 +326,25 @@ class MagicTest(unittest.TestCase):
             )
 
             self.assertRaises(IOError, m_follow.from_file, tmp_broken)
+
+    @unittest.skipIf(not HAS_CONCURRENT_FUTURES, "concurrent.futures not available in Python 2.7")
+    def test_thread_safety(self):
+        """Test that concurrent from_file calls don't crash (would SEGV without global lock)"""
+        filename = os.path.join(self.TESTDATA_DIR, "test.pdf")
+
+        m = magic.Magic(mime=True)
+
+        def check_file(_):
+            result = m.from_file(filename)
+            self.assertEqual(result, "application/pdf")
+            return result
+
+        with ThreadPoolExecutor(100) as executor:
+            results = list(executor.map(check_file, range(100)))
+
+        # All calls should complete successfully
+        self.assertEqual(len(results), 100)
+        self.assertTrue(all(r == "application/pdf" for r in results))
 
 
 if __name__ == "__main__":

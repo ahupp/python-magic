@@ -420,7 +420,8 @@ def magic_getparam(cookie, param):
         raise NotImplementedError("magic_getparam not implemented")
     val = c_size_t()
     with LOCK:
-        return _magic_getparam(cookie, param, byref(val)).value
+        _magic_getparam(cookie, param, byref(val))
+    return val.value
 
 
 _has_version = False
@@ -431,7 +432,7 @@ if hasattr(libmagic, "magic_version"):
     magic_version.argtypes = []
 
 
-def version(lock=None):
+def version():
     if not _has_version:
         raise NotImplementedError("magic_version not implemented")
     with LOCK:
