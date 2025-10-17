@@ -109,6 +109,7 @@ class Magic:
             self.flags |= MAGIC_NO_CHECK_SIMH
 
         self.cookie = magic_open(self.flags)
+        self.lock = threading.Lock()
 
         magic_load(self.cookie, magic_file)
 
@@ -137,31 +138,34 @@ class Magic:
         """
         Identify the contents of `buf`
         """
-        try:
-            # if we're on python3, convert buf to bytes
-            # otherwise this string is passed as wchar*
-            # which is not what libmagic expects
-            # NEXTBREAK: only take bytes
-            if type(buf) == str and str != bytes:
-                buf = buf.encode("utf-8", errors="replace")
-            return maybe_decode(magic_buffer(self.cookie, buf))
-        except MagicException as e:
-            return self._handle509Bug(e)
+        with self.lock:
+            try:
+                # if we're on python3, convert buf to bytes
+                # otherwise this string is passed as wchar*
+                # which is not what libmagic expects
+                # NEXTBREAK: only take bytes
+                if type(buf) == str and str != bytes:
+                    buf = buf.encode("utf-8", errors="replace")
+                return maybe_decode(magic_buffer(self.cookie, buf))
+            except MagicException as e:
+                return self._handle509Bug(e)
 
     def from_file(self, filename):
         # raise FileNotFoundException or IOError if the file does not exist
         os.stat(filename, follow_symlinks=self.flags & MAGIC_SYMLINK)
 
-        try:
-            return maybe_decode(magic_file(self.cookie, filename))
-        except MagicException as e:
-            return self._handle509Bug(e)
+        with self.lock:
+            try:
+                return maybe_decode(magic_file(self.cookie, filename))
+            except MagicException as e:
+                return self._handle509Bug(e)
 
     def from_descriptor(self, fd):
-        try:
-            return maybe_decode(magic_descriptor(self.cookie, fd))
-        except MagicException as e:
-            return self._handle509Bug(e)
+        with self.lock:
+            try:
+                return maybe_decode(magic_descriptor(self.cookie, fd))
+            except MagicException as e:
+                return self._handle509Bug(e)
 
     def _handle509Bug(self, e):
         # libmagic 5.09 has a bug where it might fail to identify the
@@ -313,9 +317,6 @@ def coerce_filename(filename):
         return filename
 
 
-# libmagic is not thread-safe: guard for concurrent calls on a global scope
-LOCK = threading.Lock()
-
 magic_open = libmagic.magic_open
 magic_open.restype = magic_t
 magic_open.argtypes = [c_int]
@@ -339,8 +340,7 @@ _magic_file.errcheck = errorcheck_null
 
 
 def magic_file(cookie, filename):
-    with LOCK:
-        return _magic_file(cookie, coerce_filename(filename))
+    return _magic_file(cookie, coerce_filename(filename))
 
 
 _magic_buffer = libmagic.magic_buffer
@@ -350,8 +350,7 @@ _magic_buffer.errcheck = errorcheck_null
 
 
 def magic_buffer(cookie, buf):
-    with LOCK:
-        return _magic_buffer(cookie, buf, len(buf))
+    return _magic_buffer(cookie, buf, len(buf))
 
 
 magic_descriptor = libmagic.magic_descriptor
@@ -366,8 +365,7 @@ _magic_descriptor.errcheck = errorcheck_null
 
 
 def magic_descriptor(cookie, fd):
-    with LOCK:
-        return _magic_descriptor(cookie, fd)
+    return _magic_descriptor(cookie, fd)
 
 
 _magic_load = libmagic.magic_load
@@ -377,8 +375,7 @@ _magic_load.errcheck = errorcheck_negative_one
 
 
 def magic_load(cookie, filename):
-    with LOCK:
-        return _magic_load(cookie, coerce_filename(filename))
+    return _magic_load(cookie, coerce_filename(filename))
 
 
 magic_setflags = libmagic.magic_setflags
@@ -411,16 +408,14 @@ def magic_setparam(cookie, param, val):
     if not _has_param:
         raise NotImplementedError("magic_setparam not implemented")
     v = c_size_t(val)
-    with LOCK:
-        return _magic_setparam(cookie, param, byref(v))
+    return _magic_setparam(cookie, param, byref(v))
 
 
 def magic_getparam(cookie, param):
     if not _has_param:
         raise NotImplementedError("magic_getparam not implemented")
     val = c_size_t()
-    with LOCK:
-        _magic_getparam(cookie, param, byref(val))
+    _magic_getparam(cookie, param, byref(val))
     return val.value
 
 
@@ -435,8 +430,7 @@ if hasattr(libmagic, "magic_version"):
 def version():
     if not _has_version:
         raise NotImplementedError("magic_version not implemented")
-    with LOCK:
-        return magic_version()
+    return magic_version()
 
 
 MAGIC_NONE = 0x000000  # No flags
