@@ -8,7 +8,6 @@ import threading
 from collections import namedtuple
 
 from ctypes import *
-from ctypes.util import find_library
 
 from . import loader
 
