@@ -18,11 +18,7 @@ Usage:
 
 import sys
 import os
-import glob
-import ctypes
-import ctypes.util
 import threading
-import logging
 
 from locale import getpreferredencoding
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
@@ -259,7 +255,7 @@ from . import loader
 
 libmagic = loader.load_lib()
 
-magic_t = ctypes.c_void_p
+magic_t = c_void_p
 
 
 def errorcheck_null(result, func, args):
