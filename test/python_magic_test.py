@@ -89,8 +89,8 @@ CASES = {
         (NO_SOFT, ["data"]),
     ],
     b"test.snappy.parquet": [
-        (COMMON_MIME, ["application/octet-stream"]),
-        (COMMON_PLAIN, ["Apache Parquet", "Par archive data"]),
+        (COMMON_MIME, ["application/octet-stream", "application/vnd.apache.parquet"]),
+        (COMMON_PLAIN, ["Apache Parquet", "Apache Parquet file", "Par archive data"]),
         (NO_SOFT, ["data"]),
     ],
     b"test.json": [
