@@ -1,5 +1,8 @@
 name: ci
 on: [push, pull_request]
+concurrency:  # https://stackoverflow.com/questions/66335225#comment133398800_72408109
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   ci:
     strategy:
@@ -19,13 +22,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
+      - name: Copy libmagic into magic dir
+        run: ${{ (runner.os == 'Windows' && 'bash add_libmagic.sh')  || 'sudo -E bash add_libmagic.sh' }}
       - run: pip install --upgrade pip
       - run: pip install --upgrade pytest
       - run: pip install --editable .
-      - if: runner.os == 'macOS'
-        run: brew install libmagic
-      - if: runner.os == 'Windows'
-        run: pip install python-magic-bin
       - run: LC_ALL=en_US.UTF-8 pytest
         shell: bash
         timeout-minutes: 15 # Limit Windows infinite loop.
