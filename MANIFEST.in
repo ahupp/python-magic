@@ -1,5 +1,6 @@
 include *.py
 include LICENSE
-graft tests
+include tox.ini
+graft test
 global-exclude __pycache__
 global-exclude *.py[co]
