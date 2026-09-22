@@ -20,6 +20,7 @@ import sys
 import os
 import threading
 
+from locale import getpreferredencoding
 from ctypes import c_char_p, c_int, c_size_t, c_void_p, byref, POINTER
 
 
@@ -107,6 +108,12 @@ class Magic:
         self.cookie = magic_open(self.flags)
         self.lock = threading.Lock()
 
+        if magic_file is None and not os.environ.get("MAGIC"):
+            # wheels package the mime database in this directory
+            # prefer it when no magic file is specified by the user
+            mime_db = os.path.join(os.path.dirname(__file__), "magic.mgc")
+            if os.path.exists(mime_db):
+                magic_file = mime_db
         magic_load(self.cookie, magic_file)
 
         # MAGIC_EXTENSION was added in 523 or 524, so bail if
@@ -308,7 +315,7 @@ def coerce_filename(filename):
         sys.version_info[0] >= 3 and isinstance(filename, str)
     )
     if is_unicode:
-        return filename.encode("utf-8", "surrogateescape")
+        return filename.encode(getpreferredencoding(), "surrogateescape")
     else:
         return filename
 

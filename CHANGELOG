@@ -1,10 +1,14 @@
-Changes to 0.4.29:
-
-- support MAGIC_SYMLINK (via follow_symlink flag on Magic constructor)
-- correctly throw FileNotFoundException depending on flag
-
 Changes to 0.4.28:
 
+- libmagic and magic.mgc now come bundled in the wheels on PyPI, and will be copied
+  into site-packages/magic along with the Python files of this library
+- magic.loader.load_lib now first searches for libmagic in the same directory as the
+  Python files, then in the current working directory, and only then in standard paths
+- magic.Magic(magic_file=...) and magic.compat.Magic.load(magic_file=...) will now
+  prefer "magic.mgc" in the same directory as the Python files, only if left
+  unspecified by the user (and the MAGIC env var is empty or not set)
+- support MAGIC_SYMLINK (via follow_symlink flag on Magic constructor)
+- correctly throw FileNotFoundException depending on flag
 - support "magic-1.dll" on Windows, which is produced by vcpkg
 - add python 3.10 to tox config
 - update test for upstream gzip extensions
