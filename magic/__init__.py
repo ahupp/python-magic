@@ -10,8 +10,9 @@ Usage:
 'PDF document, version 1.2'
 >>> magic.from_file("testdata/test.pdf", mime=True)
 'application/pdf'
->>> magic.from_buffer(open("testdata/test.pdf").read(1024))
-'PDF document, version 1.2'
+>>> with open("testdata/test.pdf", "rb") as pdf:
+...     magic.from_buffer(pdf.read(2048), mime=True)
+'application/pdf'
 >>>
 
 """
@@ -223,8 +224,9 @@ def from_buffer(buffer, mime=False):
     value is the mimetype if mime=True, otherwise a human readable
     name.
 
-    >>> magic.from_buffer(open("testdata/test.pdf").read(1024))
-    'PDF document, version 1.2'
+    >>> with open("testdata/test.pdf", "rb") as pdf:
+    ...     magic.from_buffer(pdf.read(2048), mime=True)
+    'application/pdf'
     """
     m = _get_magic_type(mime)
     return m.from_buffer(buffer)
