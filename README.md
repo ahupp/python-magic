@@ -24,9 +24,10 @@ functionality is exposed to the command line by the Unix command
 
 There is also a `Magic` class that provides more direct control,
 including overriding the magic database file and turning on character
-encoding detection.  This is not recommended for general use.  In
-particular, it's not safe for sharing across multiple threads and
-will fail throw if this is attempted.
+encoding detection. The identification methods `from_file`, `from_buffer`, and `from_descriptor`
+serialize access with a per-instance lock, so those methods can be called
+from multiple threads on the same instance. This does not cover concurrent
+parameter changes through `setparam` or direct access to the libmagic cookie.
 
 ```python
 >>> f = magic.Magic(uncompress=True)
