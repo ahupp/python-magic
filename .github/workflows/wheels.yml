@@ -64,7 +64,8 @@ jobs:
               cibuildwheel --print-build-identifiers --platform linux --arch all | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
               && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 |  jq -nRc '{"only": inputs, "os": "macos-15-intel"}' \
               && cibuildwheel --print-build-identifiers --platform macos --arch arm64 |  jq -nRc '{"only": inputs, "os": "macos-15"}' \
-              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
+              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 |  jq -nRc '{"only": inputs, "os": "windows-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch ARM64 |  jq -nRc '{"only": inputs, "os": "windows-11-arm"}'
             } | jq -sc
           )
           echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
@@ -95,7 +96,7 @@ jobs:
       if: runner.os == 'Windows'
       uses: msys2/setup-msys2@v2.33.0
       with:
-        msystem: ${{ endsWith(matrix.only, '32') && 'mingw32' || 'ucrt64' }}
+        msystem: ${{ endsWith(matrix.only, '32') && 'mingw32' || endsWith(matrix.only, 'arm64') && 'clangarm64' || 'ucrt64' }}
         path-type: inherit  # add_libmagic.sh needs the cibuildwheel python
         install: make
         pacboy: cc:p libsystre:p ntldd:p
@@ -112,7 +113,8 @@ jobs:
         CIBW_BEFORE_BUILD_WINDOWS: msys2 -c "bash add_libmagic.sh"
         # windows: prefer the MSYS2 toolchain over C:\mingw64 on PATH, CFLAGS like https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-file/PKGBUILD
         # (win32: link the UCRT like python does, as there is no 32-bit ucrt MSYS2 environment)
-        CIBW_ENVIRONMENT_WINDOWS: LC_ALL=en_US.UTF-8 CC=cc CFLAGS="-O2 -Wno-incompatible-pointer-types${{ endsWith(matrix.only, '32') && ' -mcrtdll=ucrt -D_UCRT' || '' }}"
+        # and skip the x86-only libtool file format check so the tarball's libtool links arm64 DLLs
+        CIBW_ENVIRONMENT_WINDOWS: LC_ALL=en_US.UTF-8 CC=cc CFLAGS="-O2 -Wno-incompatible-pointer-types${{ endsWith(matrix.only, '32') && ' -mcrtdll=ucrt -D_UCRT' || '' }}" lt_cv_deplibs_check_method=pass_all
         # build macos wheels with maximum backwards compatibility (gcc -mmacosx-version-min flag)
         MACOSX_DEPLOYMENT_TARGET: ${{ ( endsWith( matrix.only, 'arm64' ) && '11.0' ) || '10.9' }}
         # run the test suite against the installed wheel (CIBW_ENVIRONMENT_WINDOWS overrides, so it repeats LC_ALL)

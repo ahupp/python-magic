@@ -82,9 +82,7 @@ dnf install file-libs
  
 ### Windows
 
-The DLLs that are bundled in the Windows wheels are built from source with the MSYS2 toolchain (mingw32 and ucrt64).
-
-For ARM64 Windows, you'll need to compile libmagic from source or [install](https://packages.msys2.org/packages/mingw-w64-clang-aarch64-file) from MSYS2.
+The DLLs that are bundled in the Windows wheels are built from source with the MSYS2 toolchain (mingw32, ucrt64 and clangarm64).
 
 ### OSX
 
