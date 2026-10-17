@@ -2,6 +2,9 @@
 
 set -euxo pipefail
 
+# on windows (MSYS2), install next to the DLLs libmagic depends on
+prefix="${MINGW_PREFIX:-/usr/local}"
+
 install_source() {
     # install from source
     # https://www.darwinsys.com/file/
@@ -12,7 +15,7 @@ install_source() {
         curl -sSLo "${tmpfile}" "https://astron.com/pub/file/${version}.tar.gz" &&
         tar xvf "${tmpfile}" &&
         cd "${version}" &&
-        ./configure &&
+        ./configure --prefix="${prefix}" &&
         make &&
         make install &&
         make installcheck &&
@@ -44,14 +47,14 @@ copy_libmagic() {
     # this python command relies on current working directory containing `./magic/loader.py`
     libmagic_path="$(python -c 'from magic.loader import load_lib; print(load_lib()._name)')" &&
     cp "${libmagic_path}" "magic" &&
+    # on windows (MSYS2), also copy the DLLs libmagic depends on
+    ( [ -z "${MINGW_PREFIX:-}" ] || ntldd -R "${libmagic_path}" | awk '{print $3}' | cygpath -u -f - | grep "^${MINGW_PREFIX}/bin/" | xargs cp -t "magic" ) &&
     # additionally copy compiled db into magic dir (prefer the one installed by install_source)
-    ( ( cp "/usr/local/share/misc/magic.mgc" "magic" || cp "/usr/share/misc/magic.mgc" "magic" ) || true ) &&
+    ( ( cp "${prefix}/share/misc/magic.mgc" "magic" || cp "/usr/share/misc/magic.mgc" "magic" ) || true ) &&
     # check what was copied
     ls -ltra magic
 }
 
-# skip windows (taken care of separately in wheels.yml)
-python -c 'import platform; assert platform.system() != "Windows"' || ( echo "skipping on windows" && exit 0 )
 # prefer a recent build from source
 install_source || install_precompiled
 # files to be copied into the wheel
