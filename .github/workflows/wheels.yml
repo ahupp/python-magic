@@ -1,0 +1,164 @@
+name: wheels
+
+on:
+  pull_request:
+  push:
+    branches: master
+  release:
+    types: [released, prereleased]
+  workflow_dispatch:  # allows running workflow manually from the Actions tab
+
+concurrency:  # https://stackoverflow.com/questions/66335225#comment133398800_72408109
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build-sdist:
+    runs-on: ubuntu-latest
+
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: 1
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - run: sudo apt-get install -y libmagic1
+
+    - name: Build source distribution
+      run: |
+        pip install --upgrade setuptools wheel pip build
+        python -m build --sdist
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/*.tar.*
+
+
+  build-wheels-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.set-matrix.outputs.include }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
+      - id: set-matrix
+        env:
+          # only mention one (trivial) python version, as py2.py3 wheels only need to be build once per arch
+          CIBW_PROJECT_REQUIRES_PYTHON: '==3.12.*'
+          # skip PyPy wheels for now
+          CIBW_SKIP: pp*
+        run: |
+          MATRIX_INCLUDE=$(
+            {
+              cibuildwheel --print-build-identifiers --platform linux --arch all | jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 |  jq -nRc '{"only": inputs, "os": "macos-15-intel"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 |  jq -nRc '{"only": inputs, "os": "macos-15"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch x86,AMD64 |  jq -nRc '{"only": inputs, "os": "windows-latest"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch ARM64 |  jq -nRc '{"only": inputs, "os": "windows-11-arm"}'
+            } | jq -sc
+          )
+          echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
+
+
+  build-wheels:
+    name: build ${{ matrix.only }}
+    needs: build-wheels-matrix
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.build-wheels-matrix.outputs.include) }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up QEMU
+      if: runner.os == 'Linux'
+      uses: docker/setup-qemu-action@v3
+
+    # For Windows, add_libmagic.sh builds libmagic with the MSYS2 toolchain (CIBW_BEFORE_BUILD_WINDOWS below)
+    # ucrt64 over mingw64: libmagic shares the C runtime with python, so from_descriptor works
+    - name: Setup MSYS2
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2.33.0
+      with:
+        msystem: ${{ endsWith(matrix.only, '32') && 'mingw32' || endsWith(matrix.only, 'arm64') && 'clangarm64' || 'ucrt64' }}
+        path-type: inherit  # add_libmagic.sh needs the cibuildwheel python
+        install: make
+        pacboy: cc:p libsystre:p ntldd:p
+
+    - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
+      timeout-minutes: 10
+      with:
+        only: ${{ matrix.only }}
+      env:
+        CIBW_BUILD_VERBOSITY: 1
+        # add compiled libmagic to the build directory (to include in the wheel)
+        CIBW_BEFORE_BUILD_MACOS: sudo -E bash add_libmagic.sh
+        CIBW_BEFORE_BUILD_LINUX: bash add_libmagic.sh
+        CIBW_BEFORE_BUILD_WINDOWS: msys2 -c "bash add_libmagic.sh"
+        # windows: prefer the MSYS2 toolchain over C:\mingw64 on PATH, CFLAGS like https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-file/PKGBUILD
+        # (win32: link the UCRT like python does, as there is no 32-bit ucrt MSYS2 environment)
+        # and skip the x86-only libtool file format check so the tarball's libtool links arm64 DLLs
+        CIBW_ENVIRONMENT_WINDOWS: LC_ALL=en_US.UTF-8 CC=cc CFLAGS="-O2 -Wno-incompatible-pointer-types${{ endsWith(matrix.only, '32') && ' -mcrtdll=ucrt -D_UCRT' || '' }}" lt_cv_deplibs_check_method=pass_all
+        # build macos wheels with maximum backwards compatibility (gcc -mmacosx-version-min flag)
+        MACOSX_DEPLOYMENT_TARGET: ${{ ( endsWith( matrix.only, 'arm64' ) && '11.0' ) || '10.9' }}
+        # run the test suite against the installed wheel (CIBW_ENVIRONMENT_WINDOWS overrides, so it repeats LC_ALL)
+        CIBW_ENVIRONMENT: LC_ALL=en_US.UTF-8
+        CIBW_TEST_REQUIRES: pytest
+        CIBW_TEST_COMMAND: pytest --import-mode=importlib {project}/test
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist-${{ matrix.only }}
+        path: wheelhouse/*.whl
+
+
+  publish:
+    if: github.event_name == 'release'
+    needs: [build-sdist, build-wheels]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # softprops/action-gh-release
+      id-token: write  # pypa/gh-action-pypi-publish
+
+    steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.x
+
+    - uses: actions/download-artifact@v4
+      with:
+        path: dist/
+        pattern: dist-*
+        merge-multiple: true
+
+    - run: ls -ltra dist/
+
+    - run: pip install --upgrade python-magic --find-links ./dist
+
+    - name: Smoketest
+      run: python -c "import magic; magic.Magic()"
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        files: dist/*
+
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.8.14

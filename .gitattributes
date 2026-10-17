@@ -1,0 +1,2 @@
+# keep test files byte-identical on Windows checkouts (no CRLF conversion)
+test/testdata/** -text

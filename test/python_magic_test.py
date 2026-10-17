@@ -5,10 +5,8 @@ import os.path
 import shutil
 import sys
 import tempfile
-from typing import List, Union
 import unittest
-
-import pytest
+from typing import List, Optional
 
 try:
     from concurrent.futures import ThreadPoolExecutor
@@ -32,7 +30,7 @@ class TestFile:
     file_name: str
     mime_results: List[str]
     text_results: List[str]
-    no_check_elf_results: Union[List[str], None]
+    no_check_elf_results: Optional[List[str]]
     buf_equals_file: bool = True
 
 
@@ -96,7 +94,7 @@ CASES = {
     ],
     b"test.snappy.parquet": [
         (COMMON_MIME, ["application/octet-stream", "application/vnd.apache.parquet"]),
-        (COMMON_PLAIN, ["Apache Parquet", "Apache Parquet file", "Par archive data"]),
+        (COMMON_PLAIN, ["data", "Apache Parquet", "Apache Parquet file", "Par archive data"]),
         (NO_SOFT, ["data"]),
     ],
     b"test.json": [
@@ -212,6 +210,9 @@ class MagicTest(unittest.TestCase):
         os.environ["TZ"] = "UTC"
         try:
             for filename, cases in CASES.items():
+                if sys.platform == "win32" and filename == b"\xce\xbb":
+                    # libmagic opens paths with the narrow (ANSI codepage) api on Windows
+                    continue
                 filename = os.path.join(self.TESTDATA_DIR.encode("utf-8"), filename)
                 print("test case ", filename, file=sys.stderr)
                 for flag_variants, outputs in cases:
@@ -284,6 +285,11 @@ class MagicTest(unittest.TestCase):
         except NotImplementedError:
             pass
 
+    def test_from_buffer_hls_mp4(self):
+        # HLS MP4 video, only recognised in recent versions of libmagic (and broken in 5.47 ref #362)
+        buf = b"\x00\x00\x00\x1cftypiso5\x00\x00\x00\x01isomiso5hlsf\x00\x00"
+        self.assertEqual("video/mp4", magic.from_buffer(buf, mime=True))
+
     def test_name_count(self):
         m = magic.Magic()
         with open(os.path.join(self.TESTDATA_DIR, "name_use.jpg"), "rb") as f:
@@ -298,6 +304,7 @@ class MagicTest(unittest.TestCase):
         m = magic.Magic(mime=True)
         self.assertEqual("application/pdf", m.from_file(path))
 
+    @unittest.skipIf(sys.platform == "win32", "libmagic has no symlink support on Windows")
     def test_symlink(self):
         # TODO: 3.0
         if not hasattr(tempfile, "TemporaryDirectory"):
