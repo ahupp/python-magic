@@ -112,11 +112,13 @@ jobs:
         CIBW_BEFORE_BUILD_WINDOWS: msys2 -c "bash add_libmagic.sh"
         # windows: prefer the MSYS2 toolchain over C:\mingw64 on PATH, CFLAGS like https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-file/PKGBUILD
         # (win32: link the UCRT like python does, as there is no 32-bit ucrt MSYS2 environment)
-        CIBW_ENVIRONMENT_WINDOWS: CC=cc CFLAGS="-O2 -Wno-incompatible-pointer-types${{ endsWith(matrix.only, '32') && ' -mcrtdll=ucrt -D_UCRT' || '' }}"
+        CIBW_ENVIRONMENT_WINDOWS: LC_ALL=en_US.UTF-8 CC=cc CFLAGS="-O2 -Wno-incompatible-pointer-types${{ endsWith(matrix.only, '32') && ' -mcrtdll=ucrt -D_UCRT' || '' }}"
         # build macos wheels with maximum backwards compatibility (gcc -mmacosx-version-min flag)
         MACOSX_DEPLOYMENT_TARGET: ${{ ( endsWith( matrix.only, 'arm64' ) && '11.0' ) || '10.9' }}
-        # simple smoke test run on each wheel: this is an HLS MP4 video, only recognised in recent versions of libmagic
-        CIBW_TEST_COMMAND: python -c "import magic; assert magic.Magic(mime=True).from_buffer(b'\x00\x00\x00\x1cftypiso5\x00\x00\x00\x01isomiso5hlsf\x00\x00') == 'video/mp4'"
+        # run the test suite against the installed wheel (CIBW_ENVIRONMENT_WINDOWS overrides, so it repeats LC_ALL)
+        CIBW_ENVIRONMENT: LC_ALL=en_US.UTF-8
+        CIBW_TEST_REQUIRES: pytest
+        CIBW_TEST_COMMAND: pytest --import-mode=importlib {project}/test
 
     - uses: actions/upload-artifact@v4
       with:
