@@ -44,6 +44,20 @@ You can also combine the flag options:
 'text/plain'
 ```
 
+## Command line
+
+Identify one or more files using the same libmagic installation as the Python API:
+
+```sh
+python -m magic example.pdf
+python -m magic --mime example.pdf image.jpg
+```
+
+Each result is printed as `filename: description` (or `filename: MIME type`).
+Errors raised by file access or libmagic go to stderr; remaining files are
+still inspected, and the command exits with status 1. Use `--` before a filename
+that starts with a dash. This requires libmagic just like the Python API.
+
 ## Installation
 
 The current stable version of python-magic is available on PyPI and
