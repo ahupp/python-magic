@@ -191,6 +191,14 @@ class MagicTest(unittest.TestCase):
         except NotImplementedError:
             pass
 
+
+    def test_compat_params_use_size_t(self):
+        # libmagic reads and writes setparam/getparam values as a size_t,
+        # so the compat module must not truncate them to 32 bits.
+        m = magic.compat.open(magic.compat.MAGIC_NONE)
+        self.assertEqual(0, m.setparam(magic.compat.PARAM_BYTES_MAX, 2**33))
+        self.assertEqual(2**33, m.getparam(magic.compat.PARAM_BYTES_MAX))
+
     def test_fs_encoding(self):
         self.assertEqual("utf-8", sys.getfilesystemencoding().lower())
 
