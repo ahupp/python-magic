@@ -244,7 +244,7 @@ class Magic(object):
         Returns the param value if successful and -1 if the parameter
         was unknown.
         """
-        v = c_int()
+        v = c_size_t()
         i = _getparam(self._magic_t, param, byref(v))
         if i == -1:
             return -1
@@ -254,7 +254,7 @@ class Magic(object):
         """
         Returns 0 if successful and -1 if the parameter was unknown.
         """
-        v = c_int(value)
+        v = c_size_t(value)
         return _setparam(self._magic_t, param, byref(v))
 
 
